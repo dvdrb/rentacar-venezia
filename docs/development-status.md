@@ -2,7 +2,7 @@
 
 ## Current phase
 
-Phase 4 — global theme shell, staged but not activated.
+Phase 6 — homepage, staged but not activated.
 
 ## Confirmed
 
@@ -20,11 +20,14 @@ Phase 4 — global theme shell, staged but not activated.
 - The inactive theme now has a semantic header/footer, WordPress menu locations,
   guarded WPML language links, an accessible progressive-enhancement mobile menu,
   skip link, reduced-motion handling, and an availability notice component.
+- The inactive homepage is server-rendered and shows a limited six-vehicle
+  catalogue through the core vehicle repository. Its trip form intentionally
+  collects preferences only and never asserts live availability.
 
 ## Not started
 
 The theme has not been activated, so the baseline LocalWP site has no visible
-change. The homepage, catalogue, detail experience, pricing service and
+change. The dedicated catalogue, detail experience, pricing service and
 availability-request flow remain unimplemented. Activation of `rentacar-core`
 remains a later local-only verification step after its runtime integration
 coverage is added.
