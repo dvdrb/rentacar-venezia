@@ -11,6 +11,7 @@ define( 'ABSPATH', __DIR__ . '/' );
 require_once dirname( __DIR__, 2 ) . '/plugin/rentacar-core/src/Vehicles/PricingBand.php';
 require_once dirname( __DIR__, 2 ) . '/plugin/rentacar-core/src/Vehicles/PricingBandCollection.php';
 require_once dirname( __DIR__, 2 ) . '/plugin/rentacar-core/src/Vehicles/Vehicle.php';
+require_once dirname( __DIR__, 2 ) . '/plugin/rentacar-core/src/Vehicles/VehicleGallery.php';
 
 function rentacar_test_assert( $condition, $message ) {
     if ( ! $condition ) {
@@ -33,5 +34,9 @@ rentacar_test_assert( null === ( new Rentacar_Core_Pricing_Band( 1, 2, 'not-a-pr
 $vehicle = new Rentacar_Core_Vehicle( array( 'id' => 123, 'transmission' => 'Automatic' ) );
 rentacar_test_assert( 123 === $vehicle->get( 'id' ), 'Vehicle exposes known data.' );
 rentacar_test_assert( null === $vehicle->get( 'unknown' ), 'Vehicle has safe missing-value behavior.' );
+
+$gallery = new Rentacar_Core_Vehicle_Gallery( 99, array( 0, 99, 100, 100 ) );
+rentacar_test_assert( array( 99, 100 ) === $gallery->all_image_ids(), 'Gallery handles a featured image and duplicate/empty images.' );
+rentacar_test_assert( array() === ( new Rentacar_Core_Vehicle_Gallery( 0 ) )->all_image_ids(), 'Gallery handles missing images.' );
 
 echo "Vehicle domain checks passed.\n";

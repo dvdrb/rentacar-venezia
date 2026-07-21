@@ -2,6 +2,12 @@
 defined( 'ABSPATH' ) || exit;
 
 final class Rentacar_Core_Vehicle_Mapper {
+    private $wpml;
+
+    public function __construct( Rentacar_Core_Wpml_Vehicle_Resolver $wpml = null ) {
+        $this->wpml = $wpml ? $wpml : new Rentacar_Core_Wpml_Vehicle_Resolver();
+    }
+
     public function map( WP_Post $post ) {
         $gallery = function_exists( 'get_field' ) ? get_field( 'gallery', $post->ID ) : array();
         $images = array();
@@ -19,9 +25,11 @@ final class Rentacar_Core_Vehicle_Mapper {
             'title'             => get_the_title( $post ),
             'slug'              => $post->post_name,
             'permalink'         => get_permalink( $post ),
-            'language'          => $this->language( $post->ID ),
+            'language'          => $this->wpml->language( $post->ID ),
+            'translations'      => $this->wpml->translations( $post->ID ),
             'featured_image_id' => (int) get_post_thumbnail_id( $post ),
             'gallery'           => $images,
+            'vehicle_gallery'   => new Rentacar_Core_Vehicle_Gallery( get_post_thumbnail_id( $post ), $images ),
             'transmission'      => get_post_meta( $post->ID, 'gearbox', true ),
             'passengers'        => $this->integer_meta( $post->ID, 'max_passagers' ),
             'doors'             => $this->integer_meta( $post->ID, 'doors' ),
@@ -39,20 +47,4 @@ final class Rentacar_Core_Vehicle_Mapper {
         return max( 0, (int) get_post_meta( $post_id, $key, true ) );
     }
 
-    private function language( $post_id ) {
-        if ( ! has_filter( 'wpml_element_language_code' ) ) {
-            return null;
-        }
-
-        $language = apply_filters(
-            'wpml_element_language_code',
-            null,
-            array(
-                'element_id'   => (int) $post_id,
-                'element_type' => 'post_cars',
-            )
-        );
-
-        return is_string( $language ) ? $language : null;
-    }
 }

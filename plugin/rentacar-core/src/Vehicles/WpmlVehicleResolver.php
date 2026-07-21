@@ -33,4 +33,22 @@ final class Rentacar_Core_Wpml_Vehicle_Resolver {
 
         return is_string( $language ) ? $language : null;
     }
+
+    public function translations( $vehicle_id ) {
+        if ( ! has_filter( 'wpml_element_trid' ) || ! has_filter( 'wpml_get_element_translations' ) ) {
+            return array();
+        }
+
+        $trid = apply_filters( 'wpml_element_trid', null, (int) $vehicle_id, 'post_cars' );
+        $translations = $trid ? apply_filters( 'wpml_get_element_translations', null, $trid, 'post_cars' ) : array();
+        $resolved = array();
+
+        foreach ( is_array( $translations ) ? $translations : array() as $language => $translation ) {
+            if ( isset( $translation->element_id ) ) {
+                $resolved[ $language ] = (int) $translation->element_id;
+            }
+        }
+
+        return $resolved;
+    }
 }
