@@ -15,4 +15,14 @@
 | `price4` | Rate after third band | `single.php:49`, `127` |
 | featured image | Vehicle image | `single.php:72`, `985` |
 
-Page-level ACF fields: `text_header`, `text_seo` (`template-homepage.php:12,135`), `coordinates`, `coordinates_2` (`template-homepage.php:94–95`; `page.php:12–13`), and a commented `faq` repeater (`template-faq.php:27–35`). Preserve all keys until an approved migration. ACF field groups, return formats, and translation settings are not knowable from source alone and need ACF/WPML admin verification.
+## Runtime ACF inventory
+
+**Verified by WordPress runtime.** Five active groups contain **24 fields including repeater children**. The complete sanitized field key/name/label/type/parent/required/default/return-format/conditional/location inventory is [local-wordpress-audit.json](generated/local-wordpress-audit.json).
+
+- **Car fields** (`group_5c571f7045be6`, `post_type == cars`): gallery repeater `field_5ab2613571fba` with image child `field_5ab261bd4c3e9` (attachment-ID return); gearbox `field_5ab2617071fbd` (select/value return); doors `field_5ab2617e71fbf`; max_passagers `field_5ab2618871fc0`; air_conditioning `field_5ab264d15534e` (true/false, default false).
+- **Price list** (`group_5c571f70782a4`, `post_type == cars`): price and threshold keys listed above; all optional numbers with blank defaults.
+- **coordinates** (`group_5c571f705a3a6`, `post_type == page`): coordinates and coordinates_2 text fields.
+- **FAQ fields** (`group_5c571f706462a`, template `template-faq.php`): faq repeater with question text and answer WYSIWYG children.
+- **Home page** (`group_5c571f706f05b`, template `template-homepage.php`): text_header/text_seo WYSIWYG and text_field_car text fields.
+
+All group fields are optional and returned no conditional logic. Groups are database/runtime supplied; no PHP or local-JSON origin marker was detected. The `cars` post type has 156 published posts, rewrite `cars`, no archive/REST, and no taxonomy.

@@ -14,10 +14,10 @@
 | Classic Widgets | 0.3 | required for current frontend | Legacy header/footer/sidebar widget areas exist. |
 | LiteSpeed Cache | 7.8.1 | production-only | Do not treat cached output as source of truth. |
 | GTM4WP | 1.22.3 | required for current frontend | Analytics/tagging verification required. |
-| Click to Chat for WhatsApp | 4.35 | required for current frontend | Manual front-end/admin verification required. |
+| Click to Chat for WhatsApp | 4.41 | required for current frontend | Active; no direct legacy-theme API call found. |
 | UpdraftPlus | 1.26.5 | utility-only | Backup/restore only; keep all backup data out of Git. |
-| All-in-One WP Migration | 7.106 | utility-only | Export/import only; keep `.wpress` out of Git. |
+| All-in-One WP Migration | 7.107 | utility-only | Active; export/import only; keep `.wpress` out of Git. |
 | Regenerate Thumbnails | 3.1.6 | utility-only | Do not run during redesign setup. |
 | Update Theme and Plugins from ZIP File | 2.0.0 | utility-only | Candidate for later removal after deployment process is agreed. |
 
-Versions were captured from the WordPress-admin screenshot supplied on 2026-07-21. No plugin was activated, deactivated, updated, installed, or removed. Classifications are source-informed and require WordPress-admin confirmation of active state/configuration.
+**Runtime verified:** all 17 listed third-party plugins are active. `rentacar-core` 0.0.0 is the sole inactive plugin and is intentionally inactive. No persistent must-use plugin exists. Versions were refreshed from the local runtime where they differed from the screenshot. No plugin was activated, deactivated, updated, installed, or removed.

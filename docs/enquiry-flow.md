@@ -14,4 +14,4 @@ Rental days start as the date difference; one day is added when return time is l
 
 ## Records and required migration behavior
 
-No code creates a post, custom table, or other enquiry record. Enquiries appear email-only. This must be confirmed in WordPress-admin and mail operations. The new workflow must remain an availability enquiry—not an instant reservation—and must server-validate inputs, verify a nonce, recalculate all estimates, and use approved mail configuration.
+No code creates a post, custom table, or other enquiry record. **Verified by source.** Runtime found CF7 forms 66 and 75 and no WPForms posts; neither is referenced by the legacy theme, and neither configuration contained the known business-recipient marker. No submissions were read. The vehicle enquiry remains email-only theme code.

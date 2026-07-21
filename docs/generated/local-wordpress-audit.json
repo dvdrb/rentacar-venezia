@@ -1,0 +1,987 @@
+{
+  "generated_at": "2026-07-21T14:05:39+00:00",
+  "method": "temporary localhost-only MU-plugin read-only runtime audit",
+  "site": {
+    "home": "http://rentacar-venezia-local.local/",
+    "siteurl": "http://rentacar-venezia-local.local/",
+    "permalink_structure": "/%postname%/",
+    "category_base": "",
+    "tag_base": "",
+    "show_on_front": "page",
+    "page_on_front": 3158,
+    "page_for_posts": 0,
+    "timezone_string": "",
+    "gmt_offset": "0"
+  },
+  "active_theme": {
+    "template": "autocar",
+    "stylesheet": "autocar",
+    "name": "Auto car",
+    "version": "1.1.3",
+    "parent": null,
+    "root": "/Users/dvdrb/Local Sites/rentacar-venezia-local/app/public/wp-content/themes"
+  },
+  "themes": [
+    {
+      "stylesheet": "autocar",
+      "name": "Auto car",
+      "version": "1.1.3",
+      "template": "autocar",
+      "root": "/Users/dvdrb/Local Sites/rentacar-venezia-local/app/public/wp-content/themes"
+    },
+    {
+      "stylesheet": "rentacar-venezia-v2",
+      "name": "Rentacar Venezia V2",
+      "version": "0.0.0",
+      "template": "rentacar-venezia-v2",
+      "root": "/Users/dvdrb/Local Sites/rentacar-venezia-local/app/public/wp-content/themes"
+    },
+    {
+      "stylesheet": "twentytwentyfive",
+      "name": "Twenty Twenty-Five",
+      "version": "1.4",
+      "template": "twentytwentyfive",
+      "root": "/Users/dvdrb/Local Sites/rentacar-venezia-local/app/public/wp-content/themes"
+    },
+    {
+      "stylesheet": "twentytwentyfour",
+      "name": "Twenty Twenty-Four",
+      "version": "1.5",
+      "template": "twentytwentyfour",
+      "root": "/Users/dvdrb/Local Sites/rentacar-venezia-local/app/public/wp-content/themes"
+    },
+    {
+      "stylesheet": "twentytwentythree",
+      "name": "Twenty Twenty-Three",
+      "version": "1.6",
+      "template": "twentytwentythree",
+      "root": "/Users/dvdrb/Local Sites/rentacar-venezia-local/app/public/wp-content/themes"
+    }
+  ],
+  "plugins": [
+    {
+      "file": "advanced-custom-fields/acf.php",
+      "name": "Advanced Custom Fields",
+      "version": "6.8.6",
+      "active": true
+    },
+    {
+      "file": "acf-repeater/acf-repeater.php",
+      "name": "Advanced Custom Fields: Repeater Field",
+      "version": "2.1.0",
+      "active": true
+    },
+    {
+      "file": "acfml/wpml-acf.php",
+      "name": "Advanced Custom Fields Multilingual",
+      "version": "0.7",
+      "active": true
+    },
+    {
+      "file": "all-in-one-wp-migration/all-in-one-wp-migration.php",
+      "name": "All-in-One WP Migration and Backup",
+      "version": "7.107",
+      "active": true
+    },
+    {
+      "file": "classic-editor/classic-editor.php",
+      "name": "Classic Editor",
+      "version": "1.7.0",
+      "active": true
+    },
+    {
+      "file": "classic-widgets/classic-widgets.php",
+      "name": "Classic Widgets",
+      "version": "0.3",
+      "active": true
+    },
+    {
+      "file": "click-to-chat-for-whatsapp/click-to-chat.php",
+      "name": "Click to Chat",
+      "version": "4.41",
+      "active": true
+    },
+    {
+      "file": "contact-form-7/wp-contact-form-7.php",
+      "name": "Contact Form 7",
+      "version": "6.1.6",
+      "active": true
+    },
+    {
+      "file": "duracelltomi-google-tag-manager/duracelltomi-google-tag-manager-for-wordpress.php",
+      "name": "GTM4WP - A Google Tag Manager (GTM) plugin for WordPress",
+      "version": "1.22.3",
+      "active": true
+    },
+    {
+      "file": "litespeed-cache/litespeed-cache.php",
+      "name": "LiteSpeed Cache",
+      "version": "7.8.1",
+      "active": true
+    },
+    {
+      "file": "regenerate-thumbnails/regenerate-thumbnails.php",
+      "name": "Regenerate Thumbnails",
+      "version": "3.1.6",
+      "active": true
+    },
+    {
+      "file": "rentacar-core/rentacar-core.php",
+      "name": "Rentacar Core",
+      "version": "0.0.0",
+      "active": false
+    },
+    {
+      "file": "update-theme-and-plugins-from-zip-file/update-theme-and-plugins-from-zip-file.php",
+      "name": "Update Theme and Plugins from Zip File",
+      "version": "2.0.0",
+      "active": true
+    },
+    {
+      "file": "updraftplus/updraftplus.php",
+      "name": "UpdraftPlus - Backup/Restore",
+      "version": "1.26.5",
+      "active": true
+    },
+    {
+      "file": "wpforms-lite/wpforms.php",
+      "name": "WPForms Lite",
+      "version": "2.0.0.2",
+      "active": true
+    },
+    {
+      "file": "sitepress-multilingual-cms/sitepress.php",
+      "name": "WPML Multilingual CMS",
+      "version": "4.2.4.1",
+      "active": true
+    },
+    {
+      "file": "wpml-string-translation/plugin.php",
+      "name": "WPML String Translation",
+      "version": "2.10.2",
+      "active": true
+    },
+    {
+      "file": "wpml-translation-management/plugin.php",
+      "name": "WPML Translation Management",
+      "version": "2.8.3",
+      "active": true
+    }
+  ],
+  "mu_plugins": [],
+  "post_types": {
+    "post": {
+      "label": "Articoli",
+      "public": true,
+      "show_ui": true,
+      "show_in_rest": true,
+      "rewrite": false,
+      "has_archive": false,
+      "supports": {
+        "title": true,
+        "editor": [
+          {
+            "notes": true
+          }
+        ],
+        "author": true,
+        "thumbnail": true,
+        "excerpt": true,
+        "trackbacks": true,
+        "custom-fields": true,
+        "comments": true,
+        "revisions": true,
+        "post-formats": true,
+        "autosave": true
+      },
+      "count": 4,
+      "taxonomies": [
+        "category",
+        "post_tag",
+        "post_format",
+        "translation_priority"
+      ]
+    },
+    "page": {
+      "label": "Pagine",
+      "public": true,
+      "show_ui": true,
+      "show_in_rest": true,
+      "rewrite": false,
+      "has_archive": false,
+      "supports": {
+        "title": true,
+        "editor": [
+          {
+            "notes": true
+          }
+        ],
+        "author": true,
+        "thumbnail": true,
+        "page-attributes": true,
+        "custom-fields": true,
+        "comments": true,
+        "revisions": true,
+        "autosave": true
+      },
+      "count": 28,
+      "taxonomies": [
+        "translation_priority"
+      ]
+    },
+    "attachment": {
+      "label": "Media",
+      "public": true,
+      "show_ui": true,
+      "show_in_rest": true,
+      "rewrite": false,
+      "has_archive": false,
+      "supports": {
+        "title": true,
+        "author": true,
+        "comments": true
+      },
+      "count": 0,
+      "taxonomies": [
+        "translation_priority"
+      ]
+    },
+    "wp_block": {
+      "label": "Pattern",
+      "public": false,
+      "show_ui": true,
+      "show_in_rest": true,
+      "rewrite": false,
+      "has_archive": false,
+      "supports": {
+        "title": true,
+        "excerpt": true,
+        "editor": true,
+        "revisions": true,
+        "custom-fields": true,
+        "autosave": true
+      },
+      "count": 0,
+      "taxonomies": [
+        "wp_pattern_category",
+        "translation_priority"
+      ]
+    },
+    "wp_navigation": {
+      "label": "Menu di navigazione",
+      "public": false,
+      "show_ui": true,
+      "show_in_rest": true,
+      "rewrite": false,
+      "has_archive": false,
+      "supports": {
+        "title": true,
+        "editor": true,
+        "revisions": true,
+        "autosave": true
+      },
+      "count": 0,
+      "taxonomies": [
+        "translation_priority"
+      ]
+    },
+    "acf-taxonomy": {
+      "label": "Tassonomie",
+      "public": false,
+      "show_ui": true,
+      "show_in_rest": false,
+      "rewrite": false,
+      "has_archive": false,
+      "supports": [],
+      "count": 0,
+      "taxonomies": []
+    },
+    "acf-post-type": {
+      "label": "Post type",
+      "public": false,
+      "show_ui": true,
+      "show_in_rest": false,
+      "rewrite": false,
+      "has_archive": false,
+      "supports": [],
+      "count": 0,
+      "taxonomies": []
+    },
+    "acf-field-group": {
+      "label": "Gruppi di campi",
+      "public": false,
+      "show_ui": true,
+      "show_in_rest": false,
+      "rewrite": false,
+      "has_archive": false,
+      "supports": [],
+      "count": 5,
+      "taxonomies": []
+    },
+    "cars": {
+      "label": "Cars",
+      "public": true,
+      "show_ui": true,
+      "show_in_rest": false,
+      "rewrite": "cars",
+      "has_archive": false,
+      "supports": {
+        "title": true,
+        "author": true,
+        "thumbnail": true
+      },
+      "count": 156,
+      "taxonomies": []
+    }
+  },
+  "vehicle_taxonomies": [],
+  "vehicle_examples": [
+    {
+      "id": 4367,
+      "type": "cars",
+      "title": "Fiat 500 | 1.3 DIESEL",
+      "slug": "fiat-500",
+      "status": "publish",
+      "language": "ru",
+      "url": "http://rentacar-venezia-local.local/ru/cars/fiat-500/"
+    },
+    {
+      "id": 4366,
+      "type": "cars",
+      "title": "Fiat 500 | 1.3 DIESEL",
+      "slug": "fiat-500",
+      "status": "publish",
+      "language": "ro",
+      "url": "http://rentacar-venezia-local.local/ro/cars/fiat-500/"
+    },
+    {
+      "id": 4365,
+      "type": "cars",
+      "title": "Fiat 500 | 1.3 DIESEL",
+      "slug": "fiat-500",
+      "status": "publish",
+      "language": "en",
+      "url": "http://rentacar-venezia-local.local/en/cars/fiat-500/"
+    },
+    {
+      "id": 4063,
+      "type": "cars",
+      "title": "Fiat 500 | 1.3 DIESEL",
+      "slug": "fiat-500",
+      "status": "publish",
+      "language": "it",
+      "url": "http://rentacar-venezia-local.local/cars/fiat-500/"
+    },
+    {
+      "id": 4370,
+      "type": "cars",
+      "title": "Ford Fiesta | 1.4 Benz",
+      "slug": "4018",
+      "status": "publish",
+      "language": "ru",
+      "url": "http://rentacar-venezia-local.local/ru/cars/4018/"
+    }
+  ],
+  "acf_groups": [
+    {
+      "key": "group_5c571f7045be6",
+      "title": "Car fields",
+      "active": true,
+      "location": [
+        [
+          {
+            "param": "post_type",
+            "operator": "==",
+            "value": "cars"
+          }
+        ]
+      ],
+      "menu_order": 0,
+      "position": "normal",
+      "style": "default",
+      "origin": "database or runtime",
+      "fields": [
+        {
+          "parent": null,
+          "key": "field_5ab2613571fba",
+          "name": "gallery",
+          "label": "Gallery",
+          "type": "repeater",
+          "required": false,
+          "conditional_logic": 0,
+          "layout": "table",
+          "min": 0,
+          "max": 0,
+          "children": {
+            "sub_fields": [
+              {
+                "parent": "field_5ab2613571fba",
+                "key": "field_5ab261bd4c3e9",
+                "name": "image",
+                "label": "Image",
+                "type": "image",
+                "required": false,
+                "return_format": "id",
+                "conditional_logic": 0
+              }
+            ]
+          }
+        },
+        {
+          "parent": null,
+          "key": "field_5ab2617071fbd",
+          "name": "gearbox",
+          "label": "Gearbox",
+          "type": "select",
+          "required": false,
+          "default_value": [],
+          "return_format": "value",
+          "conditional_logic": 0,
+          "choices": {
+            "Automatic": "Automatic",
+            "Manual": "Manual",
+            "Direct-shift gearbox": "Direct-shift gearbox",
+            "SMG": "SMG"
+          }
+        },
+        {
+          "parent": null,
+          "key": "field_5ab2617e71fbf",
+          "name": "doors",
+          "label": "Doors",
+          "type": "text",
+          "required": false,
+          "default_value": "",
+          "conditional_logic": 0
+        },
+        {
+          "parent": null,
+          "key": "field_5ab2618871fc0",
+          "name": "max_passagers",
+          "label": "Max. passagers",
+          "type": "text",
+          "required": false,
+          "default_value": "",
+          "conditional_logic": 0
+        },
+        {
+          "parent": null,
+          "key": "field_5ab264d15534e",
+          "name": "air_conditioning",
+          "label": "Air conditioning",
+          "type": "true_false",
+          "required": false,
+          "default_value": 0,
+          "conditional_logic": 0
+        }
+      ]
+    },
+    {
+      "key": "group_5c571f705a3a6",
+      "title": "coordinates",
+      "active": true,
+      "location": [
+        [
+          {
+            "param": "post_type",
+            "operator": "==",
+            "value": "page"
+          }
+        ]
+      ],
+      "menu_order": 0,
+      "position": "normal",
+      "style": "seamless",
+      "origin": "database or runtime",
+      "fields": [
+        {
+          "parent": null,
+          "key": "field_5ab3751b96265",
+          "name": "coordinates",
+          "label": "coordinates",
+          "type": "text",
+          "required": false,
+          "default_value": "",
+          "conditional_logic": 0
+        },
+        {
+          "parent": null,
+          "key": "field_5ab8e59093c89",
+          "name": "coordinates_2",
+          "label": "coordinates 2",
+          "type": "text",
+          "required": false,
+          "default_value": "",
+          "conditional_logic": 0
+        }
+      ]
+    },
+    {
+      "key": "group_5c571f706462a",
+      "title": "FAQ fields",
+      "active": true,
+      "location": [
+        [
+          {
+            "param": "page_template",
+            "operator": "==",
+            "value": "template-faq.php"
+          }
+        ]
+      ],
+      "menu_order": 0,
+      "position": "normal",
+      "style": "seamless",
+      "origin": "database or runtime",
+      "fields": [
+        {
+          "parent": null,
+          "key": "field_5ab36c59a128f",
+          "name": "faq",
+          "label": "faq",
+          "type": "repeater",
+          "required": false,
+          "conditional_logic": 0,
+          "layout": "table",
+          "min": 0,
+          "max": 0,
+          "children": {
+            "sub_fields": [
+              {
+                "parent": "field_5ab36c59a128f",
+                "key": "field_5ab36c6aa1290",
+                "name": "question",
+                "label": "Question",
+                "type": "text",
+                "required": false,
+                "default_value": "",
+                "conditional_logic": 0
+              },
+              {
+                "parent": "field_5ab36c59a128f",
+                "key": "field_5ab36c9ba1291",
+                "name": "answer",
+                "label": "Answer",
+                "type": "wysiwyg",
+                "required": false,
+                "default_value": "",
+                "conditional_logic": 0
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "key": "group_5c571f706f05b",
+      "title": "Home page",
+      "active": true,
+      "location": [
+        [
+          {
+            "param": "page_template",
+            "operator": "==",
+            "value": "template-homepage.php"
+          }
+        ]
+      ],
+      "menu_order": 0,
+      "position": "normal",
+      "style": "seamless",
+      "origin": "database or runtime",
+      "fields": [
+        {
+          "parent": null,
+          "key": "field_5ab238ed160ab",
+          "name": "text_header",
+          "label": "Text header",
+          "type": "wysiwyg",
+          "required": false,
+          "default_value": "",
+          "conditional_logic": 0
+        },
+        {
+          "parent": null,
+          "key": "field_5ab238bd160aa",
+          "name": "text_seo",
+          "label": "Text pentru SEO (footer)",
+          "type": "wysiwyg",
+          "required": false,
+          "default_value": "",
+          "conditional_logic": 0
+        },
+        {
+          "parent": null,
+          "key": "field_5acc764c1120c",
+          "name": "text_field_car",
+          "label": "Text for car popup",
+          "type": "text",
+          "required": false,
+          "default_value": "",
+          "conditional_logic": 0
+        }
+      ]
+    },
+    {
+      "key": "group_5c571f70782a4",
+      "title": "Price list",
+      "active": true,
+      "location": [
+        [
+          {
+            "param": "post_type",
+            "operator": "==",
+            "value": "cars"
+          }
+        ]
+      ],
+      "menu_order": 0,
+      "position": "normal",
+      "style": "default",
+      "origin": "database or runtime",
+      "fields": [
+        {
+          "parent": null,
+          "key": "field_5ab2670e574bf",
+          "name": "price",
+          "label": "Price 1",
+          "type": "number",
+          "required": false,
+          "default_value": "",
+          "conditional_logic": 0,
+          "min": "",
+          "max": ""
+        },
+        {
+          "parent": null,
+          "key": "field_5ab8af50a8543",
+          "name": "price_1_days_1",
+          "label": "Days for price 1 - FROM",
+          "type": "number",
+          "required": false,
+          "default_value": "",
+          "conditional_logic": 0,
+          "min": "",
+          "max": ""
+        },
+        {
+          "parent": null,
+          "key": "field_5ab8af9ea8544",
+          "name": "price_1_days_2",
+          "label": "Days for price 1   - TO",
+          "type": "number",
+          "required": false,
+          "default_value": "",
+          "conditional_logic": 0,
+          "min": "",
+          "max": ""
+        },
+        {
+          "parent": null,
+          "key": "field_5ab26732574c0",
+          "name": "price2",
+          "label": "Price 2",
+          "type": "number",
+          "required": false,
+          "default_value": "",
+          "conditional_logic": 0,
+          "min": "",
+          "max": ""
+        },
+        {
+          "parent": null,
+          "key": "field_5ab8afc0a8545",
+          "name": "price_2_days_1",
+          "label": "Days for price 2 - FROM",
+          "type": "number",
+          "required": false,
+          "default_value": "",
+          "conditional_logic": 0,
+          "min": "",
+          "max": ""
+        },
+        {
+          "parent": null,
+          "key": "field_5ab8afd7a8546",
+          "name": "price_2_days_2",
+          "label": "Days for price 2 - TO",
+          "type": "number",
+          "required": false,
+          "default_value": "",
+          "conditional_logic": 0,
+          "min": "",
+          "max": ""
+        },
+        {
+          "parent": null,
+          "key": "field_5ab26743574c1",
+          "name": "price3",
+          "label": "Price 3",
+          "type": "number",
+          "required": false,
+          "default_value": "",
+          "conditional_logic": 0,
+          "min": "",
+          "max": ""
+        },
+        {
+          "parent": null,
+          "key": "field_5ab8afe1a8547",
+          "name": "price_3_days_1",
+          "label": "Days for price 3 - FROM",
+          "type": "number",
+          "required": false,
+          "default_value": "",
+          "conditional_logic": 0,
+          "min": "",
+          "max": ""
+        },
+        {
+          "parent": null,
+          "key": "field_5ab8aff4a8548",
+          "name": "price_3_days_2",
+          "label": "Days for price 3 - TO",
+          "type": "number",
+          "required": false,
+          "default_value": "",
+          "conditional_logic": 0,
+          "min": "",
+          "max": ""
+        },
+        {
+          "parent": null,
+          "key": "field_5ab8b06ea854a",
+          "name": "price4",
+          "label": "Price 4",
+          "type": "number",
+          "required": false,
+          "default_value": "",
+          "conditional_logic": 0,
+          "min": "",
+          "max": ""
+        }
+      ]
+    }
+  ],
+  "wpml": {
+    "available": true,
+    "default_language": "it",
+    "languages": [
+      {
+        "code": "ru",
+        "native_name": "RU",
+        "default_locale": "ru_RU",
+        "url": "http://rentacar-venezia-local.local/ru/",
+        "active": false
+      },
+      {
+        "code": "ro",
+        "native_name": "RO",
+        "default_locale": "ro_RO",
+        "url": "http://rentacar-venezia-local.local/ro/",
+        "active": false
+      },
+      {
+        "code": "it",
+        "native_name": "IT",
+        "default_locale": "it_IT",
+        "url": "http://rentacar-venezia-local.local",
+        "active": true
+      },
+      {
+        "code": "en",
+        "native_name": "EN",
+        "default_locale": "en_US",
+        "url": "http://rentacar-venezia-local.local/en/",
+        "active": false
+      }
+    ],
+    "url_mode": "1",
+    "browser_redirect": false,
+    "post_types": {
+      "post": 1,
+      "page": 1,
+      "cars": 1,
+      "attachment": 1,
+      "acf-field-group": 0,
+      "wp_block": 1,
+      "wp_navigation": 1,
+      "wp_template": 1,
+      "wp_template_part": 1,
+      "omapi": 0,
+      "acf-post-type": 0,
+      "acf-taxonomy": 0,
+      "acf-ui-options-page": 0
+    },
+    "taxonomies": {
+      "category": 1,
+      "post_tag": 1,
+      "translation_priority": 1,
+      "yst_prominent_words": 0,
+      "wp_theme": 0
+    },
+    "custom_fields": []
+  },
+  "pages": {
+    "front": {
+      "id": 3158,
+      "type": "page",
+      "title": "HOME PAGE",
+      "slug": "condition",
+      "status": "publish",
+      "language": "it",
+      "url": "http://rentacar-venezia-local.local/"
+    },
+    "posts": null
+  },
+  "hard_coded_ids": [
+    {
+      "id": 6,
+      "type": "page",
+      "title": "Terms and Conditions",
+      "slug": "term",
+      "status": "publish",
+      "language": "en",
+      "url": "http://rentacar-venezia-local.local/en/term/"
+    },
+    {
+      "id": 20,
+      "type": "page",
+      "title": "Home page",
+      "slug": "rent-car-treviso",
+      "status": "publish",
+      "language": "en",
+      "url": "http://rentacar-venezia-local.local/en/rent-car-treviso/"
+    },
+    {
+      "id": 23,
+      "type": "page",
+      "title": "Цены и автомобили",
+      "slug": "%d0%b0%d1%80%d0%b5%d0%bd%d0%b4%d0%b0-%d0%b0%d0%b2%d1%82%d0%be-%d0%b2-%d0%b0%d1%8d%d1%80%d0%be%d0%bf%d0%be%d1%80%d1%82-%d0%bb%d0%b0%d1%80%d0%bd%d0%b0%d0%ba%d0%b0-%d0%b8-%d0%ba%d0%b8%d0%bf%d1%80%d0%b5",
+      "status": "publish",
+      "language": "ru",
+      "url": "http://rentacar-venezia-local.local/ru/%d0%b0%d1%80%d0%b5%d0%bd%d0%b4%d0%b0-%d0%b0%d0%b2%d1%82%d0%be-%d0%b2-%d0%b0%d1%8d%d1%80%d0%be%d0%bf%d0%be%d1%80%d1%82-%d0%bb%d0%b0%d1%80%d0%bd%d0%b0%d0%ba%d0%b0-%d0%b8-%d0%ba%d0%b8%d0%bf%d1%80%d0%b5/"
+    },
+    {
+      "id": 122,
+      "type": "page",
+      "title": "Results",
+      "slug": "prenotazioni",
+      "status": "publish",
+      "language": "en",
+      "url": "http://rentacar-venezia-local.local/en/prenotazioni/"
+    },
+    {
+      "id": 135,
+      "type": "page",
+      "title": "Your request has been sent successfully!",
+      "slug": "success",
+      "status": "publish",
+      "language": "en",
+      "url": "http://rentacar-venezia-local.local/en/success/"
+    }
+  ],
+  "menus": [
+    {
+      "location": "primary",
+      "label": "Primary Menu",
+      "menu_id": 2,
+      "items": [
+        {
+          "id": 3254,
+          "title": "HOME PAGE",
+          "url": "http://rentacar-venezia-local.local/",
+          "parent": 0,
+          "language": "it"
+        },
+        {
+          "id": 3256,
+          "title": "Domande frequenti",
+          "url": "http://rentacar-venezia-local.local/faq/",
+          "parent": 0,
+          "language": "it"
+        },
+        {
+          "id": 3257,
+          "title": "Posti da vedere",
+          "url": "http://rentacar-venezia-local.local/posti/",
+          "parent": 0,
+          "language": "it"
+        },
+        {
+          "id": 3258,
+          "title": "Termini e Condizioni",
+          "url": "http://rentacar-venezia-local.local/termini/",
+          "parent": 0,
+          "language": "it"
+        },
+        {
+          "id": 3255,
+          "title": "Contatti",
+          "url": "http://rentacar-venezia-local.local/contatti/",
+          "parent": 0,
+          "language": "it"
+        }
+      ]
+    }
+  ],
+  "sidebars": [
+    {
+      "id": "sidebar-1",
+      "name": "Blog Sidebar",
+      "widgets": [
+        "custom_html-19",
+        "custom_html-13",
+        "custom_html-14",
+        "custom_html-15",
+        "custom_html-16",
+        "media_image-8",
+        "media_image-9",
+        "media_image-10",
+        "media_image-11",
+        "media_image-12"
+      ]
+    },
+    {
+      "id": "sidebar-2",
+      "name": "Header Sidebar",
+      "widgets": [
+        "icl_lang_sel_widget-3"
+      ]
+    },
+    {
+      "id": "sidebar-3",
+      "name": "Footer Sidebar",
+      "widgets": [
+        "text_icl-2",
+        "text_icl-3",
+        "custom_html-5",
+        "text_icl-4",
+        "text_icl-11",
+        "text_icl-9",
+        "text_icl-10",
+        "text_icl-12",
+        "text_icl-13"
+      ]
+    }
+  ],
+  "forms": [
+    {
+      "id": 75,
+      "type": "wpcf7_contact_form",
+      "title": "Contact form 1 ru",
+      "shortcode": "[contact-form-7 id=\"75\"]",
+      "known_business_recipient_present": false
+    },
+    {
+      "id": 66,
+      "type": "wpcf7_contact_form",
+      "title": "Contact form 1",
+      "shortcode": "[contact-form-7 id=\"66\"]",
+      "known_business_recipient_present": false
+    }
+  ],
+  "cleanup": {
+    "temporary_mu_plugin_removed": true
+  }
+}

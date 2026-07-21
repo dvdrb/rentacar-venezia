@@ -1,5 +1,8 @@
 legacy_reference,status,notes
-"/","manual verification required","Static source identifies templates but not the configured front page or permalink structure."
-"cars post type URLs","manual verification required","`cars` is public; rewrite settings are inherited/default because no explicit rewrite is set in source."
-"page ID 122","manual verification required","Legacy sidebar search target."
-"page ID 135","manual verification required","Legacy enquiry success redirect target."
+"/","verified by WordPress runtime","Static Italian homepage: page 3158, HOME PAGE, published."
+"/cars/{vehicle-slug}/","verified by WordPress runtime","Public cars post type; rewrite slug cars; no archive."
+"/en/term/","verified by both","Legacy terms link, page ID 6."
+"/en/rent-car-treviso/","verified by both","Legacy English popup-text source, page ID 20."
+"page ID 23","verified by both","Legacy Russian popup-text source; encoded runtime URL retained in sanitized JSON."
+"/en/prenotazioni/","verified by both","Legacy search target, page ID 122."
+"/en/success/","verified by both","Legacy enquiry redirect target, page ID 135."
