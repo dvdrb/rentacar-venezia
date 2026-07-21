@@ -12,5 +12,11 @@ defined( 'ABSPATH' ) || exit;
 define( 'RENTACAR_CORE_PATH', plugin_dir_path( __FILE__ ) );
 
 require_once RENTACAR_CORE_PATH . 'src/PostTypes/CarsPostType.php';
+require_once RENTACAR_CORE_PATH . 'src/Vehicles/PricingBand.php';
+require_once RENTACAR_CORE_PATH . 'src/Vehicles/PricingBandCollection.php';
+require_once RENTACAR_CORE_PATH . 'src/Vehicles/Vehicle.php';
+require_once RENTACAR_CORE_PATH . 'src/Vehicles/VehicleMapper.php';
+require_once RENTACAR_CORE_PATH . 'src/Vehicles/VehicleRepository.php';
+require_once RENTACAR_CORE_PATH . 'src/Vehicles/WpmlVehicleResolver.php';
 
 add_action( 'init', array( 'Rentacar_Core_Cars_Post_Type', 'register_when_legacy_absent' ), 9 );
