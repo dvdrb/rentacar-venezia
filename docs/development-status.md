@@ -2,7 +2,7 @@
 
 ## Current phase
 
-Phase 2 — vehicle-domain migration, staged but not activated.
+Phase 4 — global theme shell, staged but not activated.
 
 ## Confirmed
 
@@ -17,9 +17,14 @@ Phase 2 — vehicle-domain migration, staged but not activated.
   so it cannot duplicate the existing post type during the eventual local-only
   activation check.
 - Dependency-free vehicle-domain checks pass using the LocalWP PHP 7.4 binary.
+- The inactive theme now has a semantic header/footer, WordPress menu locations,
+  guarded WPML language links, an accessible progressive-enhancement mobile menu,
+  skip link, reduced-motion handling, and an availability notice component.
 
 ## Not started
 
-No visible redesign, pricing service, availability-request flow, or database
-migration has been implemented. Activation of `rentacar-core` remains a later
-local-only verification step after its runtime integration coverage is added.
+The theme has not been activated, so the baseline LocalWP site has no visible
+change. The homepage, catalogue, detail experience, pricing service and
+availability-request flow remain unimplemented. Activation of `rentacar-core`
+remains a later local-only verification step after its runtime integration
+coverage is added.
