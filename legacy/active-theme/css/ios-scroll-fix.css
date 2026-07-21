@@ -1,0 +1,8 @@
+.fancybox-wrap * {
+    overflow: hidden;
+}
+
+.fancybox-close {
+    top: 0px !important;
+    right: 0px !important;
+}

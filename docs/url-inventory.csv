@@ -1,0 +1,5 @@
+legacy_reference,status,notes
+"/","manual verification required","Static source identifies templates but not the configured front page or permalink structure."
+"cars post type URLs","manual verification required","`cars` is public; rewrite settings are inherited/default because no explicit rewrite is set in source."
+"page ID 122","manual verification required","Legacy sidebar search target."
+"page ID 135","manual verification required","Legacy enquiry success redirect target."

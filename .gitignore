@@ -1,0 +1,27 @@
+.DS_Store
+.env
+.env.*
+!.env.example
+node_modules/
+vendor/
+coverage/
+test-results/
+playwright-report/
+*.sql
+*.sqlite
+*.wpress
+*.zip
+*.tar
+*.gz
+backups/
+exports/
+runtime/
+uploads/
+wp-config.php
+auth.json
+customer-data/
+mailbox-data/
+cache/
+*.cache
+# Preserved locally for audit only: contains legacy SMTP credentials.
+/legacy/active-theme/functions.php
