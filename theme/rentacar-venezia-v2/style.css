@@ -35,6 +35,9 @@ a:hover { color: var(--rc-navy-950); }
 
 .site-header { position: relative; z-index: 20; background: var(--rc-surface); border-bottom: 1px solid var(--rc-line); }
 .site-header__inner { display: flex; min-height: 72px; align-items: center; justify-content: space-between; gap: 20px; }
+.site-branding { display: flex; align-items: center; min-width: 0; }
+.custom-logo-link { display: inline-flex; align-items: center; }
+.custom-logo { display: block; width: auto; max-width: min(190px, 46vw); max-height: 48px; object-fit: contain; }
 .site-brand { display: inline-flex; flex-direction: column; color: var(--rc-navy-950); font-size: 1rem; font-weight: 800; letter-spacing: -.04em; line-height: 1; text-decoration: none; }
 .site-brand__sub { margin-top: 4px; font-size: .57em; letter-spacing: .2em; text-align: center; }
 .menu-toggle { display: none; width: 44px; height: 44px; place-content: center; gap: 4px; border: 1px solid var(--rc-line); border-radius: 7px; background: var(--rc-surface); }
