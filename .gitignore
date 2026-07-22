@@ -23,5 +23,3 @@ customer-data/
 mailbox-data/
 cache/
 *.cache
-# Preserved locally for audit only: contains legacy SMTP credentials.
-/legacy/active-theme/functions.php

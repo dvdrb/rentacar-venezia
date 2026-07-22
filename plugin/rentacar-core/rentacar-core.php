@@ -1,9 +1,25 @@
 <?php
 /**
  * Plugin Name: Rentacar Core
- * Description: Inactive placeholder for site-specific business logic.
- * Version: 0.0.0
+ * Description: Site-specific vehicle and availability-request domain services.
+ * Version: 0.1.0
  * Text Domain: rentacar-core
+ * Requires PHP: 7.4
  */
 
-// Intentionally no hooks, activation behavior, or runtime functionality.
+defined( 'ABSPATH' ) || exit;
+
+define( 'RENTACAR_CORE_PATH', plugin_dir_path( __FILE__ ) );
+
+require_once RENTACAR_CORE_PATH . 'src/PostTypes/CarsPostType.php';
+require_once RENTACAR_CORE_PATH . 'src/Vehicles/PricingBand.php';
+require_once RENTACAR_CORE_PATH . 'src/Vehicles/PricingBandCollection.php';
+require_once RENTACAR_CORE_PATH . 'src/Vehicles/Vehicle.php';
+require_once RENTACAR_CORE_PATH . 'src/Vehicles/VehicleGallery.php';
+require_once RENTACAR_CORE_PATH . 'src/Vehicles/VehicleMapper.php';
+require_once RENTACAR_CORE_PATH . 'src/Vehicles/WpmlVehicleResolver.php';
+require_once RENTACAR_CORE_PATH . 'src/Vehicles/VehicleRepository.php';
+require_once RENTACAR_CORE_PATH . 'src/Settings/MarketingClaimRegistry.php';
+
+add_action( 'init', array( 'Rentacar_Core_Cars_Post_Type', 'register_when_legacy_absent' ), 9 );
+add_action( 'admin_init', array( 'Rentacar_Core_Marketing_Claim_Registry', 'register_setting' ) );

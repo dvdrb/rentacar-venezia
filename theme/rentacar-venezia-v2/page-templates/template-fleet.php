@@ -1,0 +1,81 @@
+<?php
+/**
+ * Template Name: Fleet catalogue
+ * Template Post Type: page
+ */
+defined( 'ABSPATH' ) || exit;
+
+$transmission = isset( $_GET['transmission'] ) ? sanitize_text_field( wp_unslash( $_GET['transmission'] ) ) : '';
+$passengers = isset( $_GET['passengers'] ) ? absint( $_GET['passengers'] ) : 0;
+$doors = isset( $_GET['doors'] ) ? absint( $_GET['doors'] ) : 0;
+$air_conditioning = isset( $_GET['air_conditioning'] ) ? '1' : '';
+$sort = isset( $_GET['sort'] ) ? sanitize_key( wp_unslash( $_GET['sort'] ) ) : 'recommended';
+$meta_query = array( 'relation' => 'AND' );
+
+if ( $transmission ) {
+    $meta_query[] = array( 'key' => 'gearbox', 'value' => $transmission );
+}
+if ( $passengers ) {
+    $meta_query[] = array( 'key' => 'max_passagers', 'value' => $passengers, 'compare' => '>=', 'type' => 'NUMERIC' );
+}
+if ( $doors ) {
+    $meta_query[] = array( 'key' => 'doors', 'value' => $doors, 'compare' => '>=', 'type' => 'NUMERIC' );
+}
+if ( $air_conditioning ) {
+    $meta_query[] = array( 'key' => 'air_conditioning', 'value' => '1' );
+}
+
+$query_args = array(
+    'post_type'           => 'cars',
+    'post_status'         => 'publish',
+    'posts_per_page'      => 12,
+    'paged'               => max( 1, get_query_var( 'paged' ) ),
+    'meta_query'          => $meta_query,
+    'ignore_sticky_posts' => true,
+);
+
+if ( 'price-low' === $sort || 'price-high' === $sort ) {
+    $query_args['meta_key'] = 'price';
+    $query_args['orderby'] = 'meta_value_num';
+    $query_args['order'] = 'price-high' === $sort ? 'DESC' : 'ASC';
+} elseif ( 'passengers' === $sort ) {
+    $query_args['meta_key'] = 'max_passagers';
+    $query_args['orderby'] = 'meta_value_num';
+    $query_args['order'] = 'DESC';
+} else {
+    $query_args['orderby'] = 'menu_order title';
+    $query_args['order'] = 'ASC';
+}
+
+$vehicles_query = new WP_Query( $query_args );
+$mapper = class_exists( 'Rentacar_Core_Vehicle_Mapper' ) ? new Rentacar_Core_Vehicle_Mapper() : null;
+
+get_header();
+?>
+<main id="main-content" class="site-main">
+    <div class="rc-container">
+        <header class="page-intro"><p class="eyebrow"><?php esc_html_e( 'Cars', 'rentacar-venezia-v2' ); ?></p><h1><?php esc_html_e( 'Our fleet', 'rentacar-venezia-v2' ); ?></h1><p><?php esc_html_e( 'Explore the vehicle fleet and choose the option that suits your trip.', 'rentacar-venezia-v2' ); ?></p></header>
+        <?php get_template_part( 'template-parts/global/notice' ); ?>
+        <form class="fleet-filters" method="get">
+            <label><?php esc_html_e( 'Transmission', 'rentacar-venezia-v2' ); ?><select name="transmission"><option value=""><?php esc_html_e( 'Any transmission', 'rentacar-venezia-v2' ); ?></option><option value="Manual"<?php selected( $transmission, 'Manual' ); ?>><?php esc_html_e( 'Manual', 'rentacar-venezia-v2' ); ?></option><option value="Automatic"<?php selected( $transmission, 'Automatic' ); ?>><?php esc_html_e( 'Automatic', 'rentacar-venezia-v2' ); ?></option></select></label>
+            <label><?php esc_html_e( 'Passengers', 'rentacar-venezia-v2' ); ?><select name="passengers"><option value="0"><?php esc_html_e( 'Any capacity', 'rentacar-venezia-v2' ); ?></option><?php for ( $count = 2; $count <= 9; $count++ ) : ?><option value="<?php echo esc_attr( $count ); ?>"<?php selected( $passengers, $count ); ?>><?php echo esc_html( $count . '+' ); ?></option><?php endfor; ?></select></label>
+            <label class="fleet-filters__check"><input name="air_conditioning" type="checkbox" value="1"<?php checked( $air_conditioning, '1' ); ?>> <?php esc_html_e( 'Air conditioning', 'rentacar-venezia-v2' ); ?></label>
+            <label><?php esc_html_e( 'Sort by', 'rentacar-venezia-v2' ); ?><select name="sort"><option value="recommended"<?php selected( $sort, 'recommended' ); ?>><?php esc_html_e( 'Recommended', 'rentacar-venezia-v2' ); ?></option><option value="price-low"<?php selected( $sort, 'price-low' ); ?>><?php esc_html_e( 'Price: low to high', 'rentacar-venezia-v2' ); ?></option><option value="price-high"<?php selected( $sort, 'price-high' ); ?>><?php esc_html_e( 'Price: high to low', 'rentacar-venezia-v2' ); ?></option><option value="passengers"<?php selected( $sort, 'passengers' ); ?>><?php esc_html_e( 'Passenger capacity', 'rentacar-venezia-v2' ); ?></option></select></label>
+            <button class="button" type="submit"><?php esc_html_e( 'Apply filters', 'rentacar-venezia-v2' ); ?></button>
+        </form>
+        <?php if ( $mapper && $vehicles_query->have_posts() ) : ?><div class="vehicle-grid vehicle-grid--catalogue"><?php while ( $vehicles_query->have_posts() ) : $vehicles_query->the_post(); get_template_part( 'template-parts/vehicle/card', null, array( 'vehicle' => $mapper->map( get_post() ) ) ); endwhile; ?></div><?php else : ?><section class="empty-state"><h2><?php esc_html_e( 'No vehicles match these filters.', 'rentacar-venezia-v2' ); ?></h2><p><?php esc_html_e( 'Try changing or clearing one of the filters.', 'rentacar-venezia-v2' ); ?></p></section><?php endif; ?>
+        <?php wp_reset_postdata(); ?>
+        <?php
+        echo wp_kses_post(
+            paginate_links(
+                array(
+                    'total'    => $vehicles_query->max_num_pages,
+                    'current'  => max( 1, get_query_var( 'paged' ) ),
+                    'add_args' => array_filter( compact( 'transmission', 'passengers', 'doors', 'air_conditioning', 'sort' ) ),
+                )
+            )
+        );
+        ?>
+    </div>
+</main>
+<?php get_footer(); ?>
