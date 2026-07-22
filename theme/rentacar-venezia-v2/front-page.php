@@ -23,8 +23,7 @@ if ( class_exists( 'Rentacar_Core_Vehicle_Repository' ) ) {
                 <p class="hero__tagline"><?php esc_html_e( 'Simple. Local. Personal.', 'rentacar-venezia-v2' ); ?></p>
                 <p><?php esc_html_e( 'Tell us where and when you need the car. We check availability and confirm the vehicle and final price personally.', 'rentacar-venezia-v2' ); ?></p>
             </div>
-            <form class="trip-form" method="get" action="<?php echo esc_url( home_url( '/' ) ); ?>" aria-label="<?php esc_attr_e( 'Tell us about your trip', 'rentacar-venezia-v2' ); ?>">
-                <input type="hidden" name="rc_trip" value="1">
+            <form class="trip-form" method="get" action="<?php echo esc_url( rentacar_venezia_v2_fleet_url() ); ?>" aria-label="<?php esc_attr_e( 'Tell us about your trip', 'rentacar-venezia-v2' ); ?>">
                 <fieldset>
                     <legend><?php esc_html_e( 'Tell us about your trip', 'rentacar-venezia-v2' ); ?></legend>
                     <div class="trip-form__grid">

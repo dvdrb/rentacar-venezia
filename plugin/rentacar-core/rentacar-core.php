@@ -20,6 +20,11 @@ require_once RENTACAR_CORE_PATH . 'src/Vehicles/VehicleMapper.php';
 require_once RENTACAR_CORE_PATH . 'src/Vehicles/WpmlVehicleResolver.php';
 require_once RENTACAR_CORE_PATH . 'src/Vehicles/VehicleRepository.php';
 require_once RENTACAR_CORE_PATH . 'src/Settings/MarketingClaimRegistry.php';
+require_once RENTACAR_CORE_PATH . 'src/Pricing/RentalDurationCalculator.php';
+require_once RENTACAR_CORE_PATH . 'src/Pricing/Estimate.php';
+require_once RENTACAR_CORE_PATH . 'src/Pricing/EstimateService.php';
+require_once RENTACAR_CORE_PATH . 'src/Rest/EstimateController.php';
 
 add_action( 'init', array( 'Rentacar_Core_Cars_Post_Type', 'register_when_legacy_absent' ), 9 );
 add_action( 'admin_init', array( 'Rentacar_Core_Marketing_Claim_Registry', 'register_setting' ) );
+add_action( 'rest_api_init', array( 'Rentacar_Core_Estimate_Controller', 'register_routes' ) );

@@ -10,6 +10,7 @@ $passengers = isset( $_GET['passengers'] ) ? absint( $_GET['passengers'] ) : 0;
 $doors = isset( $_GET['doors'] ) ? absint( $_GET['doors'] ) : 0;
 $air_conditioning = isset( $_GET['air_conditioning'] ) ? '1' : '';
 $sort = isset( $_GET['sort'] ) ? sanitize_key( wp_unslash( $_GET['sort'] ) ) : 'recommended';
+$trip = rentacar_venezia_v2_trip_query();
 $meta_query = array( 'relation' => 'AND' );
 
 if ( $transmission ) {
@@ -56,9 +57,11 @@ get_header();
     <div class="rc-container">
         <header class="page-intro"><p class="eyebrow"><?php esc_html_e( 'Cars', 'rentacar-venezia-v2' ); ?></p><h1><?php esc_html_e( 'Our fleet', 'rentacar-venezia-v2' ); ?></h1><p><?php esc_html_e( 'Explore the vehicle fleet and choose the option that suits your trip.', 'rentacar-venezia-v2' ); ?></p></header>
         <?php get_template_part( 'template-parts/global/notice' ); ?>
-        <form class="fleet-filters" method="get">
+        <form class="fleet-filters" method="get" action="<?php echo esc_url( rentacar_venezia_v2_fleet_url() ); ?>">
+            <?php foreach ( $trip as $key => $value ) : ?><input type="hidden" name="<?php echo esc_attr( $key ); ?>" value="<?php echo esc_attr( $value ); ?>"><?php endforeach; ?>
             <label><?php esc_html_e( 'Transmission', 'rentacar-venezia-v2' ); ?><select name="transmission"><option value=""><?php esc_html_e( 'Any transmission', 'rentacar-venezia-v2' ); ?></option><option value="Manual"<?php selected( $transmission, 'Manual' ); ?>><?php esc_html_e( 'Manual', 'rentacar-venezia-v2' ); ?></option><option value="Automatic"<?php selected( $transmission, 'Automatic' ); ?>><?php esc_html_e( 'Automatic', 'rentacar-venezia-v2' ); ?></option></select></label>
             <label><?php esc_html_e( 'Passengers', 'rentacar-venezia-v2' ); ?><select name="passengers"><option value="0"><?php esc_html_e( 'Any capacity', 'rentacar-venezia-v2' ); ?></option><?php for ( $count = 2; $count <= 9; $count++ ) : ?><option value="<?php echo esc_attr( $count ); ?>"<?php selected( $passengers, $count ); ?>><?php echo esc_html( $count . '+' ); ?></option><?php endfor; ?></select></label>
+            <label><?php esc_html_e( 'Doors', 'rentacar-venezia-v2' ); ?><select name="doors"><option value="0"><?php esc_html_e( 'Any doors', 'rentacar-venezia-v2' ); ?></option><?php for ( $count = 2; $count <= 5; $count++ ) : ?><option value="<?php echo esc_attr( $count ); ?>"<?php selected( $doors, $count ); ?>><?php echo esc_html( $count . '+' ); ?></option><?php endfor; ?></select></label>
             <label class="fleet-filters__check"><input name="air_conditioning" type="checkbox" value="1"<?php checked( $air_conditioning, '1' ); ?>> <?php esc_html_e( 'Air conditioning', 'rentacar-venezia-v2' ); ?></label>
             <label><?php esc_html_e( 'Sort by', 'rentacar-venezia-v2' ); ?><select name="sort"><option value="recommended"<?php selected( $sort, 'recommended' ); ?>><?php esc_html_e( 'Recommended', 'rentacar-venezia-v2' ); ?></option><option value="price-low"<?php selected( $sort, 'price-low' ); ?>><?php esc_html_e( 'Price: low to high', 'rentacar-venezia-v2' ); ?></option><option value="price-high"<?php selected( $sort, 'price-high' ); ?>><?php esc_html_e( 'Price: high to low', 'rentacar-venezia-v2' ); ?></option><option value="passengers"<?php selected( $sort, 'passengers' ); ?>><?php esc_html_e( 'Passenger capacity', 'rentacar-venezia-v2' ); ?></option></select></label>
             <button class="button" type="submit"><?php esc_html_e( 'Apply filters', 'rentacar-venezia-v2' ); ?></button>
@@ -71,7 +74,7 @@ get_header();
                 array(
                     'total'    => $vehicles_query->max_num_pages,
                     'current'  => max( 1, get_query_var( 'paged' ) ),
-                    'add_args' => array_filter( compact( 'transmission', 'passengers', 'doors', 'air_conditioning', 'sort' ) ),
+                    'add_args' => array_filter( array_merge( compact( 'transmission', 'passengers', 'doors', 'air_conditioning', 'sort' ), $trip ) ),
                 )
             )
         );
