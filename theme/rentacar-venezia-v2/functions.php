@@ -28,20 +28,18 @@ add_action( 'after_setup_theme', 'rentacar_venezia_v2_setup' );
 
 function rentacar_venezia_v2_assets() {
     $theme = wp_get_theme();
+    $manifest = rentacar_venezia_v2_asset_manifest();
 
     wp_enqueue_style( 'rentacar-venezia-v2', get_stylesheet_uri(), array(), $theme->get( 'Version' ) );
-    wp_enqueue_script(
-        'rentacar-venezia-v2',
-        get_template_directory_uri() . '/assets/dist/main.js',
-        array(),
-        $theme->get( 'Version' ),
-        true
-    );
+    if ( isset( $manifest['main'] ) ) {
+        wp_enqueue_script( 'rentacar-venezia-v2', get_template_directory_uri() . '/assets/dist/' . ltrim( $manifest['main'], '/' ), array(), $theme->get( 'Version' ), true );
+    }
     wp_localize_script(
         'rentacar-venezia-v2',
         'rentacarVenezia',
         array(
             'estimateUrl'          => esc_url_raw( rest_url( 'rentacar/v1/estimate' ) ),
+            'reservationUrl'       => esc_url_raw( admin_url( 'admin-post.php' ) ),
             'whatsappDestination'  => esc_url_raw( apply_filters( 'rentacar_core_whatsapp_destination', '' ) ),
             'estimateUnavailable'  => __( 'An indicative estimate is not available for these details. Our team will confirm the final price.', 'rentacar-venezia-v2' ),
         )
@@ -49,18 +47,42 @@ function rentacar_venezia_v2_assets() {
 }
 add_action( 'wp_enqueue_scripts', 'rentacar_venezia_v2_assets' );
 
+function rentacar_venezia_v2_asset_manifest() {
+    static $assets = null;
+
+    if ( null !== $assets ) {
+        return $assets;
+    }
+
+    $assets = array();
+    $path = get_template_directory() . '/assets/dist/manifest.json';
+
+    if ( ! is_readable( $path ) ) {
+        return $assets;
+    }
+
+    $manifest = json_decode( file_get_contents( $path ), true );
+
+    if ( ! is_array( $manifest ) ) {
+        return $assets;
+    }
+
+    foreach ( $manifest as $entry ) {
+        if ( isset( $entry['name'], $entry['file'] ) && 'main' === $entry['name'] ) {
+            $assets['main'] = $entry['file'];
+        }
+    }
+
+    return $assets;
+}
+
 function rentacar_venezia_v2_register_routes() {
     add_rewrite_rule( '^fleet/?$', 'index.php?rc_fleet=1', 'top' );
 }
 add_action( 'init', 'rentacar_venezia_v2_register_routes' );
 
 function rentacar_venezia_v2_ensure_routes() {
-    if ( '1' === get_option( 'rentacar_venezia_v2_routes_version' ) ) {
-        return;
-    }
-
-    flush_rewrite_rules( false );
-    update_option( 'rentacar_venezia_v2_routes_version', '1', false );
+    /* Kept as a no-op for backward compatibility: never flush or update options on requests. */
 }
 add_action( 'init', 'rentacar_venezia_v2_ensure_routes', 20 );
 
