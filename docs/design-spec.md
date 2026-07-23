@@ -25,8 +25,11 @@ not authorize any claim, policy or pricing shown in the image.
 | `--rc-ink` | `#14213D` | Body text |
 | `--rc-line` | `#D7DEE8` | Borders |
 
-Typography uses the system sans-serif stack initially, with a 16px body size,
-1.55 line-height, strong but not oversized headings, and a 70ch reading width.
+Typography pairs the local **Iowan Old Style / Baskerville** display stack with
+the **Avenir Next / Helvetica Neue** functional-text stack. This preserves
+fast, privacy-friendly local rendering while giving headings a more confident,
+editorial Italian character. Body copy is 16px with a 1.6 line-height; the
+reading width remains controlled.
 Spacing follows a 4px base scale. Content is contained at 1200px with 20px
 mobile gutters. Card radii are 12px; shadows are restrained and never encode
 meaning. Every interactive element has a visible, high-contrast focus outline.
