@@ -12,13 +12,13 @@ $trip = rentacar_venezia_v2_trip_query();
       <h2 id="reservation-modal-title"><?php esc_html_e( 'Reservation request', 'rentacar-venezia-v2' ); ?></h2>
       <div class="reservation-modal__grid">
         <aside class="reservation-summary" data-reservation-summary>
-          <div class="reservation-summary__image" data-reservation-image></div><h3 data-reservation-title><?php esc_html_e( 'Selected vehicle', 'rentacar-venezia-v2' ); ?></h3><p data-reservation-specifications></p>
+          <div class="reservation-summary__image" data-reservation-image></div><h3 data-reservation-title><?php esc_html_e( 'Selected vehicle', 'rentacar-venezia-v2' ); ?></h3><p data-reservation-specifications></p><p data-reservation-prices></p>
           <p><?php esc_html_e( 'Indicative prices only. Availability and final price are confirmed by our team.', 'rentacar-venezia-v2' ); ?></p>
         </aside>
         <form class="reservation-form" data-reservation-form action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="post" novalidate>
           <input type="hidden" name="action" value="rentacar_submit_reservation"><input type="hidden" name="vehicle_id" data-reservation-vehicle-id value=""><input type="hidden" name="started_at" value="<?php echo esc_attr( time() ); ?>">
           <?php wp_nonce_field( 'rentacar_submit_reservation', 'rentacar_reservation_nonce' ); ?>
-          <p class="reservation-form__error" data-reservation-errors tabindex="-1" aria-live="assertive"></p>
+          <p id="reservation-errors" class="reservation-form__error" data-reservation-errors tabindex="-1" aria-live="assertive"></p>
           <div class="honeypot" aria-hidden="true"><label><?php esc_html_e( 'Website', 'rentacar-venezia-v2' ); ?><input name="website" tabindex="-1" autocomplete="off"></label></div>
           <fieldset><legend><?php esc_html_e( 'Rental details', 'rentacar-venezia-v2' ); ?></legend><div class="reservation-form__two">
             <label><?php esc_html_e( 'Pickup date', 'rentacar-venezia-v2' ); ?><input name="pickup_date" type="date" required value="<?php echo esc_attr( $trip['pickup_date'] ?? '' ); ?>"></label><label><?php esc_html_e( 'Pickup time', 'rentacar-venezia-v2' ); ?><input name="pickup_time" type="time" required value="<?php echo esc_attr( $trip['pickup_time'] ?? '' ); ?>"></label>

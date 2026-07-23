@@ -29,6 +29,7 @@ const open = (button: HTMLElement): void => {
   if (vehicleId) vehicleId.value = data.vehicleId || '';
   const title = modal.querySelector<HTMLElement>('[data-reservation-title]'); if (title) title.textContent = data.vehicleTitle || '';
   const specifications = modal.querySelector<HTMLElement>('[data-reservation-specifications]'); if (specifications) specifications.textContent = data.vehicleSpecifications || '';
+  const prices = modal.querySelector<HTMLElement>('[data-reservation-prices]'); if (prices) prices.textContent = data.vehiclePriceBands || '';
   const image = modal.querySelector<HTMLElement>('[data-reservation-image]'); if (image) { image.replaceChildren(); if (data.vehicleImage) { const vehicleImage = document.createElement('img'); vehicleImage.src = data.vehicleImage; vehicleImage.alt = ''; image.append(vehicleImage); } }
   requestAnimationFrame(() => (modal.querySelector<HTMLElement>('[data-reservation-close]') || form).focus());
 };
@@ -42,8 +43,8 @@ document.addEventListener('keydown', (event) => {
 
 const displayErrors = (errors: Record<string, string[]>): void => {
   if (!form || !errorBox) return; const messages = Object.values(errors).flat();
-  form.querySelectorAll('[aria-invalid="true"]').forEach((field) => field.removeAttribute('aria-invalid'));
-  Object.keys(errors).forEach((name) => (form.elements.namedItem(name) as HTMLElement | null)?.setAttribute('aria-invalid', 'true'));
+  form.querySelectorAll('[aria-invalid="true"]').forEach((field) => { field.removeAttribute('aria-invalid'); field.removeAttribute('aria-describedby'); });
+  Object.keys(errors).forEach((name) => { const field = form.elements.namedItem(name) as HTMLElement | null; field?.setAttribute('aria-invalid', 'true'); field?.setAttribute('aria-describedby', 'reservation-errors'); });
   errorBox.textContent = messages.join(' '); errorBox.focus();
 };
 if (form) form.addEventListener('submit', async (event) => {

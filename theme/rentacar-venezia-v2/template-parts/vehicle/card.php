@@ -16,6 +16,10 @@ foreach ( $vehicle->get( 'pricing_bands' )->all() as $band ) {
 }
 
 $image_url = $vehicle->get( 'featured_image_id' ) ? wp_get_attachment_image_url( $vehicle->get( 'featured_image_id' ), 'medium_large' ) : '';
+$price_labels = array();
+foreach ( $valid_bands as $band ) {
+    $price_labels[] = null === $band->to_days ? sprintf( __( '%1$s+ days €%2$s/day', 'rentacar-venezia-v2' ), $band->from_days, number_format_i18n( $band->daily_price, 0 ) ) : sprintf( __( '%1$s–%2$s days €%3$s/day', 'rentacar-venezia-v2' ), $band->from_days, $band->to_days, number_format_i18n( $band->daily_price, 0 ) );
+}
 $specifications = array_filter(
     array(
         $vehicle->get( 'transmission' ),
@@ -43,7 +47,7 @@ $specifications = array_filter(
         </dl>
         <p class="vehicle-card__clarification"><?php esc_html_e( 'Indicative prices. Availability and final price are confirmed by our team.', 'rentacar-venezia-v2' ); ?></p>
         <div class="vehicle-card__actions">
-            <button class="button reservation-trigger" type="button" data-reservation-trigger data-vehicle-id="<?php echo esc_attr( $vehicle->get( 'id' ) ); ?>" data-vehicle-title="<?php echo esc_attr( $vehicle->get( 'title' ) ); ?>" data-vehicle-image="<?php echo esc_url( $image_url ); ?>" data-vehicle-specifications="<?php echo esc_attr( implode( ' · ', $specifications ) ); ?>" aria-label="<?php echo esc_attr( sprintf( __( 'Reservation for %s', 'rentacar-venezia-v2' ), $vehicle->get( 'title' ) ) ); ?>"><?php esc_html_e( 'Reservation', 'rentacar-venezia-v2' ); ?></button>
+            <button class="button reservation-trigger" type="button" data-reservation-trigger data-vehicle-id="<?php echo esc_attr( $vehicle->get( 'id' ) ); ?>" data-vehicle-title="<?php echo esc_attr( $vehicle->get( 'title' ) ); ?>" data-vehicle-image="<?php echo esc_url( $image_url ); ?>" data-vehicle-specifications="<?php echo esc_attr( implode( ' · ', $specifications ) ); ?>" data-vehicle-price-bands="<?php echo esc_attr( implode( ' · ', $price_labels ) ); ?>" aria-label="<?php echo esc_attr( sprintf( __( 'Reservation for %s', 'rentacar-venezia-v2' ), $vehicle->get( 'title' ) ) ); ?>"><?php esc_html_e( 'Reservation', 'rentacar-venezia-v2' ); ?></button>
             <a class="text-link" href="<?php echo esc_url( $vehicle->get( 'permalink' ) ); ?>"><?php esc_html_e( 'Details', 'rentacar-venezia-v2' ); ?></a>
         </div>
     </div>

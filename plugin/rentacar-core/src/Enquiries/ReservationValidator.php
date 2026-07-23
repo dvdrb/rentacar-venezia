@@ -16,6 +16,15 @@ final class Rentacar_Core_Reservation_Validator {
             }
         }
 
+        $locations = apply_filters( 'rentacar_core_reservation_locations', array() );
+        if ( is_array( $locations ) && $locations ) {
+            foreach ( array( 'pickup_location', 'return_location' ) as $location_key ) {
+                if ( ! in_array( $input[ $location_key ] ?? '', $locations, true ) ) {
+                    $errors->add( $location_key, __( 'Please select a configured location.', 'rentacar-core' ) );
+                }
+            }
+        }
+
         if ( ! empty( $input['email'] ) && ! is_email( $input['email'] ) ) {
             $errors->add( 'email', __( 'Please enter a valid email address.', 'rentacar-core' ) );
         }
