@@ -1,8 +1,8 @@
 {
-  "assets/src/ts/main.ts": {
-    "file": "js/main-reservation.js",
+  "theme/rentacar-venezia-v2/assets/src/ts/main.ts": {
+    "file": "js/main-C4QYUTFC.js",
     "name": "main",
-    "src": "assets/src/ts/main.ts",
+    "src": "theme/rentacar-venezia-v2/assets/src/ts/main.ts",
     "isEntry": true
   }
 }
