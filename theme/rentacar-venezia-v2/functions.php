@@ -133,27 +133,63 @@ function rentacar_venezia_v2_local_http_preview_host() {
     return 'localhost' === wp_parse_url( 'http://' . $host, PHP_URL_HOST ) && wp_parse_url( 'http://' . $host, PHP_URL_PORT ) ? $host : '';
 }
 
-function rentacar_venezia_v2_local_http_asset_url( $src ) {
+/**
+ * Translate only same-site clone URLs to the LocalWP port-forward address.
+ * This is evaluated per request, so no URL is stored or changed outside the
+ * HTTP localhost preview.
+ */
+function rentacar_venezia_v2_local_http_preview_url( $url ) {
     $preview_host = rentacar_venezia_v2_local_http_preview_host();
-    $asset_host = wp_parse_url( $src, PHP_URL_HOST );
+    $url_host = wp_parse_url( $url, PHP_URL_HOST );
+    $path = wp_parse_url( $url, PHP_URL_PATH );
+    $path = null === $path ? '/' : $path;
+
+    if ( ! $preview_host || ! is_string( $url_host ) || ! preg_match( '/(^localhost$|\.local$)/', $url_host ) || ! is_string( $path ) ) {
+        return $url;
+    }
+
+    $query = wp_parse_url( $url, PHP_URL_QUERY );
+    $fragment = wp_parse_url( $url, PHP_URL_FRAGMENT );
+    $local_url = 'http://' . $preview_host . $path;
+
+    if ( $query ) {
+        $local_url .= '?' . $query;
+    }
+    if ( $fragment ) {
+        $local_url .= '#' . $fragment;
+    }
+
+    return esc_url_raw( $local_url );
+}
+
+function rentacar_venezia_v2_local_http_content_url( $url ) {
+    return rentacar_venezia_v2_local_http_preview_url( $url );
+}
+add_filter( 'home_url', 'rentacar_venezia_v2_local_http_content_url', 999 );
+add_filter( 'page_link', 'rentacar_venezia_v2_local_http_content_url', 999 );
+add_filter( 'post_link', 'rentacar_venezia_v2_local_http_content_url', 999 );
+add_filter( 'post_type_link', 'rentacar_venezia_v2_local_http_content_url', 999 );
+add_filter( 'term_link', 'rentacar_venezia_v2_local_http_content_url', 999 );
+
+function rentacar_venezia_v2_local_http_menu_urls( $items ) {
+    foreach ( $items as $index => $item ) {
+        if ( isset( $item->url ) ) {
+            $items[ $index ]->url = rentacar_venezia_v2_local_http_preview_url( $item->url );
+        }
+    }
+
+    return $items;
+}
+add_filter( 'wp_nav_menu_objects', 'rentacar_venezia_v2_local_http_menu_urls', 20 );
+
+function rentacar_venezia_v2_local_http_asset_url( $src ) {
     $path = wp_parse_url( $src, PHP_URL_PATH );
 
-    if ( ! $preview_host || ! is_string( $asset_host ) || ! preg_match( '/(^localhost$|\.local$)/', $asset_host ) || ! is_string( $path ) || 0 !== strpos( $path, '/wp-' ) ) {
+    if ( ! is_string( $path ) || 0 !== strpos( $path, '/wp-' ) ) {
         return $src;
     }
 
-    $query = wp_parse_url( $src, PHP_URL_QUERY );
-    $fragment = wp_parse_url( $src, PHP_URL_FRAGMENT );
-    $local_src = 'http://' . $preview_host . $path;
-
-    if ( $query ) {
-        $local_src .= '?' . $query;
-    }
-    if ( $fragment ) {
-        $local_src .= '#' . $fragment;
-    }
-
-    return esc_url_raw( $local_src );
+    return rentacar_venezia_v2_local_http_preview_url( $src );
 }
 add_filter( 'style_loader_src', 'rentacar_venezia_v2_local_http_asset_url', 999 );
 add_filter( 'script_loader_src', 'rentacar_venezia_v2_local_http_asset_url', 999 );
@@ -277,7 +313,17 @@ function rentacar_venezia_v2_language_links() {
 
     $languages = icl_get_languages( 'skip_missing=0&orderby=code' );
 
-    return is_array( $languages ) ? $languages : array();
+    if ( ! is_array( $languages ) ) {
+        return array();
+    }
+
+    foreach ( $languages as $code => $language ) {
+        if ( isset( $language['url'] ) ) {
+            $languages[ $code ]['url'] = rentacar_venezia_v2_local_http_preview_url( $language['url'] );
+        }
+    }
+
+    return $languages;
 }
 
 function rentacar_venezia_v2_whatsapp_url() {

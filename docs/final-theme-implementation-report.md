@@ -86,6 +86,13 @@ assets from the cloned `.local` hostname to the active `localhost:10003` host.
 This keeps WPML's language-switcher stylesheet available without editing the
 third-party plugin.
 
+It also normalizes WordPress menu, content and WPML language links for that
+same localhost preview. This prevents the clone's stored HTTPS URLs from
+pointing customers to a TLS endpoint that does not exist on port `10003`.
+The local preview was verified for Italian, English, Romanian and Russian;
+each language route selected the correct active language and rendered with no
+broken images.
+
 ## Remaining owner decisions
 
 1. Confirm the current WordPress custom-logo asset is the approved brand
