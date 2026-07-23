@@ -10,7 +10,7 @@ function rentacar_venezia_v2_vehicle_title( Rentacar_Core_Vehicle $vehicle ) {
 function rentacar_venezia_v2_vehicle_specs( Rentacar_Core_Vehicle $vehicle ) {
     $specs = array_filter(
         array(
-            $vehicle->get( 'transmission' ),
+            rentacar_venezia_v2_vehicle_transmission_label( $vehicle->get( 'transmission' ) ),
             $vehicle->get( 'passengers' ) ? sprintf( _n( '%s passenger', '%s passengers', $vehicle->get( 'passengers' ), 'rentacar-venezia-v2' ), number_format_i18n( $vehicle->get( 'passengers' ) ) ) : '',
             $vehicle->get( 'doors' ) ? sprintf( _n( '%s door', '%s doors', $vehicle->get( 'doors' ), 'rentacar-venezia-v2' ), number_format_i18n( $vehicle->get( 'doors' ) ) ) : '',
             $vehicle->get( 'air_conditioning' ) ? __( 'Air conditioning', 'rentacar-venezia-v2' ) : '',

@@ -93,6 +93,11 @@ The local preview was verified for Italian, English, Romanian and Russian;
 each language route selected the correct active language and rendered with no
 broken images.
 
+The owned theme also provides translated interface copy for Italian, Romanian
+and Russian while English remains the source language. This covers the public
+home, fleet, vehicle-card and reservation-form UI; existing vehicle and editor
+content remains translated through WPML.
+
 ## Remaining owner decisions
 
 1. Confirm the current WordPress custom-logo asset is the approved brand

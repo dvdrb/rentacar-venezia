@@ -2,6 +2,7 @@
 defined( 'ABSPATH' ) || exit;
 
 require_once get_template_directory() . '/inc/presentation.php';
+require_once get_template_directory() . '/inc/interface-translations.php';
 
 function rentacar_venezia_v2_setup() {
     load_theme_textdomain( 'rentacar-venezia-v2', get_template_directory() . '/languages' );
