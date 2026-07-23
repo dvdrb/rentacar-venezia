@@ -118,6 +118,46 @@ function rentacar_venezia_v2_local_http_image_srcset( $sources ) {
 }
 add_filter( 'wp_calculate_image_srcset', 'rentacar_venezia_v2_local_http_image_srcset', 99 );
 
+/**
+ * Keep enqueued WordPress assets on the LocalWP port-forward host. A few
+ * plugins retain the clone's .local base URL when they enqueue assets; that
+ * host has no listener on port 80 during this localhost preview.
+ */
+function rentacar_venezia_v2_local_http_preview_host() {
+    if ( is_ssl() || empty( $_SERVER['HTTP_HOST'] ) ) {
+        return '';
+    }
+
+    $host = sanitize_text_field( wp_unslash( $_SERVER['HTTP_HOST'] ) );
+
+    return 'localhost' === wp_parse_url( 'http://' . $host, PHP_URL_HOST ) && wp_parse_url( 'http://' . $host, PHP_URL_PORT ) ? $host : '';
+}
+
+function rentacar_venezia_v2_local_http_asset_url( $src ) {
+    $preview_host = rentacar_venezia_v2_local_http_preview_host();
+    $asset_host = wp_parse_url( $src, PHP_URL_HOST );
+    $path = wp_parse_url( $src, PHP_URL_PATH );
+
+    if ( ! $preview_host || ! is_string( $asset_host ) || ! preg_match( '/(^localhost$|\.local$)/', $asset_host ) || ! is_string( $path ) || 0 !== strpos( $path, '/wp-' ) ) {
+        return $src;
+    }
+
+    $query = wp_parse_url( $src, PHP_URL_QUERY );
+    $fragment = wp_parse_url( $src, PHP_URL_FRAGMENT );
+    $local_src = 'http://' . $preview_host . $path;
+
+    if ( $query ) {
+        $local_src .= '?' . $query;
+    }
+    if ( $fragment ) {
+        $local_src .= '#' . $fragment;
+    }
+
+    return esc_url_raw( $local_src );
+}
+add_filter( 'style_loader_src', 'rentacar_venezia_v2_local_http_asset_url', 999 );
+add_filter( 'script_loader_src', 'rentacar_venezia_v2_local_http_asset_url', 999 );
+
 function rentacar_venezia_v2_manifest_warning() {
     if ( ! current_user_can( 'manage_options' ) || ! defined( 'WP_DEBUG' ) || ! WP_DEBUG || rentacar_venezia_v2_asset_manifest() ) {
         return;

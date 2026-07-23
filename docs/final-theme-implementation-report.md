@@ -81,6 +81,11 @@ now rewrites only same-host `localhost` attachment and image-srcset URLs to
 HTTP when the incoming request is local HTTP. It does not alter database
 options, stored URLs, external media, production hosts or HTTPS requests.
 
+The same local-only compatibility layer also normalizes enqueued WordPress
+assets from the cloned `.local` hostname to the active `localhost:10003` host.
+This keeps WPML's language-switcher stylesheet available without editing the
+third-party plugin.
+
 ## Remaining owner decisions
 
 1. Confirm the current WordPress custom-logo asset is the approved brand
