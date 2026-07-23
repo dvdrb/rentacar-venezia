@@ -1,0 +1,8 @@
+{
+  "assets/src/ts/main.ts": {
+    "file": "js/main-reservation.js",
+    "name": "main",
+    "src": "assets/src/ts/main.ts",
+    "isEntry": true
+  }
+}
