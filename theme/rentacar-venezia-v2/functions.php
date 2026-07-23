@@ -1,6 +1,8 @@
 <?php
 defined( 'ABSPATH' ) || exit;
 
+require_once get_template_directory() . '/inc/presentation.php';
+
 function rentacar_venezia_v2_setup() {
     load_theme_textdomain( 'rentacar-venezia-v2', get_template_directory() . '/languages' );
     add_theme_support( 'title-tag' );
@@ -27,14 +29,14 @@ function rentacar_venezia_v2_setup() {
 add_action( 'after_setup_theme', 'rentacar_venezia_v2_setup' );
 
 /**
- * The configured LocalWP logo is a legacy G&D asset, not the approved
- * Rent A Car Venezia identity. Keep this presentation fallback until a
- * production-quality brand asset is supplied and explicitly enabled.
+ * Prefer the WordPress-managed logo so it remains language- and
+ * environment-aware. The text mark is intentionally a resilient fallback
+ * for installations where no custom logo is configured.
  */
 function rentacar_venezia_v2_brand_mark( $inverse = false ) {
     $classes = 'site-brand' . ( $inverse ? ' site-brand--inverse' : '' );
 
-    if ( has_custom_logo() && apply_filters( 'rentacar_venezia_v2_use_custom_logo', false ) ) {
+    if ( has_custom_logo() && apply_filters( 'rentacar_venezia_v2_use_custom_logo', true ) ) {
         the_custom_logo();
         return;
     }
@@ -56,19 +58,33 @@ function rentacar_venezia_v2_assets() {
     wp_enqueue_style( 'rentacar-venezia-v2', get_stylesheet_uri(), array(), $theme->get( 'Version' ) );
     if ( isset( $manifest['main'] ) ) {
         wp_enqueue_script( 'rentacar-venezia-v2', get_template_directory_uri() . '/assets/dist/' . ltrim( $manifest['main'], '/' ), array(), $theme->get( 'Version' ), true );
+        wp_localize_script(
+            'rentacar-venezia-v2',
+            'rentacarVenezia',
+            array(
+                'reservationUrl' => esc_url_raw( admin_url( 'admin-post.php' ) ),
+                'strings'        => array(
+                    'menuOpen'       => __( 'Open navigation', 'rentacar-venezia-v2' ),
+                    'menuClose'      => __( 'Close navigation', 'rentacar-venezia-v2' ),
+                    'sending'        => __( 'Sending…', 'rentacar-venezia-v2' ),
+                    'sendRequest'    => __( 'Send reservation request', 'rentacar-venezia-v2' ),
+                    'reviewForm'     => __( 'Please review the form and try again.', 'rentacar-venezia-v2' ),
+                    'deliveryFailed' => __( 'We could not send the request. Please try again.', 'rentacar-venezia-v2' ),
+                    'reference'      => __( 'Reference: %s', 'rentacar-venezia-v2' ),
+                ),
+            )
+        );
     }
-    wp_localize_script(
-        'rentacar-venezia-v2',
-        'rentacarVenezia',
-        array(
-            'estimateUrl'          => esc_url_raw( rest_url( 'rentacar/v1/estimate' ) ),
-            'reservationUrl'       => esc_url_raw( admin_url( 'admin-post.php' ) ),
-            'whatsappDestination'  => esc_url_raw( apply_filters( 'rentacar_core_whatsapp_destination', '' ) ),
-            'estimateUnavailable'  => __( 'An indicative estimate is not available for these details. Our team will confirm the final price.', 'rentacar-venezia-v2' ),
-        )
-    );
 }
 add_action( 'wp_enqueue_scripts', 'rentacar_venezia_v2_assets' );
+
+function rentacar_venezia_v2_manifest_warning() {
+    if ( ! current_user_can( 'manage_options' ) || ! defined( 'WP_DEBUG' ) || ! WP_DEBUG || rentacar_venezia_v2_asset_manifest() ) {
+        return;
+    }
+    echo '<div class="notice notice-warning"><p>' . esc_html__( 'Rentacar Venezia V2: asset manifest is missing. Run the production build before release.', 'rentacar-venezia-v2' ) . '</p></div>';
+}
+add_action( 'admin_notices', 'rentacar_venezia_v2_manifest_warning' );
 
 function rentacar_venezia_v2_asset_manifest() {
     static $assets = null;
@@ -138,8 +154,31 @@ function rentacar_venezia_v2_document_title( $parts ) {
 }
 add_filter( 'document_title_parts', 'rentacar_venezia_v2_document_title' );
 
+/**
+ * The logo already leads home, so suppress an otherwise redundant Home item
+ * only while the visitor is on the front page. Menu ownership remains with
+ * WordPress and no menu, page or language IDs are assumed.
+ */
+function rentacar_venezia_v2_hide_current_home_menu_item( $items, $args ) {
+    if ( ! is_front_page() || empty( $args->theme_location ) || 'primary' !== $args->theme_location ) {
+        return $items;
+    }
+
+    $home_path = untrailingslashit( (string) wp_parse_url( home_url( '/' ), PHP_URL_PATH ) );
+
+    foreach ( $items as $index => $item ) {
+        $item_path = untrailingslashit( (string) wp_parse_url( $item->url, PHP_URL_PATH ) );
+        if ( $item_path === $home_path ) {
+            unset( $items[ $index ] );
+        }
+    }
+
+    return $items;
+}
+add_filter( 'wp_nav_menu_objects', 'rentacar_venezia_v2_hide_current_home_menu_item', 10, 2 );
+
 function rentacar_venezia_v2_fleet_canonical() {
-    if ( get_query_var( 'rc_fleet' ) ) {
+    if ( get_query_var( 'rc_fleet' ) && ! defined( 'WPSEO_VERSION' ) ) {
         printf( "<link rel=\"canonical\" href=\"%s\">\n", esc_url( rentacar_venezia_v2_fleet_url() ) );
     }
 }
