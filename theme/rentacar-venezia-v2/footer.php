@@ -2,11 +2,7 @@
     <div class="rc-container site-footer__grid">
         <section aria-labelledby="footer-brand-title">
             <div id="footer-brand-title" class="site-footer__brand">
-                <?php if ( has_custom_logo() ) : ?>
-                    <?php the_custom_logo(); ?>
-                <?php else : ?>
-                    <p class="site-brand site-brand--inverse"><span class="site-brand__main">RENT A CAR</span><span class="site-brand__sub">VENEZIA</span></p>
-                <?php endif; ?>
+                <?php rentacar_venezia_v2_brand_mark( true ); ?>
             </div>
             <p><?php esc_html_e( 'Choose your preferred vehicle. Our team checks availability and confirms the final price personally.', 'rentacar-venezia-v2' ); ?></p>
         </section>

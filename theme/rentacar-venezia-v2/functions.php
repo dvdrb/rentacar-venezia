@@ -26,6 +26,29 @@ function rentacar_venezia_v2_setup() {
 }
 add_action( 'after_setup_theme', 'rentacar_venezia_v2_setup' );
 
+/**
+ * The configured LocalWP logo is a legacy G&D asset, not the approved
+ * Rent A Car Venezia identity. Keep this presentation fallback until a
+ * production-quality brand asset is supplied and explicitly enabled.
+ */
+function rentacar_venezia_v2_brand_mark( $inverse = false ) {
+    $classes = 'site-brand' . ( $inverse ? ' site-brand--inverse' : '' );
+
+    if ( has_custom_logo() && apply_filters( 'rentacar_venezia_v2_use_custom_logo', false ) ) {
+        the_custom_logo();
+        return;
+    }
+
+    printf(
+        '<a class="%1$s" href="%2$s" rel="home" aria-label="%3$s"><span class="site-brand__main">%4$s</span><span class="site-brand__sub">%5$s</span></a>',
+        esc_attr( $classes ),
+        esc_url( home_url( '/' ) ),
+        esc_attr__( 'Rent A Car Venezia', 'rentacar-venezia-v2' ),
+        esc_html__( 'RENT A CAR', 'rentacar-venezia-v2' ),
+        esc_html__( 'VENEZIA', 'rentacar-venezia-v2' )
+    );
+}
+
 function rentacar_venezia_v2_assets() {
     $theme = wp_get_theme();
     $manifest = rentacar_venezia_v2_asset_manifest();

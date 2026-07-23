@@ -11,14 +11,7 @@
 <header class="site-header" data-site-header>
     <div class="site-header__inner rc-container">
         <div class="site-branding">
-            <?php if ( has_custom_logo() ) : ?>
-                <?php the_custom_logo(); ?>
-            <?php else : ?>
-                <a class="site-brand" href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home" aria-label="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>">
-                    <span class="site-brand__main">RENT A CAR</span>
-                    <span class="site-brand__sub">VENEZIA</span>
-                </a>
-            <?php endif; ?>
+            <?php rentacar_venezia_v2_brand_mark(); ?>
         </div>
         <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" data-menu-toggle>
             <span class="screen-reader-text"><?php esc_html_e( 'Toggle navigation', 'rentacar-venezia-v2' ); ?></span>
