@@ -3,58 +3,29 @@ defined( 'ABSPATH' ) || exit;
 
 get_header();
 
-$vehicles = array();
-if ( class_exists( 'Rentacar_Core_Vehicle_Repository' ) ) {
-    $vehicles = ( new Rentacar_Core_Vehicle_Repository() )->query(
-        array(
-            'posts_per_page' => 6,
-            'orderby'        => 'date',
-            'order'          => 'DESC',
-        )
-    );
-}
+$vehicles = class_exists( 'Rentacar_Core_Vehicle_Repository' ) ? ( new Rentacar_Core_Vehicle_Repository() )->query( array( 'posts_per_page' => 6, 'orderby' => 'date', 'order' => 'DESC' ) ) : array();
+$whatsapp_url = rentacar_venezia_v2_whatsapp_url();
 ?>
 <main id="main-content" class="site-main site-main--home">
     <section class="hero">
-        <div class="rc-container hero__grid">
+        <div class="rc-container hero__grid hero__grid--simple">
             <div class="hero__copy">
-                <p class="eyebrow"><?php esc_html_e( 'Rent a car Venezia', 'rentacar-venezia-v2' ); ?></p>
-                <h1><?php esc_html_e( 'Car Rental in Venice', 'rentacar-venezia-v2' ); ?></h1>
-                <p class="hero__tagline"><?php esc_html_e( 'Simple. Local. Personal.', 'rentacar-venezia-v2' ); ?></p>
-                <p><?php esc_html_e( 'Tell us where and when you need the car. We check availability and confirm the vehicle and final price personally.', 'rentacar-venezia-v2' ); ?></p>
+                <p class="eyebrow"><?php esc_html_e( 'Rent a Car Venezia', 'rentacar-venezia-v2' ); ?></p>
+                <h1><?php esc_html_e( 'Car rental in Venice and Treviso', 'rentacar-venezia-v2' ); ?></h1>
+                <p class="hero__tagline"><?php esc_html_e( 'Choose a car. Send a request. We confirm personally.', 'rentacar-venezia-v2' ); ?></p>
+                <p><?php esc_html_e( 'Select your preferred vehicle, complete one short reservation form, and our team will check availability and contact you.', 'rentacar-venezia-v2' ); ?></p>
+                <div class="hero__actions"><a class="button" href="<?php echo esc_url( rentacar_venezia_v2_fleet_url() ); ?>"><?php esc_html_e( 'View cars', 'rentacar-venezia-v2' ); ?></a><?php if ( $whatsapp_url ) : ?><a class="button button--whatsapp" href="<?php echo esc_url( $whatsapp_url ); ?>"><?php esc_html_e( 'WhatsApp', 'rentacar-venezia-v2' ); ?></a><?php endif; ?></div>
             </div>
-            <form class="trip-form" method="get" action="<?php echo esc_url( rentacar_venezia_v2_fleet_url() ); ?>" aria-label="<?php esc_attr_e( 'Tell us about your trip', 'rentacar-venezia-v2' ); ?>">
-                <fieldset>
-                    <legend><?php esc_html_e( 'Tell us about your trip', 'rentacar-venezia-v2' ); ?></legend>
-                    <div class="trip-form__grid">
-                        <label><?php esc_html_e( 'Pickup location', 'rentacar-venezia-v2' ); ?><input name="pickup_location" type="text" autocomplete="off"></label>
-                        <label><?php esc_html_e( 'Drop-off location', 'rentacar-venezia-v2' ); ?><input name="dropoff_location" type="text" autocomplete="off"></label>
-                        <label><?php esc_html_e( 'Pickup date', 'rentacar-venezia-v2' ); ?><input name="pickup_date" type="date"></label>
-                        <label><?php esc_html_e( 'Pickup time', 'rentacar-venezia-v2' ); ?><input name="pickup_time" type="time"></label>
-                        <label><?php esc_html_e( 'Return date', 'rentacar-venezia-v2' ); ?><input name="return_date" type="date"></label>
-                        <label><?php esc_html_e( 'Return time', 'rentacar-venezia-v2' ); ?><input name="return_time" type="time"></label>
-                    </div>
-                </fieldset>
-                <button class="button" type="submit"><?php esc_html_e( 'Find a suitable car', 'rentacar-venezia-v2' ); ?></button>
-                <p class="form-help"><?php esc_html_e( 'This is a request for availability, not a reservation.', 'rentacar-venezia-v2' ); ?></p>
-            </form>
         </div>
     </section>
-
+    <section class="trust-strip" aria-label="<?php esc_attr_e( 'Service highlights', 'rentacar-venezia-v2' ); ?>"><div class="rc-container trust-strip__items"><p><?php esc_html_e( 'Local assistance', 'rentacar-venezia-v2' ); ?></p><p><?php esc_html_e( 'Multilingual support', 'rentacar-venezia-v2' ); ?></p><p><?php esc_html_e( 'Availability confirmed personally', 'rentacar-venezia-v2' ); ?></p></div></section>
     <section class="section rc-container" aria-labelledby="popular-cars-title">
-        <div class="section-heading"><div><p class="eyebrow"><?php esc_html_e( 'Explore our fleet', 'rentacar-venezia-v2' ); ?></p><h2 id="popular-cars-title"><?php esc_html_e( 'Popular cars', 'rentacar-venezia-v2' ); ?></h2></div></div>
+        <div class="section-heading"><div><p class="eyebrow"><?php esc_html_e( 'Explore our fleet', 'rentacar-venezia-v2' ); ?></p><h2 id="popular-cars-title"><?php esc_html_e( 'Choose your preferred vehicle', 'rentacar-venezia-v2' ); ?></h2></div><a class="text-link" href="<?php echo esc_url( rentacar_venezia_v2_fleet_url() ); ?>"><?php esc_html_e( 'View all cars', 'rentacar-venezia-v2' ); ?></a></div>
         <?php get_template_part( 'template-parts/global/notice' ); ?>
-        <div class="vehicle-grid">
-            <?php foreach ( $vehicles as $vehicle ) : ?>
-                <?php get_template_part( 'template-parts/vehicle/card', null, array( 'vehicle' => $vehicle ) ); ?>
-            <?php endforeach; ?>
-        </div>
+        <div class="vehicle-grid"><?php foreach ( $vehicles as $vehicle ) : get_template_part( 'template-parts/vehicle/card', null, array( 'vehicle' => $vehicle ) ); endforeach; ?></div>
     </section>
-
-    <section class="section section--muted">
-        <div class="rc-container"><p class="eyebrow"><?php esc_html_e( 'How it works', 'rentacar-venezia-v2' ); ?></p><h2><?php esc_html_e( 'A personal availability check, in four clear steps.', 'rentacar-venezia-v2' ); ?></h2>
-            <ol class="steps"><li><strong><?php esc_html_e( 'Tell us your trip', 'rentacar-venezia-v2' ); ?></strong><span><?php esc_html_e( 'Share pickup and return details.', 'rentacar-venezia-v2' ); ?></span></li><li><strong><?php esc_html_e( 'Choose your preferred car', 'rentacar-venezia-v2' ); ?></strong><span><?php esc_html_e( 'Browse the vehicle catalogue.', 'rentacar-venezia-v2' ); ?></span></li><li><strong><?php esc_html_e( 'Send your request', 'rentacar-venezia-v2' ); ?></strong><span><?php esc_html_e( 'Continue on WhatsApp when ready.', 'rentacar-venezia-v2' ); ?></span></li><li><strong><?php esc_html_e( 'We confirm availability', 'rentacar-venezia-v2' ); ?></strong><span><?php esc_html_e( 'Our team confirms the model, price and conditions.', 'rentacar-venezia-v2' ); ?></span></li></ol>
-        </div>
-    </section>
+    <section class="section section--muted"><div class="rc-container"><p class="eyebrow"><?php esc_html_e( 'How it works', 'rentacar-venezia-v2' ); ?></p><h2><?php esc_html_e( 'One clear request, personally confirmed.', 'rentacar-venezia-v2' ); ?></h2><ol class="steps"><li><strong><?php esc_html_e( 'Choose a vehicle', 'rentacar-venezia-v2' ); ?></strong><span><?php esc_html_e( 'Browse our fleet and select your preferred car.', 'rentacar-venezia-v2' ); ?></span></li><li><strong><?php esc_html_e( 'Send the reservation request', 'rentacar-venezia-v2' ); ?></strong><span><?php esc_html_e( 'Enter your rental and contact details in one short form.', 'rentacar-venezia-v2' ); ?></span></li><li><strong><?php esc_html_e( 'We contact you', 'rentacar-venezia-v2' ); ?></strong><span><?php esc_html_e( 'We check availability and confirm everything with you.', 'rentacar-venezia-v2' ); ?></span></li></ol></div></section>
+    <section class="section rc-container airport-information"><div><p class="eyebrow"><?php esc_html_e( 'Venice and Treviso', 'rentacar-venezia-v2' ); ?></p><h2><?php esc_html_e( 'Plan your airport car rental with a local team.', 'rentacar-venezia-v2' ); ?></h2></div><p><?php esc_html_e( 'Tell us where you need the car and when. We will review your request personally and explain the available options.', 'rentacar-venezia-v2' ); ?></p></section>
 </main>
+<?php get_template_part( 'template-parts/enquiry/reservation-modal' ); ?>
 <?php get_footer(); ?>
