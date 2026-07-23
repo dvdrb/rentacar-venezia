@@ -72,6 +72,15 @@ screenshots, browser regressions, multi-language runtime checks, intercepted
 mail checks and local activation/rollback must be rerun after the owner starts
 the local site.
 
+## Local HTTP media compatibility
+
+The LocalWP port-forwarded preview at `http://localhost:10003/` exposed an
+HTTPS/HTTP mismatch: existing media URLs were emitted as
+`https://localhost:10003/...`, although that port serves HTTP only. The theme
+now rewrites only same-host `localhost` attachment and image-srcset URLs to
+HTTP when the incoming request is local HTTP. It does not alter database
+options, stored URLs, external media, production hosts or HTTPS requests.
+
 ## Remaining owner decisions
 
 1. Confirm the current WordPress custom-logo asset is the approved brand

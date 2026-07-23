@@ -78,6 +78,46 @@ function rentacar_venezia_v2_assets() {
 }
 add_action( 'wp_enqueue_scripts', 'rentacar_venezia_v2_assets' );
 
+/**
+ * LocalWP's port-forwarded HTTP preview can coexist with a database whose
+ * attachment URLs still use HTTPS. The port exposes no TLS endpoint, so
+ * browser image requests fail before WordPress can serve them. Normalize only
+ * same-host media for an incoming local HTTP request; production HTTPS and
+ * external media URLs are intentionally untouched.
+ */
+function rentacar_venezia_v2_local_http_media_url( $url ) {
+    if ( ! is_string( $url ) || '' === $url || is_ssl() || empty( $_SERVER['HTTP_HOST'] ) ) {
+        return $url;
+    }
+
+    $request_host = wp_parse_url( 'http://' . sanitize_text_field( wp_unslash( $_SERVER['HTTP_HOST'] ) ), PHP_URL_HOST );
+    $request_port = wp_parse_url( 'http://' . sanitize_text_field( wp_unslash( $_SERVER['HTTP_HOST'] ) ), PHP_URL_PORT );
+    $url_host = wp_parse_url( $url, PHP_URL_HOST );
+    $url_port = wp_parse_url( $url, PHP_URL_PORT );
+
+    if ( 'localhost' !== $request_host || 'localhost' !== $url_host || (int) $request_port !== (int) $url_port || 'https' !== wp_parse_url( $url, PHP_URL_SCHEME ) ) {
+        return $url;
+    }
+
+    return set_url_scheme( $url, 'http' );
+}
+add_filter( 'wp_get_attachment_url', 'rentacar_venezia_v2_local_http_media_url', 99 );
+
+function rentacar_venezia_v2_local_http_image_srcset( $sources ) {
+    if ( ! is_array( $sources ) ) {
+        return $sources;
+    }
+
+    foreach ( $sources as $width => $source ) {
+        if ( isset( $source['url'] ) ) {
+            $sources[ $width ]['url'] = rentacar_venezia_v2_local_http_media_url( $source['url'] );
+        }
+    }
+
+    return $sources;
+}
+add_filter( 'wp_calculate_image_srcset', 'rentacar_venezia_v2_local_http_image_srcset', 99 );
+
 function rentacar_venezia_v2_manifest_warning() {
     if ( ! current_user_can( 'manage_options' ) || ! defined( 'WP_DEBUG' ) || ! WP_DEBUG || rentacar_venezia_v2_asset_manifest() ) {
         return;
