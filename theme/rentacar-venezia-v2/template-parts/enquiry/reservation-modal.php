@@ -9,9 +9,11 @@ $reservation_extras = class_exists( 'Rentacar_Core_Reservation_Extras' ) ? Renta
 <section class="reservation-modal reservation-modal--inline" data-reservation-modal data-reservation-initial-open="<?php echo $success ? '1' : '0'; ?>" aria-labelledby="reservation-modal-title" tabindex="-1">
   <div class="reservation-modal__backdrop" data-reservation-close></div>
   <div class="reservation-modal__panel">
-    <button class="reservation-modal__close" type="button" data-reservation-close aria-label="<?php esc_attr_e( 'Close reservation form', 'rentacar-venezia-v2' ); ?>">×</button>
-    <div data-reservation-form-wrap<?php echo $success ? ' hidden' : ''; ?>>
+    <header class="reservation-modal__header">
       <h2 id="reservation-modal-title"><?php esc_html_e( 'Reservation request', 'rentacar-venezia-v2' ); ?></h2>
+      <button class="reservation-modal__close" type="button" data-reservation-close aria-label="<?php esc_attr_e( 'Close reservation form', 'rentacar-venezia-v2' ); ?>">×</button>
+    </header>
+    <div data-reservation-form-wrap<?php echo $success ? ' hidden' : ''; ?>>
       <div class="reservation-modal__grid">
         <aside class="reservation-summary" data-reservation-summary>
           <div class="reservation-summary__image" data-reservation-image></div><h3 data-reservation-title><?php esc_html_e( 'Selected vehicle', 'rentacar-venezia-v2' ); ?></h3><p data-reservation-specifications></p><p data-reservation-prices></p>
@@ -47,8 +49,8 @@ $reservation_extras = class_exists( 'Rentacar_Core_Reservation_Extras' ) ? Renta
           <?php endif; ?>
           <fieldset><legend><?php esc_html_e( 'Your details', 'rentacar-venezia-v2' ); ?></legend>
             <label><?php esc_html_e( 'Full name', 'rentacar-venezia-v2' ); ?><input name="full_name" autocomplete="name" required></label><label><?php esc_html_e( 'Phone or WhatsApp', 'rentacar-venezia-v2' ); ?><input name="phone" autocomplete="tel" required></label><label><?php esc_html_e( 'Email', 'rentacar-venezia-v2' ); ?><input name="email" type="email" autocomplete="email" required></label>
-            <label class="check-label"><input name="similar_vehicle" type="checkbox" value="1"> <?php esc_html_e( 'I accept a similar vehicle if the selected model is unavailable.', 'rentacar-venezia-v2' ); ?></label><label><?php esc_html_e( 'Message (optional)', 'rentacar-venezia-v2' ); ?><textarea name="message" rows="3"></textarea></label>
-            <label class="check-label"><input name="privacy" type="checkbox" value="1" required> <span><?php esc_html_e( 'I agree that my details will be used only to respond to this request.', 'rentacar-venezia-v2' ); ?><?php if ( $privacy_policy_url ) : ?> <a href="<?php echo esc_url( $privacy_policy_url ); ?>"><?php esc_html_e( 'Privacy Policy', 'rentacar-venezia-v2' ); ?></a><?php endif; ?></span></label>
+            <label><?php esc_html_e( 'Message (optional)', 'rentacar-venezia-v2' ); ?><textarea name="message" rows="3"></textarea></label>
+            <label class="check-label reservation-form__privacy"><input name="privacy" type="checkbox" value="1" required> <span><?php esc_html_e( 'I agree that my details will be used only to respond to this request.', 'rentacar-venezia-v2' ); ?><?php if ( $privacy_policy_url ) : ?> <a href="<?php echo esc_url( $privacy_policy_url ); ?>"><?php esc_html_e( 'Privacy Policy', 'rentacar-venezia-v2' ); ?></a><?php endif; ?></span></label>
           </fieldset>
           <p class="form-help"><?php esc_html_e( 'Submitting this request does not immediately confirm the reservation. We will check availability and contact you.', 'rentacar-venezia-v2' ); ?></p>
           <button class="button" type="submit"><?php esc_html_e( 'Send reservation request', 'rentacar-venezia-v2' ); ?></button>
