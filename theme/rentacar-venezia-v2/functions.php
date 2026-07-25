@@ -357,6 +357,19 @@ function rentacar_venezia_v2_flush_routes() {
 add_action( 'after_switch_theme', 'rentacar_venezia_v2_flush_routes' );
 
 function rentacar_venezia_v2_language_links() {
+    if ( 'polylang' === rentacar_venezia_v2_multilingual_provider() ) {
+        $languages = rentacar_venezia_v2_languages();
+        $items = array();
+        foreach ( $languages as $language ) {
+            if ( empty( $language['slug'] ) || empty( $language['url'] ) ) continue;
+            $items[ $language['slug'] ] = array(
+                'language_code' => $language['slug'], 'native_name' => $language['name'] ?? strtoupper( $language['slug'] ),
+                'translated_name' => $language['name'] ?? strtoupper( $language['slug'] ), 'country_flag_url' => $language['flag_url'] ?? '',
+                'url' => $language['url'], 'active' => ! empty( $language['current_lang'] ),
+            );
+        }
+        return count( $items ) > 1 ? $items : array();
+    }
     $languages = apply_filters(
         'wpml_active_languages',
         null,
