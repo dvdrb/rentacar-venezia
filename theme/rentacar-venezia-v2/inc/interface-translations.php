@@ -7,7 +7,7 @@ defined( 'ABSPATH' ) || exit;
  * approved. WordPress content, vehicles, menus and URLs remain WPML-owned.
  */
 function rentacar_venezia_v2_interface_language() {
-    $language = apply_filters( 'wpml_current_language', '' );
+    $language = function_exists( 'rentacar_venezia_v2_current_language' ) ? rentacar_venezia_v2_current_language() : apply_filters( 'wpml_current_language', '' );
 
     return in_array( $language, array( 'it', 'ro', 'ru' ), true ) ? $language : '';
 }

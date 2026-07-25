@@ -36,9 +36,7 @@ function rentacar_venezia_v2_location_page_id( $location_key ) {
         $page_id = $pages ? (int) $pages[0] : 0;
     }
 
-    if ( $page_id && has_filter( 'wpml_object_id' ) ) {
-        $page_id = (int) apply_filters( 'wpml_object_id', $page_id, 'page', false );
-    }
+    if ( $page_id && function_exists( 'rentacar_venezia_v2_translated_post_id' ) ) $page_id = rentacar_venezia_v2_translated_post_id( $page_id );
 
     return $page_id && 'publish' === get_post_status( $page_id ) ? $page_id : 0;
 }
