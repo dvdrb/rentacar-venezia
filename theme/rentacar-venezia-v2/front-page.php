@@ -2,23 +2,44 @@
 defined( 'ABSPATH' ) || exit;
 
 $vehicles = class_exists( 'Rentacar_Core_Vehicle_Repository' ) ? ( new Rentacar_Core_Vehicle_Repository() )->query( array( 'posts_per_page' => 6, 'orderby' => 'date', 'order' => 'DESC' ) ) : array();
-$hero_vehicle = $vehicles ? $vehicles[0] : null;
-$hero_image_id = $hero_vehicle ? rentacar_venezia_v2_vehicle_image_id( $hero_vehicle ) : 0;
+$trip = rentacar_venezia_v2_trip_query();
 $whatsapp_url = rentacar_venezia_v2_whatsapp_url();
 
 get_header();
 ?>
 <main id="main-content" class="site-main site-main--home">
     <section class="hero">
-        <div class="rc-container hero__grid">
+        <picture class="hero__media">
+            <source media="(max-width: 767px)" srcset="<?php echo esc_url( get_theme_file_uri( '/assets/images/hero/hero-venice-mobile.webp' ) ); ?>">
+            <img src="<?php echo esc_url( get_theme_file_uri( '/assets/images/hero/hero-venice-desktop.webp' ) ); ?>" alt="" fetchpriority="high" decoding="async">
+        </picture>
+        <div class="hero__overlay" aria-hidden="true"></div>
+        <div class="rc-container hero__inner">
             <div class="hero__copy">
                 <p class="eyebrow"><?php esc_html_e( 'Rent a Car Venezia', 'rentacar-venezia-v2' ); ?></p>
                 <h1><?php esc_html_e( 'Car rental in Venice and Treviso', 'rentacar-venezia-v2' ); ?></h1>
                 <p class="hero__tagline"><?php esc_html_e( 'Choose a car. Send a request. We confirm personally.', 'rentacar-venezia-v2' ); ?></p>
-                <p><?php esc_html_e( 'Select your preferred vehicle, complete one short reservation form, and our team will check availability and contact you.', 'rentacar-venezia-v2' ); ?></p>
-                <div class="hero__actions"><a class="button" href="#fleet"><?php esc_html_e( 'Choose your car', 'rentacar-venezia-v2' ); ?></a><?php if ( $whatsapp_url ) : ?><a class="button button--whatsapp" href="<?php echo esc_url( $whatsapp_url ); ?>"><?php esc_html_e( 'WhatsApp', 'rentacar-venezia-v2' ); ?></a><?php endif; ?></div>
+                <p><?php esc_html_e( 'Tell us where you need the car and when. We will review your request personally and explain the available options.', 'rentacar-venezia-v2' ); ?></p>
+                <div class="hero__actions"><a class="button" href="#trip-filter"><?php esc_html_e( 'Choose your car', 'rentacar-venezia-v2' ); ?></a><?php if ( $whatsapp_url ) : ?><a class="button button--whatsapp" href="<?php echo esc_url( $whatsapp_url ); ?>"><?php esc_html_e( 'WhatsApp', 'rentacar-venezia-v2' ); ?></a><?php endif; ?></div>
             </div>
-            <?php if ( $hero_vehicle && $hero_image_id ) : ?><figure class="hero__vehicle"><?php echo wp_kses_post( wp_get_attachment_image( $hero_image_id, 'large', false, array( 'loading' => 'eager', 'fetchpriority' => 'high', 'sizes' => '(min-width: 960px) 42vw, 100vw', 'alt' => '' ) ) ); ?><figcaption><?php echo esc_html( rentacar_venezia_v2_vehicle_title( $hero_vehicle ) ); ?></figcaption></figure><?php endif; ?>
+        </div>
+    </section>
+    <section id="trip-filter" class="trip-filter-section" aria-labelledby="trip-filter-title">
+        <div class="rc-container">
+            <form class="trip-form" method="get" action="<?php echo esc_url( rentacar_venezia_v2_fleet_url() ); ?>">
+                <fieldset>
+                    <legend id="trip-filter-title"><?php esc_html_e( 'Filter and sort cars', 'rentacar-venezia-v2' ); ?></legend>
+                    <div class="trip-form__grid">
+                        <label><?php esc_html_e( 'Pickup location', 'rentacar-venezia-v2' ); ?><input name="pickup_location" type="text" autocomplete="off" value="<?php echo esc_attr( $trip['pickup_location'] ?? '' ); ?>"></label>
+                        <label><?php esc_html_e( 'Return location', 'rentacar-venezia-v2' ); ?><input name="dropoff_location" type="text" autocomplete="off" value="<?php echo esc_attr( $trip['dropoff_location'] ?? '' ); ?>"></label>
+                        <label><?php esc_html_e( 'Pickup date', 'rentacar-venezia-v2' ); ?><input name="pickup_date" type="date" value="<?php echo esc_attr( $trip['pickup_date'] ?? '' ); ?>"></label>
+                        <label><?php esc_html_e( 'Pickup time', 'rentacar-venezia-v2' ); ?><input name="pickup_time" type="time" value="<?php echo esc_attr( $trip['pickup_time'] ?? '' ); ?>"></label>
+                        <label><?php esc_html_e( 'Return date', 'rentacar-venezia-v2' ); ?><input name="return_date" type="date" value="<?php echo esc_attr( $trip['return_date'] ?? '' ); ?>"></label>
+                        <label><?php esc_html_e( 'Return time', 'rentacar-venezia-v2' ); ?><input name="return_time" type="time" value="<?php echo esc_attr( $trip['return_time'] ?? '' ); ?>"></label>
+                    </div>
+                </fieldset>
+                <button class="button" type="submit"><?php esc_html_e( 'Apply filters', 'rentacar-venezia-v2' ); ?></button>
+            </form>
         </div>
     </section>
     <section class="trust-strip" aria-label="<?php esc_attr_e( 'Service highlights', 'rentacar-venezia-v2' ); ?>"><div class="rc-container trust-strip__items"><p><?php esc_html_e( 'Local assistance', 'rentacar-venezia-v2' ); ?></p><p><?php esc_html_e( 'Multilingual support', 'rentacar-venezia-v2' ); ?></p><p><?php esc_html_e( 'Availability confirmed personally', 'rentacar-venezia-v2' ); ?></p></div></section>

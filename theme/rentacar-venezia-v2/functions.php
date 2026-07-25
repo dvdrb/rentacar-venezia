@@ -308,20 +308,17 @@ function rentacar_venezia_v2_flush_routes() {
 add_action( 'after_switch_theme', 'rentacar_venezia_v2_flush_routes' );
 
 function rentacar_venezia_v2_language_links() {
-    if ( ! function_exists( 'icl_get_languages' ) ) {
+    $languages = apply_filters(
+        'wpml_active_languages',
+        null,
+        array(
+            'skip_missing' => 0,
+            'orderby'      => 'code',
+        )
+    );
+
+    if ( ! is_array( $languages ) || count( $languages ) < 2 ) {
         return array();
-    }
-
-    $languages = icl_get_languages( 'skip_missing=0&orderby=code' );
-
-    if ( ! is_array( $languages ) ) {
-        return array();
-    }
-
-    foreach ( $languages as $code => $language ) {
-        if ( isset( $language['url'] ) ) {
-            $languages[ $code ]['url'] = rentacar_venezia_v2_local_http_preview_url( $language['url'] );
-        }
     }
 
     return $languages;

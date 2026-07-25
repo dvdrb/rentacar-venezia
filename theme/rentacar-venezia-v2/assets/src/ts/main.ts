@@ -32,8 +32,35 @@ const toggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
 const navigation = document.querySelector<HTMLElement>('[data-primary-navigation]');
 let navigationOpen = false;
 
+type LanguageSwitcher = {
+  root: HTMLElement;
+  trigger: HTMLButtonElement;
+  menu: HTMLElement;
+};
+
+const languageSwitchers = Array.from(document.querySelectorAll<HTMLElement>('[data-language-switcher]')).flatMap((root) => {
+  const trigger = root.querySelector<HTMLButtonElement>('[data-language-trigger]');
+  const menu = root.querySelector<HTMLElement>('[data-language-menu]');
+
+  return trigger && menu ? [{ root, trigger, menu }] : [];
+});
+
+const setLanguageSwitcher = (switcher: LanguageSwitcher, open: boolean, restoreFocus = false): void => {
+  switcher.trigger.setAttribute('aria-expanded', String(open));
+  switcher.menu.hidden = !open;
+
+  if (!open && restoreFocus) {
+    switcher.trigger.focus();
+  }
+};
+
+const closeLanguageSwitchers = (restoreFocus = false): void => {
+  languageSwitchers.forEach((switcher) => setLanguageSwitcher(switcher, false, restoreFocus));
+};
+
 const setNavigation = (open: boolean): void => {
   if (!toggle || !navigation) return;
+  if (open) closeLanguageSwitchers();
   navigationOpen = open;
   toggle.setAttribute('aria-expanded', String(open));
   toggle.setAttribute('aria-label', open ? strings.menuClose : strings.menuOpen);
@@ -45,6 +72,28 @@ if (toggle && navigation) {
   toggle.setAttribute('aria-label', strings.menuOpen);
   toggle.addEventListener('click', () => setNavigation(!navigationOpen));
 }
+
+languageSwitchers.forEach((switcher) => {
+  switcher.trigger.addEventListener('click', () => {
+    const open = switcher.trigger.getAttribute('aria-expanded') !== 'true';
+
+    if (open) {
+      languageSwitchers.forEach((otherSwitcher) => {
+        if (otherSwitcher !== switcher) setLanguageSwitcher(otherSwitcher, false);
+      });
+      setNavigation(false);
+    }
+
+    setLanguageSwitcher(switcher, open);
+  });
+});
+
+document.addEventListener('pointerdown', (event) => {
+  const target = event.target;
+  if (target instanceof Node && !languageSwitchers.some((switcher) => switcher.root.contains(target))) {
+    closeLanguageSwitchers();
+  }
+});
 
 const modal = document.querySelector<HTMLElement>('[data-reservation-modal]');
 const form = document.querySelector<HTMLFormElement>('[data-reservation-form]');
@@ -140,6 +189,15 @@ modal?.querySelectorAll<HTMLElement>('[data-reservation-close]').forEach((button
 });
 
 document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') {
+    const openSwitcher = languageSwitchers.find((switcher) => switcher.trigger.getAttribute('aria-expanded') === 'true');
+    if (openSwitcher) {
+      event.preventDefault();
+      setLanguageSwitcher(openSwitcher, false, true);
+      return;
+    }
+  }
+
   if (event.key === 'Escape' && modal && !modal.hidden) {
     closeModal();
     return;
