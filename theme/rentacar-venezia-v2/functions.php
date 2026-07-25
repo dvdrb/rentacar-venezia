@@ -3,6 +3,8 @@ defined( 'ABSPATH' ) || exit;
 
 require_once get_template_directory() . '/inc/presentation.php';
 require_once get_template_directory() . '/inc/interface-translations.php';
+require_once get_template_directory() . '/inc/seo.php';
+require_once get_template_directory() . '/inc/breadcrumbs.php';
 
 function rentacar_venezia_v2_setup() {
     load_theme_textdomain( 'rentacar-venezia-v2', get_template_directory() . '/languages' );
@@ -19,6 +21,8 @@ function rentacar_venezia_v2_setup() {
         )
     );
     add_theme_support( 'html5', array( 'search-form', 'comment-form', 'comment-list', 'gallery', 'caption', 'style', 'script' ) );
+    add_theme_support( 'editor-styles' );
+    add_editor_style( 'assets/editor.css' );
 
     register_nav_menus(
         array(
@@ -233,7 +237,12 @@ function rentacar_venezia_v2_asset_manifest() {
 }
 
 function rentacar_venezia_v2_register_routes() {
+    if ( rentacar_venezia_v2_fleet_page_id() ) {
+        return;
+    }
+
     add_rewrite_rule( '^fleet/?$', 'index.php?rc_fleet=1', 'top' );
+    add_rewrite_rule( '^fleet/page/([0-9]+)/?$', 'index.php?rc_fleet=1&paged=$matches[1]', 'top' );
 }
 add_action( 'init', 'rentacar_venezia_v2_register_routes' );
 
@@ -249,8 +258,39 @@ function rentacar_venezia_v2_query_vars( $variables ) {
 }
 add_filter( 'query_vars', 'rentacar_venezia_v2_query_vars' );
 
+/**
+ * A legacy custom fleet rewrite can remain in the stored rewrite rules after
+ * a fleet page is added. Prefer the real page without flushing rules during a
+ * visitor request, so WordPress and WPML own it as a normal page.
+ */
+function rentacar_venezia_v2_prefer_fleet_page( $wp ) {
+    $fleet_page_id = rentacar_venezia_v2_fleet_page_id();
+
+    if ( ! $fleet_page_id && empty( $wp->query_vars['rc_fleet'] ) ) {
+        $fleet_path = trim( (string) wp_parse_url( rentacar_venezia_v2_fleet_url(), PHP_URL_PATH ), '/' );
+        $request_path = trim( (string) $wp->request, '/' );
+
+        if ( $fleet_path && preg_match( '#^' . preg_quote( $fleet_path, '#' ) . '/page/([0-9]+)/?$#', $request_path, $matches ) ) {
+            $wp->query_vars['rc_fleet'] = 1;
+            $wp->query_vars['paged'] = absint( $matches[1] );
+        }
+    }
+
+    if ( empty( $wp->query_vars['rc_fleet'] ) || ! $fleet_page_id ) {
+        return;
+    }
+
+    $paged = isset( $wp->query_vars['paged'] ) ? absint( $wp->query_vars['paged'] ) : 0;
+    $wp->query_vars = array( 'page_id' => $fleet_page_id );
+
+    if ( $paged > 1 ) {
+        $wp->query_vars['paged'] = $paged;
+    }
+}
+add_action( 'parse_request', 'rentacar_venezia_v2_prefer_fleet_page', 1 );
+
 function rentacar_venezia_v2_template_router( $template ) {
-    if ( ! get_query_var( 'rc_fleet' ) ) {
+    if ( ! get_query_var( 'rc_fleet' ) || rentacar_venezia_v2_fleet_page_id() ) {
         return $template;
     }
 
@@ -261,15 +301,6 @@ function rentacar_venezia_v2_template_router( $template ) {
     return get_template_directory() . '/page-templates/template-fleet.php';
 }
 add_filter( 'template_include', 'rentacar_venezia_v2_template_router' );
-
-function rentacar_venezia_v2_document_title( $parts ) {
-    if ( get_query_var( 'rc_fleet' ) ) {
-        $parts['title'] = __( 'Our fleet', 'rentacar-venezia-v2' );
-    }
-
-    return $parts;
-}
-add_filter( 'document_title_parts', 'rentacar_venezia_v2_document_title' );
 
 /**
  * The logo already leads home, so suppress an otherwise redundant Home item
@@ -293,13 +324,6 @@ function rentacar_venezia_v2_hide_current_home_menu_item( $items, $args ) {
     return $items;
 }
 add_filter( 'wp_nav_menu_objects', 'rentacar_venezia_v2_hide_current_home_menu_item', 10, 2 );
-
-function rentacar_venezia_v2_fleet_canonical() {
-    if ( get_query_var( 'rc_fleet' ) && ! defined( 'WPSEO_VERSION' ) ) {
-        printf( "<link rel=\"canonical\" href=\"%s\">\n", esc_url( rentacar_venezia_v2_fleet_url() ) );
-    }
-}
-add_action( 'wp_head', 'rentacar_venezia_v2_fleet_canonical', 5 );
 
 function rentacar_venezia_v2_flush_routes() {
     rentacar_venezia_v2_register_routes();
@@ -332,10 +356,6 @@ function rentacar_venezia_v2_whatsapp_url() {
     return apply_filters( 'rentacar_venezia_v2_whatsapp_url', '' );
 }
 
-function rentacar_venezia_v2_fleet_url() {
-    return home_url( '/fleet/' );
-}
-
 function rentacar_venezia_v2_trip_query() {
     $keys = array( 'pickup_location', 'dropoff_location', 'pickup_date', 'pickup_time', 'return_date', 'return_time' );
     $trip = array();
@@ -348,31 +368,3 @@ function rentacar_venezia_v2_trip_query() {
 
     return $trip;
 }
-
-function rentacar_venezia_v2_vehicle_schema() {
-    if ( ! is_singular( 'cars' ) || ! class_exists( 'Rentacar_Core_Vehicle_Repository' ) ) {
-        return;
-    }
-
-    $vehicle = ( new Rentacar_Core_Vehicle_Repository() )->find( get_queried_object_id() );
-
-    if ( ! $vehicle ) {
-        return;
-    }
-
-    $image = $vehicle->get( 'featured_image_id' ) ? wp_get_attachment_image_url( $vehicle->get( 'featured_image_id' ), 'large' ) : '';
-    $schema = array_filter(
-        array(
-            '@context'    => 'https://schema.org',
-            '@type'       => 'Product',
-            'name'        => $vehicle->get( 'title' ),
-            'url'         => $vehicle->get( 'permalink' ),
-            'image'       => $image,
-            'category'    => 'Car rental vehicle',
-            'description' => __( 'Vehicle shown in the Rent a Car Venezia fleet. Availability is confirmed personally.', 'rentacar-venezia-v2' ),
-        )
-    );
-
-    printf( "<script type=\"application/ld+json\">%s</script>\n", wp_json_encode( $schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) );
-}
-add_action( 'wp_head', 'rentacar_venezia_v2_vehicle_schema', 30 );

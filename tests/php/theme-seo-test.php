@@ -1,0 +1,107 @@
+<?php
+/** Focused PHP 7.4 checks for theme-level SEO helpers. */
+define( 'ABSPATH', __DIR__ . '/' );
+
+$GLOBALS['theme_seo_filters'] = array();
+$GLOBALS['theme_seo_query_vars'] = array( 'rc_fleet' => 1, 'paged' => 0, 'page' => 0 );
+$GLOBALS['theme_seo_page_ids'] = array( 10 );
+$GLOBALS['theme_seo_post_status'] = array( 10 => 'publish', 110 => 'publish' );
+$GLOBALS['theme_seo_attachment_alts'] = array();
+$GLOBALS['theme_seo_is_page'] = false;
+$GLOBALS['theme_seo_is_singular'] = false;
+
+function add_filter( $tag, $callback, $priority = 10, $accepted_args = 1 ) { $GLOBALS['theme_seo_filters'][ $tag ][ $priority ][] = $callback; }
+function add_action( $tag, $callback, $priority = 10, $accepted_args = 1 ) { add_filter( $tag, $callback, $priority, $accepted_args ); }
+function has_filter( $tag ) { return ! empty( $GLOBALS['theme_seo_filters'][ $tag ] ); }
+function apply_filters( $tag, $value ) { $args = func_get_args(); if ( empty( $GLOBALS['theme_seo_filters'][ $tag ] ) ) { return $value; } ksort( $GLOBALS['theme_seo_filters'][ $tag ] ); foreach ( $GLOBALS['theme_seo_filters'][ $tag ] as $callbacks ) { foreach ( $callbacks as $callback ) { $args[1] = call_user_func_array( $callback, array_slice( $args, 1 ) ); } } return $args[1]; }
+function __( $text ) { return $text; }
+function get_posts() { return $GLOBALS['theme_seo_page_ids']; }
+function get_post_status( $id ) { return isset( $GLOBALS['theme_seo_post_status'][ $id ] ) ? $GLOBALS['theme_seo_post_status'][ $id ] : false; }
+function get_permalink( $id ) { return 'https://example.test/fleet-' . $id . '/'; }
+function home_url( $path = '/' ) { return 'https://example.test' . $path; }
+function get_query_var( $key ) { return isset( $GLOBALS['theme_seo_query_vars'][ $key ] ) ? $GLOBALS['theme_seo_query_vars'][ $key ] : ''; }
+function is_page( $id = 0 ) { return $GLOBALS['theme_seo_is_page'] && ( ! $id || 110 === (int) $id ); }
+function is_front_page() { return false; }
+function is_singular() { return $GLOBALS['theme_seo_is_singular']; }
+function is_archive() { return false; }
+function is_home() { return false; }
+function get_queried_object_id() { return 42; }
+function get_post_meta( $id ) { return isset( $GLOBALS['theme_seo_attachment_alts'][ $id ] ) ? $GLOBALS['theme_seo_attachment_alts'][ $id ] : ''; }
+function wp_get_attachment_image_url( $id ) { return $id ? 'https://example.test/media/' . $id . '.webp' : false; }
+function get_post_field( $field, $id ) { return 'post_content' === $field ? 'A visible vehicle description.' : ''; }
+function wp_strip_all_tags( $value ) { return strip_tags( $value ); }
+function wp_trim_words( $text ) { return $text; }
+function trailingslashit( $value ) { return rtrim( $value, '/' ) . '/'; }
+function wp_unslash( $value ) { return $value; }
+function absint( $value ) { return abs( (int) $value ); }
+function esc_url( $value ) { return $value; }
+function wp_json_encode( $value, $flags = 0 ) { return json_encode( $value, $flags ); }
+function get_the_title( $id = 0 ) { return 'Example title ' . $id; }
+function get_post_ancestors() { return array(); }
+function wp_get_document_title() { return 'Archive'; }
+
+require_once dirname( __DIR__, 2 ) . '/plugin/rentacar-core/src/Vehicles/PricingBand.php';
+require_once dirname( __DIR__, 2 ) . '/plugin/rentacar-core/src/Vehicles/PricingBandCollection.php';
+require_once dirname( __DIR__, 2 ) . '/plugin/rentacar-core/src/Vehicles/Vehicle.php';
+require_once dirname( __DIR__, 2 ) . '/plugin/rentacar-core/src/Vehicles/VehicleGallery.php';
+require_once dirname( __DIR__, 2 ) . '/theme/rentacar-venezia-v2/inc/presentation.php';
+require_once dirname( __DIR__, 2 ) . '/theme/rentacar-venezia-v2/inc/seo.php';
+require_once dirname( __DIR__, 2 ) . '/theme/rentacar-venezia-v2/inc/breadcrumbs.php';
+
+if ( ! class_exists( 'Rentacar_Core_Vehicle_Repository' ) ) {
+    class Rentacar_Core_Vehicle_Repository {
+        public function find() { return $GLOBALS['theme_seo_vehicle']; }
+    }
+}
+
+function theme_seo_assert( $condition, $message ) { if ( ! $condition ) { fwrite( STDERR, "FAIL: {$message}\n" ); exit( 1 ); } }
+
+add_filter( 'wpml_object_id', function( $id ) { return 110; } );
+theme_seo_assert( 110 === rentacar_venezia_v2_fleet_page_id(), 'A template-assigned fleet page resolves through WPML.' );
+theme_seo_assert( 'https://example.test/fleet-110/' === rentacar_venezia_v2_fleet_url(), 'The fleet URL uses the current-language page permalink.' );
+
+$_GET = array();
+theme_seo_assert( ! rentacar_venezia_v2_is_filtered_fleet_request(), 'A clean fleet request is not treated as filtered.' );
+theme_seo_assert( 'https://example.test/fleet-110/' === rentacar_venezia_v2_fleet_canonical_url(), 'A clean fleet canonical is self-referencing.' );
+
+$GLOBALS['theme_seo_query_vars']['paged'] = 2;
+theme_seo_assert( 'https://example.test/fleet-110/page/2/' === rentacar_venezia_v2_fleet_canonical_url(), 'A paginated fleet canonical retains its page number.' );
+
+$GLOBALS['theme_seo_query_vars']['paged'] = 0;
+$_GET = array( 'transmission' => 'manual' );
+theme_seo_assert( rentacar_venezia_v2_is_filtered_fleet_request(), 'Recognized fleet filters are detected.' );
+theme_seo_assert( 'https://example.test/fleet-110/' === rentacar_venezia_v2_fleet_canonical_url(), 'A filtered fleet canonical points to the clean catalogue.' );
+$robots = rentacar_venezia_v2_fleet_robots( array() );
+theme_seo_assert( ! empty( $robots['noindex'] ) && ! empty( $robots['follow'] ), 'Filtered fleet requests are noindex,follow.' );
+
+add_filter( 'rentacar_venezia_v2_external_seo_plugin_active', function() { return true; } );
+theme_seo_assert( rentacar_venezia_v2_external_seo_plugin_active(), 'External SEO ownership can be enabled through the integration filter.' );
+$GLOBALS['theme_seo_filters']['rentacar_venezia_v2_external_seo_plugin_active'] = array();
+
+$vehicle = new Rentacar_Core_Vehicle( array(
+    'id'              => 42,
+    'title'           => 'Fiat 500',
+    'permalink'       => 'https://example.test/vehicles/fiat-500/',
+    'vehicle_gallery' => new Rentacar_Core_Vehicle_Gallery( 99 ),
+) );
+$GLOBALS['theme_seo_vehicle'] = $vehicle;
+theme_seo_assert( 'Fiat 500 rental vehicle' === rentacar_venezia_v2_vehicle_image_alt( $vehicle, 99, true ), 'Primary images receive a restrained title-based fallback alt.' );
+theme_seo_assert( '' === rentacar_venezia_v2_vehicle_image_alt( $vehicle, 100, false ), 'Repeated gallery images remain decorative without supplied alt text.' );
+$GLOBALS['theme_seo_attachment_alts'][99] = 'White Fiat 500 parked in Venice';
+theme_seo_assert( 'White Fiat 500 parked in Venice' === rentacar_venezia_v2_vehicle_image_alt( $vehicle, 99, true ), 'Attachment alt text takes precedence.' );
+theme_seo_assert( 'https://example.test/media/99.webp' === rentacar_venezia_v2_primary_image_url( $vehicle ), 'Primary image URLs use WordPress media.' );
+
+$schema = rentacar_venezia_v2_vehicle_schema_data( $vehicle );
+$schema_json = json_encode( $schema );
+theme_seo_assert( false === strpos( $schema_json, 'Offer' ) && false === strpos( $schema_json, 'InStock' ), 'Vehicle schema excludes commercial availability claims.' );
+$GLOBALS['theme_seo_is_singular'] = true;
+add_filter( 'rentacar_venezia_v2_enable_vehicle_schema_fallback', function() { return false; } );
+ob_start();
+rentacar_venezia_v2_vehicle_schema();
+theme_seo_assert( '' === ob_get_clean(), 'Vehicle schema output can be suppressed by filter.' );
+
+$_GET = array();
+$breadcrumb_items = rentacar_venezia_v2_breadcrumb_items();
+theme_seo_assert( 2 === count( $breadcrumb_items ) && 'Fleet' === $breadcrumb_items[1]['label'], 'Fleet breadcrumbs include crawlable Home and current Fleet items.' );
+
+echo "Theme SEO checks passed.\n";

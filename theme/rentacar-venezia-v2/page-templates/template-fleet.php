@@ -53,12 +53,18 @@ if ( 'price-low' === $sort || 'price-high' === $sort ) {
 
 $vehicles_query = new WP_Query( $query_args );
 $mapper = class_exists( 'Rentacar_Core_Vehicle_Mapper' ) ? new Rentacar_Core_Vehicle_Mapper() : null;
+$fleet_page_content = rentacar_venezia_v2_fleet_page_content();
 
 get_header();
 ?>
-<main id="main-content" class="site-main">
+<main id="main-content" class="site-main site-main--fleet">
     <div class="rc-container">
         <header class="page-intro"><p class="eyebrow"><?php esc_html_e( 'Cars', 'rentacar-venezia-v2' ); ?></p><h1><?php esc_html_e( 'Our fleet', 'rentacar-venezia-v2' ); ?></h1><p><?php esc_html_e( 'Explore the vehicle fleet and choose the option that suits your trip.', 'rentacar-venezia-v2' ); ?></p></header>
+        <?php if ( '' !== trim( $fleet_page_content['before'] ) ) : ?>
+            <section class="fleet-page-content fleet-page-content--before">
+                <?php echo $fleet_page_content['before']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- rendered through the_content. ?>
+            </section>
+        <?php endif; ?>
         <?php get_template_part( 'template-parts/global/notice' ); ?>
         <details class="fleet-filters" open>
             <summary><?php esc_html_e( 'Filter and sort cars', 'rentacar-venezia-v2' ); ?></summary>
@@ -85,6 +91,11 @@ get_header();
             )
         );
         ?>
+        <?php if ( '' !== trim( $fleet_page_content['after'] ) ) : ?>
+            <section class="fleet-page-content fleet-page-content--after">
+                <?php echo $fleet_page_content['after']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- rendered through the_content. ?>
+            </section>
+        <?php endif; ?>
     </div>
 </main>
 <?php get_template_part( 'template-parts/enquiry/reservation-modal' ); ?>

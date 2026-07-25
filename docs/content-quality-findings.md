@@ -19,6 +19,10 @@ legacy data was changed.
 - Vehicle titles can contain inconsistent repeated whitespace or `|` spacing.
   The theme only normalizes this for display; stored titles, slugs and URLs are
   untouched.
+- Visible catalogue examples still needing owner-led CMS cleanup include
+  inconsistent title casing (for example “Fiat panda”, “Toyota yaris” and
+  all-caps diesel variants) and the typo “Hatcback” in the Fiat Tipo title.
+  The theme deliberately does not guess corrected model names.
 - A vehicle can lack a featured image, gallery, optional specification or a
   trustworthy complete price band. The UI respectively uses a gallery image,
   a neutral image state, omission, or “Price to be confirmed”; it never
@@ -27,6 +31,15 @@ legacy data was changed.
   theme does not label a single band as “from” when more bands exist.
 - Generic page and post content is rendered from the editor. Empty vehicle
   descriptions are omitted rather than replaced with generated copy.
+
+## Vehicle-image presentation hook
+
+- All card images share one fixed, uncropped contain stage. When an individual
+  source image has excessive internal whitespace, a child theme may use the
+  rentacar_venezia_v2_vehicle_image_presentation_class filter to return one
+  safe presentation class, such as vehicle-card__image--compact or
+  vehicle-card__image--raised. No post IDs, media files or database values
+  are hard-coded by the theme.
 
 ## Translation follow-up
 

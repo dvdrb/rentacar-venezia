@@ -19,6 +19,8 @@ final class Rentacar_Core_Business_Notification {
             'Message: ' . ( $request->get( 'message' ) ? $request->get( 'message' ) : '—' ),
         );
 
+        $lines = array_merge( $lines, Rentacar_Core_Reservation_Extras::notification_lines( (array) $request->get( 'extras', array() ) ) );
+
         return wp_mail( $recipient, $subject, implode( "\n", $lines ) );
     }
 }

@@ -25,10 +25,11 @@ final class Rentacar_Core_Reservation_Controller {
         }
 
         $vehicle = ( new Rentacar_Core_Vehicle_Repository() )->find( $input['vehicle_id'] );
-        $estimate = ( new Rentacar_Core_Estimate_Service() )->estimate( $input['vehicle_id'], $input['pickup_date'], $input['pickup_time'], $input['return_date'], $input['return_time'] );
+        $estimate = ( new Rentacar_Core_Estimate_Service() )->estimate( $input['vehicle_id'], $input['pickup_date'], $input['pickup_time'], $input['return_date'], $input['return_time'], $input['extras'] );
         $input['reference'] = Rentacar_Core_Reservation_Reference::generate();
         $input['vehicle_title'] = $vehicle ? $vehicle->get( 'title' ) : '';
         $input['estimate_summary'] = self::estimate_summary( $estimate );
+        $input['extras'] = $estimate ? $estimate->get( 'extras', array() ) : array();
         $input['submitted_at'] = wp_date( 'c' );
         $request = new Rentacar_Core_Reservation_Request( $input );
 
@@ -68,6 +69,7 @@ final class Rentacar_Core_Reservation_Controller {
             'full_name' => sanitize_text_field( $raw['full_name'] ?? '' ), 'phone' => sanitize_text_field( $raw['phone'] ?? '' ), 'email' => sanitize_email( $raw['email'] ?? '' ),
             'similar_vehicle' => ! empty( $raw['similar_vehicle'] ), 'message' => sanitize_textarea_field( $raw['message'] ?? '' ), 'privacy' => ! empty( $raw['privacy'] ),
             'website' => sanitize_text_field( $raw['website'] ?? '' ), 'started_at' => absint( $raw['started_at'] ?? 0 ),
+            'extras' => self::extra_keys( $raw['extras'] ?? array() ),
             'rentacar_ajax' => ! empty( $raw['rentacar_ajax'] ), 'rentacar_reservation_nonce' => sanitize_text_field( $raw['rentacar_reservation_nonce'] ?? '' ),
             'language' => sanitize_key( apply_filters( 'wpml_current_language', get_locale() ) ),
         );
@@ -77,7 +79,22 @@ final class Rentacar_Core_Reservation_Controller {
         if ( ! $estimate || ! $estimate->get( 'available' ) ) {
             return __( 'Price to be confirmed', 'rentacar-core' );
         }
-        return sprintf( '€%1$s (%2$s days; base vehicle rate only; indicative)', number_format_i18n( $estimate->get( 'base_total' ), 2 ), absint( $estimate->get( 'days' ) ) );
+        return sprintf( '€%1$s (%2$s days; selected extras included where priced; indicative)', number_format_i18n( $estimate->get( 'estimate_total' ), 2 ), absint( $estimate->get( 'days' ) ) );
+    }
+
+    private static function extra_keys( $extras ) {
+        if ( ! is_array( $extras ) ) {
+            return array();
+        }
+
+        $keys = array();
+        foreach ( $extras as $extra ) {
+            if ( is_scalar( $extra ) ) {
+                $keys[] = sanitize_key( $extra );
+            }
+        }
+
+        return array_values( array_unique( array_filter( $keys ) ) );
     }
 
     private static function wants_json( array $input ) { return ! empty( $input['rentacar_ajax'] ); }
