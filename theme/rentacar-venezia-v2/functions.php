@@ -5,6 +5,7 @@ require_once get_template_directory() . '/inc/presentation.php';
 require_once get_template_directory() . '/inc/interface-translations.php';
 require_once get_template_directory() . '/inc/seo.php';
 require_once get_template_directory() . '/inc/breadcrumbs.php';
+require_once get_template_directory() . '/inc/locations.php';
 
 function rentacar_venezia_v2_setup() {
     load_theme_textdomain( 'rentacar-venezia-v2', get_template_directory() . '/languages' );
@@ -32,6 +33,29 @@ function rentacar_venezia_v2_setup() {
     );
 }
 add_action( 'after_setup_theme', 'rentacar_venezia_v2_setup' );
+
+function rentacar_venezia_v2_core_reservation_locations( $locations ) {
+    return wp_list_pluck( rentacar_venezia_v2_pickup_locations(), 'value' );
+}
+add_filter( 'rentacar_core_reservation_locations', 'rentacar_venezia_v2_core_reservation_locations' );
+
+function rentacar_venezia_v2_register_home_patterns() {
+    if ( ! function_exists( 'register_block_pattern' ) ) {
+        return;
+    }
+
+    register_block_pattern_category( 'rentacar-venezia', array( 'label' => __( 'Rent a Car Venezia', 'rentacar-venezia-v2' ) ) );
+    $patterns = array(
+        'airport-seo' => array( 'title' => __( 'Airport SEO section', 'rentacar-venezia-v2' ), 'content' => '<!-- wp:group {"className":"homepage-content__airport"} --><div class="wp-block-group homepage-content__airport"><!-- wp:paragraph {"className":"eyebrow"} --><p class="eyebrow">' . esc_html__( 'Local information', 'rentacar-venezia-v2' ) . '</p><!-- /wp:paragraph --><!-- wp:heading {"level":2} --><h2>' . esc_html__( 'Add verified airport information', 'rentacar-venezia-v2' ) . '</h2><!-- /wp:heading --><!-- wp:paragraph --><p>' . esc_html__( 'Add verified pickup information, local context and helpful internal links here.', 'rentacar-venezia-v2' ) . '</p><!-- /wp:paragraph --><!-- wp:paragraph --><p>' . esc_html__( 'Use this area only for business-approved details.', 'rentacar-venezia-v2' ) . '</p><!-- /wp:paragraph --></div><!-- /wp:group -->' ),
+        'customer-reviews' => array( 'title' => __( 'Customer reviews section', 'rentacar-venezia-v2' ), 'content' => '<!-- wp:group {"className":"home-review-grid"} --><div class="wp-block-group home-review-grid"><!-- wp:heading {"level":2} --><h2>' . esc_html__( 'Verified customer reviews', 'rentacar-venezia-v2' ) . '</h2><!-- /wp:heading --><!-- wp:paragraph --><p>' . esc_html__( 'Add only verified reviews with source, date and public reviewer name or initials.', 'rentacar-venezia-v2' ) . '</p><!-- /wp:paragraph --></div><!-- /wp:group -->' ),
+        'faq' => array( 'title' => __( 'Homepage FAQ section', 'rentacar-venezia-v2' ), 'content' => '<!-- wp:group {"className":"home-faq"} --><div class="wp-block-group home-faq"><!-- wp:heading {"level":2} --><h2>' . esc_html__( 'Frequently asked questions', 'rentacar-venezia-v2' ) . '</h2><!-- /wp:heading --><!-- wp:details --><details class="wp-block-details"><summary>' . esc_html__( 'Can I send a request without paying?', 'rentacar-venezia-v2' ) . '</summary><!-- wp:paragraph --><p>' . esc_html__( 'Add verified business information here.', 'rentacar-venezia-v2' ) . '</p><!-- /wp:paragraph --></details><!-- /wp:details --></div><!-- /wp:group -->' ),
+        'local-callout' => array( 'title' => __( 'Local information callout', 'rentacar-venezia-v2' ), 'content' => '<!-- wp:group {"className":"local-information-callout"} --><div class="wp-block-group local-information-callout"><!-- wp:heading {"level":2} --><h2>' . esc_html__( 'Local information', 'rentacar-venezia-v2' ) . '</h2><!-- /wp:heading --><!-- wp:paragraph --><p>' . esc_html__( 'Add verified local service information and a useful internal link.', 'rentacar-venezia-v2' ) . '</p><!-- /wp:paragraph --></div><!-- /wp:group -->' ),
+    );
+    foreach ( $patterns as $slug => $pattern ) {
+        register_block_pattern( 'rentacar-venezia/' . $slug, array_merge( $pattern, array( 'categories' => array( 'rentacar-venezia' ) ) ) );
+    }
+}
+add_action( 'init', 'rentacar_venezia_v2_register_home_patterns' );
 
 /**
  * Prefer the WordPress-managed logo so it remains language- and

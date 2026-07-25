@@ -405,6 +405,76 @@ function rentacar_venezia_v2_interface_translation_map() {
         ),
     );
 
+    $homepage_translations = array(
+        'it' => array(
+            'Local car rental in Venice and Treviso' => 'Noleggio auto locale a Venezia e Treviso',
+            'Car rental in Venice and Treviso, with personal confirmation' => 'Noleggio auto a Venezia e Treviso, con conferma personale',
+            'Choose your preferred vehicle and send your dates without making a payment. Our local team will confirm availability, final price and rental conditions.' => 'Scegli il veicolo che preferisci e invia le date senza effettuare alcun pagamento. Il nostro team locale confermerà disponibilità, prezzo finale e condizioni di noleggio.',
+            'Pickup locations' => 'Luoghi di ritiro',
+            'Venice Marco Polo Airport' => 'Aeroporto di Venezia Marco Polo',
+            'Treviso Airport' => 'Aeroporto di Treviso',
+            'Treviso office' => 'Ufficio di Treviso',
+            'Plan your trip' => 'Pianifica il tuo viaggio',
+            'Quick pickup selection' => 'Selezione rapida del ritiro',
+            'More trip details' => 'Altri dettagli del viaggio',
+            'Return to a different location' => 'Riconsegna in un luogo diverso',
+            'See suitable cars' => 'Vedi le auto adatte',
+            'The dates help us prepare your request. Availability is confirmed personally.' => 'Le date ci aiutano a preparare la tua richiesta. La disponibilità viene confermata personalmente.',
+            'Where are you arriving?' => 'Dove arrivi?',
+            'Choose the pickup point that suits your trip. We confirm the practical details personally before your reservation is final.' => 'Scegli il punto di ritiro più adatto al tuo viaggio. Confermiamo personalmente i dettagli pratici prima che la prenotazione sia definitiva.',
+            'Meet us close to Venice Marco Polo Airport and begin your journey with a locally confirmed pickup.' => 'Incontraci vicino all’Aeroporto di Venezia Marco Polo e inizia il viaggio con un ritiro confermato dal team locale.',
+            'A practical pickup point for Treviso Airport arrivals and trips across Veneto.' => 'Un pratico punto di ritiro per gli arrivi all’Aeroporto di Treviso e i viaggi in Veneto.',
+            'Arrange collection from our Treviso office with clear timing confirmed by our team.' => 'Organizza il ritiro presso il nostro ufficio di Treviso con orari chiari confermati dal nostro team.',
+            'Choose %s pickup' => 'Scegli il ritiro a %s',
+            'Local service' => 'Servizio locale',
+            'Choose this pickup' => 'Scegli questo ritiro',
+            'Why choose us' => 'Perché sceglierci',
+            'Straightforward rental support from a local team.' => 'Un supporto al noleggio semplice, da un team locale.',
+            'Speak with a local team that understands Venice and Treviso pickup needs.' => 'Parla con un team locale che conosce le esigenze di ritiro a Venezia e Treviso.',
+            'No payment to send a request' => 'Nessun pagamento per inviare una richiesta',
+            'Send your dates and preferred car first; the team confirms the details with you.' => 'Invia prima le date e l’auto preferita; il team confermerà i dettagli con te.',
+            'Venice and Treviso pickup' => 'Ritiro a Venezia e Treviso',
+            'Choose a practical arrival point and receive pickup instructions personally.' => 'Scegli un punto di arrivo pratico e ricevi personalmente le istruzioni per il ritiro.',
+            'Personal confirmation' => 'Conferma personale',
+            'Availability, final price and rental conditions are checked before confirmation.' => 'Disponibilità, prezzo finale e condizioni di noleggio vengono verificati prima della conferma.',
+            'Ready when you are' => 'Quando sei pronto',
+            'Ready to choose your car?' => 'Pronto a scegliere la tua auto?',
+            'Send your dates and preferred vehicle. We will confirm the details personally.' => 'Invia le date e il veicolo preferito. Confermeremo personalmente i dettagli.',
+            'Submitting a request does not immediately confirm the reservation.' => 'L’invio di una richiesta non conferma immediatamente la prenotazione.',
+        ),
+        'ro' => array(
+            'Local car rental in Venice and Treviso' => 'Închirieri auto locale în Veneția și Treviso',
+            'Car rental in Venice and Treviso, with personal confirmation' => 'Închirieri auto în Veneția și Treviso, cu confirmare personală',
+            'Choose your preferred vehicle and send your dates without making a payment. Our local team will confirm availability, final price and rental conditions.' => 'Alegeți vehiculul preferat și trimiteți datele fără plată. Echipa noastră locală va confirma disponibilitatea, prețul final și condițiile de închiriere.',
+            'Pickup locations' => 'Locuri de preluare', 'Venice Marco Polo Airport' => 'Aeroportul Veneția Marco Polo', 'Treviso Airport' => 'Aeroportul Treviso', 'Treviso office' => 'Biroul Treviso',
+            'Plan your trip' => 'Planificați călătoria', 'Quick pickup selection' => 'Selectare rapidă a preluării', 'More trip details' => 'Mai multe detalii despre călătorie', 'Return to a different location' => 'Returnare într-o altă locație', 'See suitable cars' => 'Vedeți mașinile potrivite',
+            'The dates help us prepare your request. Availability is confirmed personally.' => 'Datele ne ajută să pregătim solicitarea. Disponibilitatea este confirmată personal.',
+            'Where are you arriving?' => 'Unde sosiți?', 'Choose the pickup point that suits your trip. We confirm the practical details personally before your reservation is final.' => 'Alegeți punctul de preluare potrivit călătoriei. Confirmăm personal detaliile practice înainte ca rezervarea să fie finală.',
+            'Meet us close to Venice Marco Polo Airport and begin your journey with a locally confirmed pickup.' => 'Întâlniți-ne aproape de Aeroportul Veneția Marco Polo și începeți călătoria cu o preluare confirmată local.', 'A practical pickup point for Treviso Airport arrivals and trips across Veneto.' => 'Un punct practic de preluare pentru sosirile la Aeroportul Treviso și călătoriile prin Veneto.', 'Arrange collection from our Treviso office with clear timing confirmed by our team.' => 'Organizați preluarea de la biroul nostru din Treviso, cu orarul confirmat clar de echipa noastră.',
+            'Choose %s pickup' => 'Alegeți preluarea din %s', 'Local service' => 'Serviciu local', 'Choose this pickup' => 'Alegeți această preluare', 'Why choose us' => 'De ce să ne alegeți', 'Straightforward rental support from a local team.' => 'Asistență simplă pentru închiriere, de la o echipă locală.',
+            'Speak with a local team that understands Venice and Treviso pickup needs.' => 'Discutați cu o echipă locală care înțelege nevoile de preluare din Veneția și Treviso.', 'No payment to send a request' => 'Fără plată pentru a trimite o solicitare', 'Send your dates and preferred car first; the team confirms the details with you.' => 'Trimiteți mai întâi datele și mașina preferată; echipa confirmă detaliile cu dumneavoastră.',
+            'Venice and Treviso pickup' => 'Preluare în Veneția și Treviso', 'Choose a practical arrival point and receive pickup instructions personally.' => 'Alegeți un punct de sosire practic și primiți personal instrucțiunile de preluare.', 'Personal confirmation' => 'Confirmare personală', 'Availability, final price and rental conditions are checked before confirmation.' => 'Disponibilitatea, prețul final și condițiile de închiriere sunt verificate înainte de confirmare.',
+            'Ready when you are' => 'Când sunteți gata', 'Ready to choose your car?' => 'Sunteți gata să alegeți mașina?', 'Send your dates and preferred vehicle. We will confirm the details personally.' => 'Trimiteți datele și vehiculul preferat. Vom confirma personal detaliile.', 'Submitting a request does not immediately confirm the reservation.' => 'Trimiterea unei solicitări nu confirmă imediat rezervarea.',
+        ),
+        'ru' => array(
+            'Local car rental in Venice and Treviso' => 'Местный прокат автомобилей в Венеции и Тревизо', 'Car rental in Venice and Treviso, with personal confirmation' => 'Прокат автомобилей в Венеции и Тревизо с личным подтверждением',
+            'Choose your preferred vehicle and send your dates without making a payment. Our local team will confirm availability, final price and rental conditions.' => 'Выберите автомобиль и отправьте даты без оплаты. Наша местная команда подтвердит доступность, окончательную цену и условия аренды.',
+            'Pickup locations' => 'Места получения', 'Venice Marco Polo Airport' => 'Аэропорт Венеция Марко Поло', 'Treviso Airport' => 'Аэропорт Тревизо', 'Treviso office' => 'Офис в Тревизо',
+            'Plan your trip' => 'Спланируйте поездку', 'Quick pickup selection' => 'Быстрый выбор получения', 'More trip details' => 'Больше деталей поездки', 'Return to a different location' => 'Возврат в другом месте', 'See suitable cars' => 'Посмотреть подходящие автомобили',
+            'The dates help us prepare your request. Availability is confirmed personally.' => 'Даты помогают нам подготовить ваш запрос. Доступность подтверждается лично.',
+            'Where are you arriving?' => 'Куда вы прибываете?', 'Choose the pickup point that suits your trip. We confirm the practical details personally before your reservation is final.' => 'Выберите подходящий пункт получения. Мы лично подтвердим практические детали до окончательного подтверждения бронирования.',
+            'Meet us close to Venice Marco Polo Airport and begin your journey with a locally confirmed pickup.' => 'Встретьтесь с нами рядом с аэропортом Венеция Марко Поло и начните поездку с получения, подтверждённого местной командой.', 'A practical pickup point for Treviso Airport arrivals and trips across Veneto.' => 'Практичный пункт получения для прибывающих в аэропорт Тревизо и поездок по Венето.', 'Arrange collection from our Treviso office with clear timing confirmed by our team.' => 'Организуйте получение в нашем офисе в Тревизо с точным временем, подтверждённым нашей командой.',
+            'Choose %s pickup' => 'Выберите получение в %s', 'Local service' => 'Местный сервис', 'Choose this pickup' => 'Выбрать это место получения', 'Why choose us' => 'Почему выбирают нас', 'Straightforward rental support from a local team.' => 'Простая поддержка аренды от местной команды.',
+            'Speak with a local team that understands Venice and Treviso pickup needs.' => 'Общайтесь с местной командой, которая понимает особенности получения в Венеции и Тревизо.', 'No payment to send a request' => 'Без оплаты за отправку запроса', 'Send your dates and preferred car first; the team confirms the details with you.' => 'Сначала отправьте даты и выбранный автомобиль; команда подтвердит детали с вами.',
+            'Venice and Treviso pickup' => 'Получение в Венеции и Тревизо', 'Choose a practical arrival point and receive pickup instructions personally.' => 'Выберите удобное место прибытия и получите инструкции по получению лично.', 'Personal confirmation' => 'Личное подтверждение', 'Availability, final price and rental conditions are checked before confirmation.' => 'Доступность, окончательная цена и условия аренды проверяются до подтверждения.',
+            'Ready when you are' => 'Когда вы готовы', 'Ready to choose your car?' => 'Готовы выбрать автомобиль?', 'Send your dates and preferred vehicle. We will confirm the details personally.' => 'Отправьте даты и выбранный автомобиль. Мы лично подтвердим детали.', 'Submitting a request does not immediately confirm the reservation.' => 'Отправка запроса не подтверждает бронирование сразу.',
+        ),
+    );
+
+    foreach ( $homepage_translations as $language => $strings ) {
+        $translations[ $language ] = array_merge( $translations[ $language ], $strings );
+    }
+
     return $translations;
 }
 

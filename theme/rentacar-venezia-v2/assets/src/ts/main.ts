@@ -95,6 +95,52 @@ document.addEventListener('pointerdown', (event) => {
   }
 });
 
+const tripForm = document.querySelector<HTMLFormElement>('[data-trip-form]');
+
+if (tripForm) {
+  const pickup = tripForm.elements.namedItem('pickup_location') as HTMLSelectElement | null;
+  const dropoff = tripForm.elements.namedItem('dropoff_location') as HTMLSelectElement | null;
+  const returnDifferent = tripForm.querySelector<HTMLInputElement>('[data-return-different]');
+  const returnLocation = tripForm.querySelector<HTMLElement>('[data-return-location]');
+  const quickLocations = Array.from(tripForm.querySelectorAll<HTMLButtonElement>('[data-trip-location]'));
+
+  const syncTripLocations = (): void => {
+    const different = Boolean(returnDifferent?.checked);
+    if (returnLocation) returnLocation.hidden = !different;
+    if (!different && pickup && dropoff) dropoff.value = pickup.value;
+
+    quickLocations.forEach((button) => {
+      button.setAttribute('aria-pressed', String(button.dataset.tripLocation === pickup?.value));
+    });
+  };
+
+  pickup?.addEventListener('change', syncTripLocations);
+  returnDifferent?.addEventListener('change', syncTripLocations);
+  quickLocations.forEach((button) => {
+    button.addEventListener('click', () => {
+      if (pickup) pickup.value = button.dataset.tripLocation || pickup.value;
+      syncTripLocations();
+    });
+  });
+  syncTripLocations();
+}
+
+const revealItems = Array.from(document.querySelectorAll<HTMLElement>('.reveal-on-scroll'));
+if (revealItems.length) {
+  if (!('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    revealItems.forEach((item) => item.classList.add('is-visible'));
+  } else {
+    const observer = new IntersectionObserver((entries, currentObserver) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        (entry.target as HTMLElement).classList.add('is-visible');
+        currentObserver.unobserve(entry.target);
+      });
+    }, { threshold: 0.14 });
+    revealItems.forEach((item) => observer.observe(item));
+  }
+}
+
 const modal = document.querySelector<HTMLElement>('[data-reservation-modal]');
 const form = document.querySelector<HTMLFormElement>('[data-reservation-form]');
 const formWrap = document.querySelector<HTMLElement>('[data-reservation-form-wrap]');
