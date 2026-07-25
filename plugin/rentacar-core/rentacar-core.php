@@ -36,6 +36,7 @@ require_once RENTACAR_CORE_PATH . 'src/Enquiries/ReservationRateLimiter.php';
 require_once RENTACAR_CORE_PATH . 'src/Enquiries/ReservationController.php';
 
 add_action( 'init', array( 'Rentacar_Core_Cars_Post_Type', 'register_when_legacy_absent' ), 9 );
+add_filter( 'pll_get_post_types', function( $post_types ) { $post_types['cars'] = 'cars'; return $post_types; } );
 add_action( 'admin_init', array( 'Rentacar_Core_Marketing_Claim_Registry', 'register_setting' ) );
 add_action( 'admin_init', array( 'Rentacar_Core_Reservation_Extra_Settings', 'register_setting' ) );
 add_action( 'admin_menu', array( 'Rentacar_Core_Reservation_Extra_Settings', 'register_page' ) );
