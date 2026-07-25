@@ -19,3 +19,13 @@ add_filter(
     10,
     2
 );
+
+/* A non-routable recipient makes local request-path tests safe and explicit. */
+add_filter(
+    'rentacar_core_reservation_recipient',
+    static function ( $recipient ) {
+        $host = (string) wp_parse_url( home_url( '/' ), PHP_URL_HOST );
+
+        return ( false !== strpos( $host, '.local' ) || false !== strpos( $host, 'rentacar-venezia-local' ) ) ? 'local-reservation@example.invalid' : $recipient;
+    }
+);

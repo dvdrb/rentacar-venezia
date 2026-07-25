@@ -8,10 +8,15 @@
 
 define( 'ABSPATH', __DIR__ . '/' );
 
+function get_option( $key ) {
+    return '';
+}
+
 require_once dirname( __DIR__, 2 ) . '/plugin/rentacar-core/src/Vehicles/PricingBand.php';
 require_once dirname( __DIR__, 2 ) . '/plugin/rentacar-core/src/Vehicles/PricingBandCollection.php';
 require_once dirname( __DIR__, 2 ) . '/plugin/rentacar-core/src/Vehicles/Vehicle.php';
 require_once dirname( __DIR__, 2 ) . '/plugin/rentacar-core/src/Vehicles/VehicleGallery.php';
+require_once dirname( __DIR__, 2 ) . '/plugin/rentacar-core/src/Pricing/RentalDurationCalculator.php';
 
 function rentacar_test_assert( $condition, $message ) {
     if ( ! $condition ) {
@@ -38,5 +43,12 @@ rentacar_test_assert( null === $vehicle->get( 'unknown' ), 'Vehicle has safe mis
 $gallery = new Rentacar_Core_Vehicle_Gallery( 99, array( 0, 99, 100, 100 ) );
 rentacar_test_assert( array( 99, 100 ) === $gallery->all_image_ids(), 'Gallery handles a featured image and duplicate/empty images.' );
 rentacar_test_assert( array() === ( new Rentacar_Core_Vehicle_Gallery( 0 ) )->all_image_ids(), 'Gallery handles missing images.' );
+
+$duration = new Rentacar_Core_Rental_Duration_Calculator();
+rentacar_test_assert( 2 === $duration->calculate( '2026-08-10', '10:00', '2026-08-10', '14:00' ), 'Later same-day returns follow the established chargeable-day rule.' );
+rentacar_test_assert( 2 === $duration->calculate( '2026-08-10', '10:00', '2026-08-12', '10:00' ), 'Calendar duration preserves the established day calculation.' );
+rentacar_test_assert( 3 === $duration->calculate( '2026-08-10', '10:00', '2026-08-12', '11:00' ), 'Later return times add a chargeable day.' );
+rentacar_test_assert( null === $duration->calculate( '2026-08-12', '10:00', '2026-08-10', '10:00' ), 'Returns before pickup are rejected.' );
+rentacar_test_assert( null === $duration->calculate( 'bad-date', '10:00', '2026-08-12', '10:00' ), 'Malformed dates are rejected.' );
 
 echo "Vehicle domain checks passed.\n";

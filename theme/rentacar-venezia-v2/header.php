@@ -11,19 +11,8 @@
 <header class="site-header" data-site-header>
     <div class="site-header__inner rc-container">
         <div class="site-branding">
-            <?php if ( has_custom_logo() ) : ?>
-                <?php the_custom_logo(); ?>
-            <?php else : ?>
-                <a class="site-brand" href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home" aria-label="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>">
-                    <span class="site-brand__main">RENT A CAR</span>
-                    <span class="site-brand__sub">VENEZIA</span>
-                </a>
-            <?php endif; ?>
+            <?php rentacar_venezia_v2_brand_mark(); ?>
         </div>
-        <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" data-menu-toggle>
-            <span class="screen-reader-text"><?php esc_html_e( 'Toggle navigation', 'rentacar-venezia-v2' ); ?></span>
-            <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
-        </button>
         <nav id="primary-navigation" class="primary-navigation" aria-label="<?php esc_attr_e( 'Primary navigation', 'rentacar-venezia-v2' ); ?>" data-primary-navigation>
             <?php
             wp_nav_menu(
@@ -35,20 +24,17 @@
                 )
             );
             ?>
-            <?php $languages = rentacar_venezia_v2_language_links(); ?>
-            <?php if ( $languages ) : ?>
-                <ul class="language-switcher" aria-label="<?php esc_attr_e( 'Language selector', 'rentacar-venezia-v2' ); ?>">
-                    <?php foreach ( $languages as $language ) : ?>
-                        <li>
-                            <a href="<?php echo esc_url( $language['url'] ); ?>" lang="<?php echo esc_attr( $language['language_code'] ); ?>"<?php echo ! empty( $language['active'] ) ? ' aria-current="page"' : ''; ?>><?php echo esc_html( strtoupper( $language['language_code'] ) ); ?></a>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
-            <?php endif; ?>
+        </nav>
+        <div class="site-header__actions">
+            <?php get_template_part( 'template-parts/global/language-switcher' ); ?>
             <?php $whatsapp_url = rentacar_venezia_v2_whatsapp_url(); ?>
             <?php if ( $whatsapp_url ) : ?>
                 <a class="button button--whatsapp" href="<?php echo esc_url( $whatsapp_url ); ?>"><?php esc_html_e( 'WhatsApp', 'rentacar-venezia-v2' ); ?></a>
             <?php endif; ?>
-        </nav>
+            <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" data-menu-toggle>
+                <span class="screen-reader-text"><?php esc_html_e( 'Toggle navigation', 'rentacar-venezia-v2' ); ?></span>
+                <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
+            </button>
+        </div>
     </div>
 </header>
