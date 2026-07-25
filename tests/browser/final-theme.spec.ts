@@ -32,6 +32,50 @@ test.describe('final theme experience', () => {
     await expect(page.locator('.trip-form select[name="dropoff_location"]')).toHaveCount(1);
   });
 
+  test('renders three precise, equal-width customer assurances below the trip filter', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto('/');
+    const strip = page.locator('.trust-strip');
+    const items = strip.locator('.trust-strip__item');
+
+    await expect(items).toHaveCount(3);
+    await expect(strip).not.toContainText('Car rental in Venice and Treviso');
+    await expect(items.nth(0)).toContainText('Pickup at Venice Marco Polo and Treviso Airport');
+    await expect(items.nth(1)).toContainText('No payment required to send a request');
+    await expect(items.nth(2)).toContainText('Availability, final price and rental conditions confirmed personally');
+    await expect(strip.locator('.trust-strip__icon[aria-hidden="true"]')).toHaveCount(3);
+    await expect(strip.locator('a, button')).toHaveCount(0);
+    await expect(page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).resolves.toBeTruthy();
+
+    const layout = await items.evaluateAll((elements) => elements.map((element) => {
+      const styles = getComputedStyle(element);
+      const rect = element.getBoundingClientRect();
+      return { width: rect.width, top: rect.top, borderLeft: styles.borderLeftWidth };
+    }));
+    expect(Math.max(...layout.map((item) => item.width)) - Math.min(...layout.map((item) => item.width))).toBeLessThanOrEqual(1);
+    expect(layout.slice(1).every((item) => item.borderLeft !== '0px')).toBe(true);
+  });
+
+  test('stacks the three trust assurances without clipping on narrow screens', async ({ page }) => {
+    for (const width of [320, 390]) {
+      await page.setViewportSize({ width, height: 780 });
+      await page.goto('/');
+      const items = page.locator('.trust-strip__item');
+      await expect(items).toHaveCount(3);
+      await expect(page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).resolves.toBeTruthy();
+
+      const rows = await items.evaluateAll((elements) => elements.map((element) => {
+        const rect = element.getBoundingClientRect();
+        return { top: rect.top, width: rect.width, height: rect.height, text: element.textContent || '' };
+      }));
+      expect(rows.every((row) => row.width <= width && row.height > 0)).toBe(true);
+      expect(rows[0].top).toBeLessThan(rows[1].top);
+      expect(rows[1].top).toBeLessThan(rows[2].top);
+      expect(rows[0].text).toContain('Venice Marco Polo');
+      expect(rows[1].text).toContain('No payment required to send a request');
+    }
+  });
+
   test('opens a selected-vehicle modal and restores focus after Escape', async ({ page }) => {
     await page.goto('/');
     const trigger = page.locator('[data-reservation-trigger]').first();
@@ -44,6 +88,16 @@ test.describe('final theme experience', () => {
     await page.keyboard.press('Escape');
     await expect(page.locator('[data-reservation-modal]')).toBeHidden();
     await expect(trigger).toBeFocused();
+  });
+
+  test('renders only configured reservation extras with stable submitted keys', async ({ page }) => {
+    await page.goto('/');
+    await page.locator('[data-reservation-trigger]').first().click();
+    const extras = page.locator('[data-reservation-form] input[name="extras[]"]');
+    await expect(extras).toHaveCount(2);
+    await expect(extras.nth(0)).toHaveAttribute('value', 'child_seat');
+    await expect(extras.nth(1)).toHaveAttribute('value', 'additional_driver');
+    await expect(page.locator('[data-reservation-form] input[value="gps"], [data-reservation-form] input[value="internet_sim"]')).toHaveCount(0);
   });
 
   test('presents accessible validation errors without a network request', async ({ page }) => {
@@ -124,6 +178,13 @@ test.describe('final theme experience', () => {
     await switcher.locator('[data-language-trigger]').click();
     const languages = await switcher.locator('.language-switcher__link').evaluateAll((links) => links.map((link) => ({ href: link.getAttribute('href'), lang: link.getAttribute('lang') })));
 
+    const trustCopy: Record<string, string[]> = {
+      en: ['Pickup at Venice Marco Polo and Treviso Airport', 'No payment required to send a request', 'Availability, final price and rental conditions confirmed personally'],
+      it: ['Ritiro agli aeroporti di Venezia e Treviso', 'Nessun pagamento richiesto per inviare la richiesta', 'Disponibilità, prezzo finale e condizioni confermati personalmente'],
+      ro: ['Preluare la aeroporturile din Veneția și Treviso', 'Nu este necesară nicio plată pentru a trimite o solicitare', 'Disponibilitatea, prețul final și condițiile de închiriere sunt confirmate personal'],
+      ru: ['Получение в аэропортах Венеции и Тревизо', 'Для отправки запроса оплата не требуется', 'Доступность, окончательная цена и условия аренды подтверждаются лично'],
+    };
+
     for (const language of languages) {
       if (!language.href || !language.lang) continue;
       await page.goto(language.href);
@@ -131,6 +192,12 @@ test.describe('final theme experience', () => {
       await expect(page.locator('h1')).toHaveCount(1);
       const fleetLink = page.locator('a[href]').filter({ hasText: /View all cars|Vedi tutte|Vezi toate|Все/i }).first();
       await expect(fleetLink).toHaveCount(1);
+      const copy = trustCopy[language.lang.toLowerCase().slice(0, 2)];
+      if (copy) {
+        const strip = page.locator('.trust-strip');
+        await expect(strip.locator('.trust-strip__item')).toHaveCount(3);
+        for (const line of copy) await expect(strip).toContainText(line);
+      }
     }
   });
 

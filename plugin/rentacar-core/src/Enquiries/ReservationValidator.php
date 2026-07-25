@@ -38,6 +38,10 @@ final class Rentacar_Core_Reservation_Validator {
             $errors->add( 'privacy', __( 'Please confirm the privacy notice.', 'rentacar-core' ) );
         }
 
+        foreach ( Rentacar_Core_Reservation_Extras::validate_selection( (array) ( $input['extras'] ?? array() ) ) as $message ) {
+            $errors->add( 'extras', $message );
+        }
+
         if ( ! empty( $input['website'] ) ) {
             $errors->add( 'website', __( 'Unable to send this request.', 'rentacar-core' ) );
         }

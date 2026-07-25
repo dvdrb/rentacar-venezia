@@ -54,7 +54,15 @@ get_header();
             <p class="trip-filter-section__help"><?php esc_html_e( 'The dates help us prepare your request. Availability is confirmed personally.', 'rentacar-venezia-v2' ); ?></p>
         </div>
     </section>
-    <section class="trust-strip" aria-label="<?php esc_attr_e( 'Service highlights', 'rentacar-venezia-v2' ); ?>"><div class="rc-container trust-strip__items"><p class="trust-strip__item"><span aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M3 12h14l-2-5H5l-2 5Zm2 0v3m10-3v3M6 15h.01M14 15h.01"></path></svg></span><?php esc_html_e( 'Car rental in Venice and Treviso', 'rentacar-venezia-v2' ); ?></p><p class="trust-strip__item"><span aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M10 18s6-5.1 6-10a6 6 0 1 0-12 0c0 4.9 6 10 6 10Z"></path><circle cx="10" cy="8" r="2"></circle></svg></span><?php esc_html_e( 'Venice Marco Polo Airport pickup', 'rentacar-venezia-v2' ); ?></p><p class="trust-strip__item"><span aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M3 10h14M10 3v14M7 16h6"></path></svg></span><?php esc_html_e( 'Treviso Airport arrivals', 'rentacar-venezia-v2' ); ?></p><p class="trust-strip__item"><span aria-hidden="true"><svg viewBox="0 0 20 20"><path d="m4 10 3.5 3.5L16 5"></path></svg></span><?php esc_html_e( 'Availability and final price confirmed personally', 'rentacar-venezia-v2' ); ?></p></div></section>
+    <section class="trust-strip" aria-label="<?php esc_attr_e( 'Service highlights', 'rentacar-venezia-v2' ); ?>">
+        <div class="rc-container">
+            <ul class="trust-strip__list">
+                <li class="trust-strip__item"><span class="trust-strip__icon" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M10 18s6-5.1 6-10a6 6 0 1 0-12 0c0 4.9 6 10 6 10Z"></path><circle cx="10" cy="8" r="2"></circle></svg></span><span class="trust-strip__text"><?php esc_html_e( 'Pickup at Venice Marco Polo and Treviso Airport', 'rentacar-venezia-v2' ); ?></span></li>
+                <li class="trust-strip__item"><span class="trust-strip__icon" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M5 2.5h7l3 3V17.5H5zM12 2.5v3h3M7.5 11l1.7 1.7 3.5-3.5"></path></svg></span><span class="trust-strip__text"><?php esc_html_e( 'No payment required to send a request', 'rentacar-venezia-v2' ); ?></span></li>
+                <li class="trust-strip__item"><span class="trust-strip__icon" aria-hidden="true"><svg viewBox="0 0 20 20"><circle cx="8" cy="6" r="3"></circle><path d="M2.5 17c.7-3 2.5-4.5 5.5-4.5 1.8 0 3.2.5 4.1 1.6M13 15.5l1.7 1.7 3-3.4"></path></svg></span><span class="trust-strip__text"><?php esc_html_e( 'Availability, final price and rental conditions confirmed personally', 'rentacar-venezia-v2' ); ?></span></li>
+            </ul>
+        </div>
+    </section>
     <section id="fleet" class="section fleet-section" aria-labelledby="featured-cars-title">
         <div class="rc-container">
         <div class="section-heading"><div><p class="eyebrow"><?php esc_html_e( 'Explore the fleet', 'rentacar-venezia-v2' ); ?></p><h2 id="featured-cars-title"><?php esc_html_e( 'Choose your preferred car', 'rentacar-venezia-v2' ); ?></h2></div><a class="text-link" href="<?php echo esc_url( rentacar_venezia_v2_fleet_url() ); ?>"><?php esc_html_e( 'View all cars', 'rentacar-venezia-v2' ); ?></a></div>

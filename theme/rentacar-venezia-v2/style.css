@@ -568,29 +568,32 @@ textarea { font: inherit; }
 
 .trip-filter-section__help { max-width: 66ch; padding: 10px 4px 0; margin: 0; color: var(--rc-muted); font-size: .9rem; }
 
-.trust-strip { border-top: 1px solid var(--rc-line); border-bottom: 1px solid var(--rc-line); background: var(--rc-surface); }
+.trust-strip { border-top:1px solid var(--rc-line); border-bottom:1px solid var(--rc-line); background:#fff; }
 
-.trust-strip__items { display:grid; grid-template-columns:repeat(auto-fit, minmax(210px, 1fr)); gap:0; padding-block:20px; }
+.trust-strip__list { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); padding:0; margin:0; list-style:none; }
 
 .trust-strip__item {
-  display: flex;
-  min-height: 28px;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding-inline: 16px;
-  margin: 0;
-  color: #314863;
-  font-size: .9rem;
-  font-weight: 600;
-  text-align: center;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:11px;
+  min-height:72px;
+  padding:20px 24px;
+  margin:0;
+  color:var(--rc-navy-950);
+  font-size:.95rem;
+  font-weight:650;
+  line-height:1.35;
+  text-align:left;
 }
 
-.trust-strip__item + .trust-strip__item { border-left: 1px solid var(--rc-line); }
+.trust-strip__item + .trust-strip__item { border-left:1px solid var(--rc-line); }
 
-.trust-strip__item span { display:inline-grid; width:18px; height:18px; place-items:center; color:var(--rc-navy-800); }
+.trust-strip__icon { display:grid; flex:0 0 20px; width:20px; height:20px; place-items:center; color:var(--rc-navy-800); }
 
-.trust-strip__item svg { width:18px; height:18px; fill:none; stroke:currentcolor; stroke-linecap:round; stroke-linejoin:round; stroke-width:1.7; }
+.trust-strip__icon svg { width:20px; height:20px; fill:none; stroke:currentcolor; stroke-linecap:round; stroke-linejoin:round; stroke-width:1.65; }
+
+.trust-strip__text { max-width:34ch; }
 
 .fleet-section { background: var(--rc-surface-muted); }
 
@@ -970,6 +973,17 @@ textarea { font: inherit; }
 
 .reservation-form .check-label input { width:18px; min-width:18px; height:18px; min-height:18px; margin-top:2px; accent-color:var(--rc-navy-800); }
 
+.reservation-extras { display:grid; gap:8px; padding:0; }
+
+.reservation-extras__item { min-height:44px; padding:8px 0; border-bottom:1px solid var(--rc-line); }
+
+.reservation-extras__item:last-child { border-bottom:0; }
+
+.reservation-extras__item strong,
+.reservation-extras__item small { display:block; }
+
+.reservation-extras__item small { margin-top:2px; color:var(--rc-muted); font-size:.84rem; }
+
 .reservation-form .button { width:100%; }
 
 .reservation-form__error { min-height:0; margin:0 0 var(--rc-space-3); color:var(--rc-error); font-weight:700; }
@@ -1093,13 +1107,13 @@ textarea { font: inherit; }
 
   .trip-filter-section { margin-top:0; padding-block:22px; background:var(--rc-surface-muted); }
 
-  .trust-strip__items { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .trust-strip__list { grid-template-columns:1fr; }
 
-  .trust-strip__item { justify-content:flex-start; min-height:48px; padding:10px 12px; text-align:left; }
+  .trust-strip__item { justify-content:flex-start; min-height:0; padding:15px 0; font-size:.9rem; text-align:left; }
 
-  .trust-strip__item:nth-child(odd) { border-left:0; }
+  .trust-strip__item + .trust-strip__item { border-top:1px solid var(--rc-line); border-left:0; }
 
-  .trust-strip__item:nth-child(n + 3) { border-top:1px solid var(--rc-line); }
+  .trust-strip__text { max-width:none; }
 
   .vehicle-card__image { height:205px; }
 
