@@ -22,6 +22,7 @@ require_once RENTACAR_CORE_PATH . 'src/Vehicles/VehicleRepository.php';
 require_once RENTACAR_CORE_PATH . 'src/Settings/MarketingClaimRegistry.php';
 require_once RENTACAR_CORE_PATH . 'src/Settings/ReservationExtras.php';
 require_once RENTACAR_CORE_PATH . 'src/Settings/ReservationExtraSettings.php';
+require_once RENTACAR_CORE_PATH . 'src/Settings/RentalPolicy.php';
 require_once RENTACAR_CORE_PATH . 'src/Pricing/RentalDurationCalculator.php';
 require_once RENTACAR_CORE_PATH . 'src/Pricing/Estimate.php';
 require_once RENTACAR_CORE_PATH . 'src/Pricing/EstimateService.php';

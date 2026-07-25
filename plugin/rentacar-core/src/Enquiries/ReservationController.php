@@ -25,7 +25,7 @@ final class Rentacar_Core_Reservation_Controller {
         }
 
         $vehicle = ( new Rentacar_Core_Vehicle_Repository() )->find( $input['vehicle_id'] );
-        $estimate = ( new Rentacar_Core_Estimate_Service() )->estimate( $input['vehicle_id'], $input['pickup_date'], $input['pickup_time'], $input['return_date'], $input['return_time'], $input['extras'] );
+        $estimate = ( new Rentacar_Core_Estimate_Service() )->estimate( $input['vehicle_id'], $input['pickup_date'], $input['pickup_time'], $input['return_date'], $input['return_time'], $input['extras'], $input['insurance'] );
         $input['reference'] = Rentacar_Core_Reservation_Reference::generate();
         $input['vehicle_title'] = $vehicle ? $vehicle->get( 'title' ) : '';
         $input['estimate_summary'] = self::estimate_summary( $estimate );
@@ -66,8 +66,8 @@ final class Rentacar_Core_Reservation_Controller {
             'vehicle_id' => absint( $raw['vehicle_id'] ?? 0 ), 'pickup_date' => sanitize_text_field( $raw['pickup_date'] ?? '' ), 'pickup_time' => sanitize_text_field( $raw['pickup_time'] ?? '' ),
             'return_date' => sanitize_text_field( $raw['return_date'] ?? '' ), 'return_time' => sanitize_text_field( $raw['return_time'] ?? '' ),
             'pickup_location' => sanitize_text_field( $raw['pickup_location'] ?? '' ), 'return_location' => sanitize_text_field( $raw['return_location'] ?? '' ),
-            'full_name' => sanitize_text_field( $raw['full_name'] ?? '' ), 'phone' => sanitize_text_field( $raw['phone'] ?? '' ), 'email' => sanitize_email( $raw['email'] ?? '' ),
-            'similar_vehicle' => ! empty( $raw['similar_vehicle'] ), 'message' => sanitize_textarea_field( $raw['message'] ?? '' ), 'privacy' => ! empty( $raw['privacy'] ),
+            'full_name' => sanitize_text_field( trim( ( $raw['full_name'] ?? '' ) ?: trim( ( $raw['first_name'] ?? '' ) . ' ' . ( $raw['last_name'] ?? '' ) ) ) ), 'first_name' => sanitize_text_field( $raw['first_name'] ?? '' ), 'last_name' => sanitize_text_field( $raw['last_name'] ?? '' ), 'phone' => sanitize_text_field( $raw['phone'] ?? '' ), 'email' => sanitize_email( $raw['email'] ?? '' ),
+            'similar_vehicle' => ! empty( $raw['similar_vehicle'] ), 'message' => sanitize_textarea_field( $raw['message'] ?? '' ), 'privacy' => ! empty( $raw['privacy'] ), 'terms' => ! empty( $raw['terms'] ), 'insurance' => sanitize_key( $raw['insurance'] ?? '' ), 'airline' => sanitize_text_field( $raw['airline'] ?? '' ), 'flight_number' => strtoupper( sanitize_text_field( $raw['flight_number'] ?? '' ) ),
             'website' => sanitize_text_field( $raw['website'] ?? '' ), 'started_at' => absint( $raw['started_at'] ?? 0 ),
             'extras' => self::extra_keys( $raw['extras'] ?? array() ),
             'rentacar_ajax' => ! empty( $raw['rentacar_ajax'] ), 'rentacar_reservation_nonce' => sanitize_text_field( $raw['rentacar_reservation_nonce'] ?? '' ),

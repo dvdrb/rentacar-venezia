@@ -4,6 +4,7 @@ defined( 'ABSPATH' ) || exit;
 $vehicles = class_exists( 'Rentacar_Core_Vehicle_Repository' ) ? ( new Rentacar_Core_Vehicle_Repository() )->query( array( 'posts_per_page' => 6, 'orderby' => 'date', 'order' => 'DESC' ) ) : array();
 $trip = rentacar_venezia_v2_trip_query();
 $locations = rentacar_venezia_v2_pickup_locations();
+$public_locations = array_intersect_key( $locations, array_flip( array( 'venice_marco_polo', 'treviso_airport' ) ) );
 $location_options = wp_list_pluck( $locations, 'value' );
 $location_descriptions = array(
     'venice_marco_polo' => __( 'Meet us close to Venice Marco Polo Airport and begin your journey with a locally confirmed pickup.', 'rentacar-venezia-v2' ),
@@ -37,7 +38,7 @@ get_header();
             </div>
             <aside class="hero-location-card" aria-label="<?php esc_attr_e( 'Pickup locations', 'rentacar-venezia-v2' ); ?>">
                 <p><?php esc_html_e( 'Pickup locations', 'rentacar-venezia-v2' ); ?></p>
-                <ul><?php foreach ( $locations as $location ) : ?><li><?php echo esc_html( $location['label'] ); ?></li><?php endforeach; ?></ul>
+                <ul><?php foreach ( $public_locations as $location ) : ?><li><?php echo esc_html( $location['label'] ); ?></li><?php endforeach; ?></ul>
             </aside>
         </div>
     </section>
@@ -89,7 +90,7 @@ get_header();
                 <p><?php esc_html_e( 'Choose the pickup point that suits your trip. We confirm the practical details personally before your reservation is final.', 'rentacar-venezia-v2' ); ?></p>
             </header>
             <div class="arrivals-grid">
-                <?php foreach ( $locations as $key => $location ) : $location_image_id = rentacar_venezia_v2_location_page_image_id( $key ); ?>
+                <?php foreach ( $public_locations as $key => $location ) : $location_image_id = rentacar_venezia_v2_location_page_image_id( $key ); ?>
                     <a class="arrival-card reveal-on-scroll" href="<?php echo esc_url( rentacar_venezia_v2_location_page_url( $key ) ); ?>" aria-label="<?php echo esc_attr( sprintf( __( 'Choose %s pickup', 'rentacar-venezia-v2' ), $location['label'] ) ); ?>">
                         <span class="arrival-card__media">
                             <?php if ( $location_image_id ) : ?>

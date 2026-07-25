@@ -9,6 +9,8 @@ final class Rentacar_Core_Business_Notification {
             'Vehicle: ' . $request->get( 'vehicle_title' ),
             'Pickup: ' . $request->get( 'pickup_location' ) . ' — ' . $request->get( 'pickup_date' ) . ' ' . $request->get( 'pickup_time' ),
             'Return: ' . $request->get( 'return_location' ) . ' — ' . $request->get( 'return_date' ) . ' ' . $request->get( 'return_time' ),
+            'Flight: ' . ( $request->get( 'flight_number' ) ? trim( $request->get( 'airline' ) . ' ' . $request->get( 'flight_number' ) ) : '—' ),
+            'Insurance: ' . ( $request->get( 'insurance' ) ?: '—' ),
             'Name: ' . $request->get( 'full_name' ),
             'Phone: ' . $request->get( 'phone' ),
             'Email: ' . $request->get( 'email' ),
