@@ -12,6 +12,24 @@ test.describe('final theme experience', () => {
     await expect(page.locator('h1')).toHaveCount(1);
     await expect(page.locator('.vehicle-card').first()).toBeVisible();
     await expect(page.locator('[data-reservation-trigger]').first()).toHaveAttribute('data-vehicle-id', /\d+/);
+    await expect(page.locator('.vehicle-card__starting-price').first()).toBeVisible();
+  });
+
+  test('keeps the supplied responsive hero and trip filter flow', async ({ page }) => {
+    await page.goto('/');
+    const hero = page.locator('.hero');
+
+    await expect(hero.locator('picture')).toHaveCount(1);
+    await expect(hero.locator('source[media="(max-width: 767px)"]')).toHaveAttribute('srcset', /hero-venice-mobile\.webp$/);
+    await expect(hero.locator('img')).toHaveAttribute('src', /hero-venice-desktop\.webp$/);
+    await expect(hero.locator('img')).toHaveAttribute('width', '1672');
+    await expect(hero.locator('img')).toHaveAttribute('height', '941');
+    await expect(hero.locator('img')).toHaveAttribute('fetchpriority', 'high');
+    await expect(hero.locator('a[href="#trip-filter"]')).toHaveCount(1);
+    await expect(page.locator('.trip-form')).toHaveCount(1);
+    await expect(page.locator('.trip-filter-section__help')).toBeVisible();
+    await expect(page.locator('.trip-form select[name="pickup_location"]')).toHaveCount(1);
+    await expect(page.locator('.trip-form select[name="dropoff_location"]')).toHaveCount(1);
   });
 
   test('opens a selected-vehicle modal and restores focus after Escape', async ({ page }) => {
@@ -42,18 +60,19 @@ test.describe('final theme experience', () => {
     });
     await page.goto('/');
     await page.locator('[data-reservation-trigger]').first().click();
-    await page.locator('input[name="pickup_date"]').fill('2027-04-10');
-    await page.locator('input[name="pickup_time"]').fill('10:00');
-    await page.locator('input[name="return_date"]').fill('2027-04-12');
-    await page.locator('input[name="return_time"]').fill('10:00');
-    await page.locator('input[name="pickup_location"]').fill('Venice');
-    await page.locator('input[name="return_location"]').fill('Venice');
-    await page.locator('input[name="full_name"]').fill('Local test');
-    await page.locator('input[name="phone"]').fill('+39000000000');
-    await page.locator('input[name="email"]').fill('local-test@example.invalid');
-    await page.locator('input[name="privacy"]').check();
-    await page.locator('[data-reservation-form] button[type="submit"]').click();
-    await expect(page.locator('[data-reservation-success]')).toContainText('Request received');
+    const form = page.locator('[data-reservation-form]');
+    await form.locator('input[name="pickup_date"]').fill('2027-04-10');
+    await form.locator('input[name="pickup_time"]').fill('10:00');
+    await form.locator('input[name="return_date"]').fill('2027-04-12');
+    await form.locator('input[name="return_time"]').fill('10:00');
+    await form.locator('input[name="pickup_location"]').fill('Venice');
+    await form.locator('input[name="return_location"]').fill('Venice');
+    await form.locator('input[name="full_name"]').fill('Local test');
+    await form.locator('input[name="phone"]').fill('+39000000000');
+    await form.locator('input[name="email"]').fill('local-test@example.invalid');
+    await form.locator('input[name="privacy"]').check();
+    await form.locator('button[type="submit"]').click();
+    await expect(page.locator('[data-reservation-success]')).toContainText(/Request received|Richiesta ricevuta/);
     await expect(page.locator('[data-reservation-success]')).not.toContainText(/confirmed reservation/i);
   });
 
@@ -62,6 +81,66 @@ test.describe('final theme experience', () => {
     await page.goto('/fleet/');
     await expect(page.locator('h1')).toHaveCount(1);
     await expect(page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).resolves.toBeTruthy();
+  });
+
+  test('keeps fleet indexing signals specific to clean, filtered and paginated catalogue requests', async ({ page }) => {
+    await page.goto('/fleet/');
+    await expect(page.locator('h1')).toHaveCount(1);
+    await expect(page.locator('link[rel="canonical"]')).toHaveCount(1);
+    await expect(page.locator('meta[name="keywords"]')).toHaveCount(0);
+    const cleanCanonical = await page.locator('link[rel="canonical"]').getAttribute('href');
+    expect(cleanCanonical).toBeTruthy();
+
+    await page.goto('/fleet/?transmission=manual');
+    await expect(page.locator('link[rel="canonical"]')).toHaveCount(1);
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', cleanCanonical || '');
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex.*follow|follow.*noindex/i);
+
+    await page.goto('/fleet/page/2/');
+    await expect(page.locator('h1')).toHaveCount(1);
+    await expect(page.locator('link[rel="canonical"]')).toHaveCount(1);
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', /\/page\/2\/?$/);
+  });
+
+  test('provides crawlable vehicle breadcrumbs, meaningful primary image alt text and factual schema', async ({ page }) => {
+    await page.goto('/');
+    const detailsUrl = await page.locator('.vehicle-card h3 a').first().getAttribute('href');
+    test.skip(!detailsUrl, 'A published vehicle is required for vehicle SEO coverage.');
+    await page.goto(detailsUrl!);
+
+    await expect(page.locator('h1')).toHaveCount(1);
+    const breadcrumbs = page.locator('.breadcrumbs');
+    await expect(breadcrumbs.locator('a')).toHaveCount(2);
+    await expect(breadcrumbs.locator('[aria-current="page"]')).toHaveCount(1);
+    await expect(page.locator('.vehicle-gallery__image--primary img')).toHaveAttribute('alt', /\S+/);
+    const schema = await page.locator('script[type="application/ld+json"]').filter({ hasText: 'Product' }).textContent();
+    expect(schema || '').not.toMatch(/"Offer"|"availability"|"InStock"|"aggregateRating"|"review"/i);
+  });
+
+  test('keeps current-language URLs intact when navigating enabled WPML languages', async ({ page }) => {
+    await page.goto('/');
+    const switcher = page.locator('[data-language-switcher]');
+    test.skip(await switcher.count() === 0, 'WPML must have at least two enabled languages for this test.');
+    await switcher.locator('[data-language-trigger]').click();
+    const languages = await switcher.locator('.language-switcher__link').evaluateAll((links) => links.map((link) => ({ href: link.getAttribute('href'), lang: link.getAttribute('lang') })));
+
+    for (const language of languages) {
+      if (!language.href || !language.lang) continue;
+      await page.goto(language.href);
+      await expect(page.locator('html')).toHaveAttribute('lang', new RegExp(`^${language.lang}(?:-|$)`, 'i'));
+      await expect(page.locator('h1')).toHaveCount(1);
+      const fleetLink = page.locator('a[href]').filter({ hasText: /View all cars|Vedi tutte|Vezi toate|Все/i }).first();
+      await expect(fleetLink).toHaveCount(1);
+    }
+  });
+
+  test('returns a real noindex 404 with useful internal links', async ({ page }) => {
+    const response = await page.goto('/this-route-does-not-exist/');
+    expect(response?.status()).toBe(404);
+    await expect(page.locator('h1')).toHaveCount(1);
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/i);
+    await expect(page.locator('a[href]').filter({ hasText: /home|home page|iniziale|acasă|глав/i })).not.toHaveCount(0);
+    await expect(page.locator('a[href]').filter({ hasText: /fleet|flotta|flotă|автопарк/i })).not.toHaveCount(0);
   });
 
   test('renders an accessible WPML language disclosure instead of separate language buttons', async ({ page }) => {
@@ -85,9 +164,7 @@ test.describe('final theme experience', () => {
     expect(await links.count()).toBeGreaterThan(1);
     await expect(menu.locator('.language-switcher__name')).not.toHaveCount(0);
     await expect(menu.locator('[aria-current="page"]')).toHaveCount(1);
-    await expect(links).toHaveAttribute('href', /.+/);
-    await expect(links).toHaveAttribute('lang', /.+/);
-    await expect(links).toHaveAttribute('hreflang', /.+/);
+    expect(await links.evaluateAll((items) => items.every((item) => item.getAttribute('href') && item.getAttribute('lang') && item.getAttribute('hreflang')))).toBe(true);
     await expect(menu.locator('img[src=""]')).toHaveCount(0);
     expect(await switcher.innerText()).not.toMatch(/\p{Regional_Indicator}/u);
 
@@ -113,8 +190,9 @@ test.describe('final theme experience', () => {
 
   test('keeps WPML language configuration and flag asset paths out of the theme source', async () => {
     const component = await readFile(resolve('theme/rentacar-venezia-v2/template-parts/global/language-switcher.php'), 'utf8');
+    const functions = await readFile(resolve('theme/rentacar-venezia-v2/functions.php'), 'utf8');
 
-    expect(component).toContain("'wpml_active_languages'");
+    expect(functions).toContain("'wpml_active_languages'");
     expect(component).not.toContain('/wp-content/plugins/sitepress-multilingual-cms/res/flags/');
     expect(component).not.toMatch(/(?:\bRU\b|\bRO\b|\bIT\b|\bEN\b).*https?:/);
   });

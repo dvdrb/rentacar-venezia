@@ -31,6 +31,27 @@ function rentacar_venezia_v2_vehicle_bands( Rentacar_Core_Vehicle $vehicle ) {
     return $valid;
 }
 
+function rentacar_venezia_v2_vehicle_starting_price( Rentacar_Core_Vehicle $vehicle ) {
+    $prices = array();
+
+    foreach ( rentacar_venezia_v2_vehicle_bands( $vehicle ) as $band ) {
+        $prices[] = (float) $band->daily_price;
+    }
+
+    return $prices ? min( $prices ) : null;
+}
+
+/**
+ * Presentation-only escape hatch for source images with excessive internal
+ * whitespace. A theme or child theme may return one safe modifier class
+ * without touching vehicle records.
+ */
+function rentacar_venezia_v2_vehicle_image_presentation_class( Rentacar_Core_Vehicle $vehicle ) {
+    $class = apply_filters( 'rentacar_venezia_v2_vehicle_image_presentation_class', '', $vehicle );
+
+    return is_string( $class ) ? sanitize_html_class( $class ) : '';
+}
+
 function rentacar_venezia_v2_price_range_label( Rentacar_Core_Pricing_Band $band ) {
     return null === $band->to_days
         ? sprintf( __( '%s+ days', 'rentacar-venezia-v2' ), number_format_i18n( $band->from_days ) )
@@ -45,38 +66,6 @@ function rentacar_venezia_v2_vehicle_image_id( Rentacar_Core_Vehicle $vehicle ) 
     $gallery = $vehicle->get( 'vehicle_gallery' );
     $ids = $gallery ? $gallery->all_image_ids() : array();
     return $ids ? (int) $ids[0] : 0;
-}
-
-/**
- * Return the breadcrumb items for ordinary WordPress content without making
- * assumptions about page IDs, translated URLs or menu structure.
- */
-function rentacar_venezia_v2_breadcrumb_items( $post_id = 0 ) {
-    $post_id = $post_id ? absint( $post_id ) : get_queried_object_id();
-    $items = array(
-        array(
-            'label' => __( 'Home', 'rentacar-venezia-v2' ),
-            'url'   => home_url( '/' ),
-        ),
-    );
-
-    if ( ! $post_id ) {
-        return $items;
-    }
-
-    foreach ( array_reverse( get_post_ancestors( $post_id ) ) as $ancestor_id ) {
-        $items[] = array(
-            'label' => get_the_title( $ancestor_id ),
-            'url'   => get_permalink( $ancestor_id ),
-        );
-    }
-
-    $items[] = array(
-        'label' => get_the_title( $post_id ),
-        'url'   => '',
-    );
-
-    return $items;
 }
 
 /**

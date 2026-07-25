@@ -4,7 +4,7 @@ defined( 'ABSPATH' ) || exit;
 $repository = class_exists( 'Rentacar_Core_Vehicle_Repository' ) ? new Rentacar_Core_Vehicle_Repository() : null;
 $vehicle = $repository ? $repository->find( get_queried_object_id() ) : null;
 $image_ids = $vehicle ? $vehicle->get( 'vehicle_gallery' )->all_image_ids() : array();
-$image_url = $vehicle ? wp_get_attachment_image_url( rentacar_venezia_v2_vehicle_image_id( $vehicle ), 'medium_large' ) : '';
+$image_url = $vehicle ? rentacar_venezia_v2_primary_image_url( $vehicle, 'medium_large' ) : '';
 $specifications = $vehicle ? rentacar_venezia_v2_vehicle_specs( $vehicle ) : array();
 $bands = $vehicle ? rentacar_venezia_v2_vehicle_bands( $vehicle ) : array();
 $price_labels = array();
@@ -21,7 +21,7 @@ foreach ( $bands as $band ) {
 
 get_header();
 ?>
-<main id="main-content" class="site-main vehicle-page">
+<main id="main-content" class="site-main site-main--vehicle vehicle-page">
     <div class="rc-container">
         <?php if ( ! $vehicle ) : ?>
             <section class="empty-state">
@@ -30,13 +30,7 @@ get_header();
                 <a class="button" href="<?php echo esc_url( rentacar_venezia_v2_fleet_url() ); ?>"><?php esc_html_e( 'View the fleet', 'rentacar-venezia-v2' ); ?></a>
             </section>
         <?php else : ?>
-            <nav class="breadcrumbs" aria-label="<?php esc_attr_e( 'Breadcrumbs', 'rentacar-venezia-v2' ); ?>">
-                <a href="<?php echo esc_url( home_url( '/' ) ); ?>"><?php esc_html_e( 'Home', 'rentacar-venezia-v2' ); ?></a>
-                <span aria-hidden="true">/</span>
-                <a href="<?php echo esc_url( rentacar_venezia_v2_fleet_url() ); ?>"><?php esc_html_e( 'Fleet', 'rentacar-venezia-v2' ); ?></a>
-                <span aria-hidden="true">/</span>
-                <span aria-current="page"><?php echo esc_html( rentacar_venezia_v2_vehicle_title( $vehicle ) ); ?></span>
-            </nav>
+            <?php get_template_part( 'template-parts/global/breadcrumbs' ); ?>
 
             <div class="vehicle-page__grid">
                 <section class="vehicle-page__content">
@@ -66,7 +60,7 @@ get_header();
                                                 'loading'       => 0 === $index ? 'eager' : 'lazy',
                                                 'fetchpriority' => 0 === $index ? 'high' : 'auto',
                                                 'sizes'         => '(min-width: 960px) 50vw, 100vw',
-                                                'alt'           => '',
+                                                'alt'           => rentacar_venezia_v2_vehicle_image_alt( $vehicle, $image_id, 0 === $index ),
                                             )
                                         )
                                     );

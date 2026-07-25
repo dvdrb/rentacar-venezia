@@ -7,8 +7,9 @@ if ( '' === trim( wp_strip_all_tags( $archive_title ) ) ) {
     $archive_title = __( 'Latest updates', 'rentacar-venezia-v2' );
 }
 ?>
-<main id="main-content" class="site-main">
+<main id="main-content" class="site-main site-main--archive">
     <div class="rc-container archive-page">
+        <?php get_template_part( 'template-parts/global/breadcrumbs' ); ?>
         <header class="page-intro">
             <p class="eyebrow"><?php esc_html_e( 'Rent a Car Venezia', 'rentacar-venezia-v2' ); ?></p>
             <h1><?php echo wp_kses_post( $archive_title ); ?></h1>

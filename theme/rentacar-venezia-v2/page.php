@@ -3,16 +3,11 @@ defined( 'ABSPATH' ) || exit;
 
 get_header();
 ?>
-<main id="main-content" class="site-main">
+<main id="main-content" class="site-main site-main--content">
     <article class="rc-container content-page">
         <?php while ( have_posts() ) : the_post(); ?>
-            <nav class="breadcrumbs" aria-label="<?php esc_attr_e( 'Breadcrumbs', 'rentacar-venezia-v2' ); ?>">
-                <?php foreach ( rentacar_venezia_v2_breadcrumb_items() as $index => $item ) : ?>
-                    <?php if ( $item['url'] ) : ?><a href="<?php echo esc_url( $item['url'] ); ?>"><?php echo esc_html( $item['label'] ); ?></a><?php else : ?><span aria-current="page"><?php echo esc_html( $item['label'] ); ?></span><?php endif; ?>
-                    <?php if ( $index < count( rentacar_venezia_v2_breadcrumb_items() ) - 1 ) : ?><span aria-hidden="true">/</span><?php endif; ?>
-                <?php endforeach; ?>
-            </nav>
-            <header class="page-intro">
+            <?php get_template_part( 'template-parts/global/breadcrumbs' ); ?>
+            <header class="page-intro content-page__header">
                 <p class="eyebrow"><?php esc_html_e( 'Rent a Car Venezia', 'rentacar-venezia-v2' ); ?></p>
                 <h1><?php the_title(); ?></h1>
             </header>
