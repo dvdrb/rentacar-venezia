@@ -149,6 +149,29 @@ const errorBox = document.querySelector<HTMLElement>('[data-reservation-errors]'
 const inertTargets = Array.from(document.querySelectorAll<HTMLElement>('[data-site-header], #main-content, .site-footer'));
 let trigger: HTMLElement | null = null;
 
+const refreshEstimate = async (): Promise<void> => {
+  if (!form) return;
+  const output = form.querySelector<HTMLElement>('[data-reservation-estimate]');
+  const content = form.querySelector<HTMLElement>('[data-reservation-estimate-content]');
+  const vehicleId = form.querySelector<HTMLInputElement>('[data-reservation-vehicle-id]')?.value;
+  const required = ['pickup_date', 'pickup_time', 'return_date', 'return_time'];
+  const values = Object.fromEntries(required.map((name) => [name, (form.elements.namedItem(name) as HTMLInputElement | null)?.value || '']));
+  if (!output || !content || !vehicleId || required.some((name) => !values[name])) return;
+  const extras = Array.from(form.querySelectorAll<HTMLInputElement>('input[name="extras[]"]:checked')).map((input) => input.value);
+  const insurance = form.querySelector<HTMLInputElement>('input[name="insurance"]:checked')?.value || 'base';
+  const body = new URLSearchParams({ vehicle_id: vehicleId, ...values, insurance });
+  extras.forEach((extra) => body.append('extras[]', extra));
+  try {
+    const response = await fetch('/wp-json/rentacar/v1/estimate', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body, credentials: 'same-origin' });
+    if (!response.ok) return;
+    const estimate = await response.json() as { days: number; line_items: { label: string; amount: number }[]; estimate_total: number; included_km: number; excess_km_rate: number; deposit: number };
+    content.replaceChildren(...estimate.line_items.map((item) => { const row = document.createElement('p'); row.textContent = `${item.label}: €${item.amount.toFixed(2)}`; return row; }));
+    const total = document.createElement('p'); total.innerHTML = `<strong>Indicative rental total: €${estimate.estimate_total.toFixed(2)}</strong>`;
+    const details = document.createElement('p'); details.textContent = `${estimate.days} rental days · ${estimate.included_km} km included · €${estimate.excess_km_rate.toFixed(2)}/km excess · Deposit €${estimate.deposit.toFixed(2)}`;
+    content.append(total, details); output.hidden = false;
+  } catch { /* The form remains usable when estimates cannot be loaded. */ }
+};
+
 const setBackgroundInert = (inert: boolean): void => {
   inertTargets.forEach((target) => {
     if (inert) {
@@ -224,7 +247,10 @@ const openModal = (button: HTMLElement): void => {
   }
 
   requestAnimationFrame(() => (modal.querySelector<HTMLElement>('[data-reservation-close]') || form).focus());
+  void refreshEstimate();
 };
+
+form?.addEventListener('change', () => { void refreshEstimate(); });
 
 document.querySelectorAll<HTMLElement>('[data-reservation-trigger]').forEach((button) => {
   button.addEventListener('click', () => openModal(button));

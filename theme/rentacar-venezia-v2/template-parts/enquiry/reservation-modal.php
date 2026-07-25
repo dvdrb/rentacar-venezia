@@ -50,6 +50,7 @@ $insurance_packages = class_exists( 'Rentacar_Core_Rental_Policy' ) ? Rentacar_C
               <?php endforeach; ?>
             </fieldset>
           <?php endif; ?>
+          <section class="reservation-estimate" aria-live="polite" data-reservation-estimate hidden><h3><?php esc_html_e( 'Indicative estimate', 'rentacar-venezia-v2' ); ?></h3><div data-reservation-estimate-content></div><p><?php esc_html_e( 'Deposit is paid separately at pickup. Availability, final price and rental conditions are confirmed personally.', 'rentacar-venezia-v2' ); ?></p></section>
           <fieldset><legend><?php esc_html_e( 'Your details', 'rentacar-venezia-v2' ); ?></legend>
             <div class="reservation-form__two"><label><?php esc_html_e( 'First name', 'rentacar-venezia-v2' ); ?><input name="first_name" autocomplete="given-name" required></label><label><?php esc_html_e( 'Last name', 'rentacar-venezia-v2' ); ?><input name="last_name" autocomplete="family-name" required></label></div><label><?php esc_html_e( 'Phone or WhatsApp', 'rentacar-venezia-v2' ); ?><input name="phone" autocomplete="tel" required></label><label><?php esc_html_e( 'Email', 'rentacar-venezia-v2' ); ?><input name="email" type="email" autocomplete="email" required></label>
             <label><?php esc_html_e( 'Message (optional)', 'rentacar-venezia-v2' ); ?><textarea name="message" rows="3"></textarea></label>
