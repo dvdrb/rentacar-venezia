@@ -1,0 +1,311 @@
+{
+    "provider": "polylang",
+    "languages": [
+        "en",
+        "it",
+        "ro",
+        "ru"
+    ],
+    "managed_pages": [
+        {
+            "id": 8,
+            "title": "Contact",
+            "slug": "contact",
+            "status": "publish",
+            "language": "en",
+            "template": "page-templates/template-contact.php",
+            "url": "http://localhost:10003/en/contact/",
+            "provisioning_key": "contact"
+        },
+        {
+            "id": 3161,
+            "title": "Frequently asked questions",
+            "slug": "faq",
+            "status": "publish",
+            "language": "it",
+            "template": "page-templates/template-faq.php",
+            "url": "http://localhost:10003/faq/",
+            "provisioning_key": "faq"
+        },
+        {
+            "id": 5016,
+            "title": "Fleet",
+            "slug": "fleet",
+            "status": "publish",
+            "language": "it",
+            "template": "page-templates/template-fleet.php",
+            "url": "http://localhost:10003/fleet/",
+            "provisioning_key": "fleet"
+        },
+        {
+            "id": 5017,
+            "title": "How it works",
+            "slug": "how-it-works",
+            "status": "publish",
+            "language": "it",
+            "template": "page-templates/template-how-it-works.php",
+            "url": "http://localhost:10003/how-it-works/",
+            "provisioning_key": "how_it_works"
+        },
+        {
+            "id": 5018,
+            "title": "Rental requirements",
+            "slug": "rental-requirements",
+            "status": "publish",
+            "language": "it",
+            "template": "page-templates/template-rental-requirements.php",
+            "url": "http://localhost:10003/rental-requirements/",
+            "provisioning_key": "rental_requirements"
+        },
+        {
+            "id": 5021,
+            "title": "Terms and Conditions",
+            "slug": "terms-and-conditions",
+            "status": "publish",
+            "language": "it",
+            "template": "page-templates/template-terms.php",
+            "url": "http://localhost:10003/terms-and-conditions/",
+            "provisioning_key": "terms"
+        },
+        {
+            "id": 5022,
+            "title": "Guides",
+            "slug": "guides",
+            "status": "publish",
+            "language": "it",
+            "template": "",
+            "url": "http://localhost:10003/guides/",
+            "provisioning_key": "guides"
+        },
+        {
+            "id": 5023,
+            "title": "Venice Marco Polo Airport car rental",
+            "slug": "venice-marco-polo-airport-car-rental",
+            "status": "publish",
+            "language": "it",
+            "template": "page-templates/template-airport-location.php",
+            "url": "http://localhost:10003/venice-marco-polo-airport-car-rental/",
+            "provisioning_key": "venice_marco_polo"
+        },
+        {
+            "id": 5024,
+            "title": "Treviso Airport car rental",
+            "slug": "treviso-airport-car-rental",
+            "status": "publish",
+            "language": "it",
+            "template": "page-templates/template-airport-location.php",
+            "url": "http://localhost:10003/treviso-airport-car-rental/",
+            "provisioning_key": "treviso_airport"
+        },
+        {
+            "id": 5032,
+            "title": "Fleet",
+            "slug": "fleet-2",
+            "status": "publish",
+            "language": "en",
+            "template": "page-templates/template-fleet.php",
+            "url": "http://localhost:10003/en/fleet-2/",
+            "provisioning_key": "fleet"
+        },
+        {
+            "id": 5033,
+            "title": "Flota",
+            "slug": "flota",
+            "status": "publish",
+            "language": "ro",
+            "template": "page-templates/template-fleet.php",
+            "url": "http://localhost:10003/ro/flota/",
+            "provisioning_key": "fleet"
+        },
+        {
+            "id": 5034,
+            "title": "\u0410\u0432\u0442\u043e\u043f\u0430\u0440\u043a",
+            "slug": "avtopark",
+            "status": "publish",
+            "language": "ru",
+            "template": "page-templates/template-fleet.php",
+            "url": "http://localhost:10003/ru/avtopark/",
+            "provisioning_key": "fleet"
+        },
+        {
+            "id": 5035,
+            "title": "How it works",
+            "slug": "how-it-works-2",
+            "status": "publish",
+            "language": "en",
+            "template": "page-templates/template-how-it-works.php",
+            "url": "http://localhost:10003/en/how-it-works-2/",
+            "provisioning_key": "how_it_works"
+        },
+        {
+            "id": 5036,
+            "title": "Cum func\u021bioneaz\u0103",
+            "slug": "cum-functioneaza",
+            "status": "publish",
+            "language": "ro",
+            "template": "page-templates/template-how-it-works.php",
+            "url": "http://localhost:10003/ro/cum-functioneaza/",
+            "provisioning_key": "how_it_works"
+        },
+        {
+            "id": 5037,
+            "title": "\u041a\u0430\u043a \u044d\u0442\u043e \u0440\u0430\u0431\u043e\u0442\u0430\u0435\u0442",
+            "slug": "kak-eto-rabotaet",
+            "status": "publish",
+            "language": "ru",
+            "template": "page-templates/template-how-it-works.php",
+            "url": "http://localhost:10003/ru/kak-eto-rabotaet/",
+            "provisioning_key": "how_it_works"
+        },
+        {
+            "id": 5038,
+            "title": "Rental requirements",
+            "slug": "rental-requirements-2",
+            "status": "publish",
+            "language": "en",
+            "template": "page-templates/template-rental-requirements.php",
+            "url": "http://localhost:10003/en/rental-requirements-2/",
+            "provisioning_key": "rental_requirements"
+        },
+        {
+            "id": 5039,
+            "title": "Condi\u021bii de \u00eenchiriere",
+            "slug": "conditii-inchiriere",
+            "status": "publish",
+            "language": "ro",
+            "template": "page-templates/template-rental-requirements.php",
+            "url": "http://localhost:10003/ro/conditii-inchiriere/",
+            "provisioning_key": "rental_requirements"
+        },
+        {
+            "id": 5040,
+            "title": "\u0423\u0441\u043b\u043e\u0432\u0438\u044f \u0430\u0440\u0435\u043d\u0434\u044b",
+            "slug": "usloviya-arendy",
+            "status": "publish",
+            "language": "ru",
+            "template": "page-templates/template-rental-requirements.php",
+            "url": "http://localhost:10003/ru/usloviya-arendy/",
+            "provisioning_key": "rental_requirements"
+        },
+        {
+            "id": 5041,
+            "title": "Terms and Conditions",
+            "slug": "terms-and-conditions-2",
+            "status": "publish",
+            "language": "en",
+            "template": "page-templates/template-terms.php",
+            "url": "http://localhost:10003/en/terms-and-conditions-2/",
+            "provisioning_key": "terms"
+        },
+        {
+            "id": 5042,
+            "title": "Termeni \u0219i condi\u021bii",
+            "slug": "termeni-conditii",
+            "status": "publish",
+            "language": "ro",
+            "template": "page-templates/template-terms.php",
+            "url": "http://localhost:10003/ro/termeni-conditii/",
+            "provisioning_key": "terms"
+        },
+        {
+            "id": 5043,
+            "title": "\u0423\u0441\u043b\u043e\u0432\u0438\u044f \u0438 \u043f\u043e\u043b\u043e\u0436\u0435\u043d\u0438\u044f",
+            "slug": "usloviya-i-polozheniya",
+            "status": "publish",
+            "language": "ru",
+            "template": "page-templates/template-terms.php",
+            "url": "http://localhost:10003/ru/usloviya-i-polozheniya/",
+            "provisioning_key": "terms"
+        },
+        {
+            "id": 5044,
+            "title": "Guides",
+            "slug": "guides-2",
+            "status": "publish",
+            "language": "en",
+            "template": "",
+            "url": "http://localhost:10003/en/guides-2/",
+            "provisioning_key": "guides"
+        },
+        {
+            "id": 5045,
+            "title": "Ghiduri",
+            "slug": "ghiduri",
+            "status": "publish",
+            "language": "ro",
+            "template": "",
+            "url": "http://localhost:10003/ro/ghiduri/",
+            "provisioning_key": "guides"
+        },
+        {
+            "id": 5046,
+            "title": "\u041f\u0443\u0442\u0435\u0432\u043e\u0434\u0438\u0442\u0435\u043b\u0438",
+            "slug": "putevoditeli",
+            "status": "publish",
+            "language": "ru",
+            "template": "",
+            "url": "http://localhost:10003/ru/putevoditeli/",
+            "provisioning_key": "guides"
+        },
+        {
+            "id": 5047,
+            "title": "Venice Marco Polo Airport car rental",
+            "slug": "venice-marco-polo-airport-car-rental-2",
+            "status": "publish",
+            "language": "en",
+            "template": "page-templates/template-airport-location.php",
+            "url": "http://localhost:10003/en/venice-marco-polo-airport-car-rental-2/",
+            "provisioning_key": "venice_marco_polo"
+        },
+        {
+            "id": 5048,
+            "title": "\u00cenchirieri auto Aeroportul Vene\u021bia Marco Polo",
+            "slug": "inchirieri-auto-aeroport-venetia-marco-polo",
+            "status": "publish",
+            "language": "ro",
+            "template": "page-templates/template-airport-location.php",
+            "url": "http://localhost:10003/ro/inchirieri-auto-aeroport-venetia-marco-polo/",
+            "provisioning_key": "venice_marco_polo"
+        },
+        {
+            "id": 5049,
+            "title": "\u041f\u0440\u043e\u043a\u0430\u0442 \u0430\u0432\u0442\u043e \u0432 \u0430\u044d\u0440\u043e\u043f\u043e\u0440\u0442\u0443 \u0412\u0435\u043d\u0435\u0446\u0438\u044f \u041c\u0430\u0440\u043a\u043e \u041f\u043e\u043b\u043e",
+            "slug": "prokat-avto-aeroport-veneciya-marko-polo",
+            "status": "publish",
+            "language": "ru",
+            "template": "page-templates/template-airport-location.php",
+            "url": "http://localhost:10003/ru/prokat-avto-aeroport-veneciya-marko-polo/",
+            "provisioning_key": "venice_marco_polo"
+        },
+        {
+            "id": 5050,
+            "title": "Treviso Airport car rental",
+            "slug": "treviso-airport-car-rental-2",
+            "status": "publish",
+            "language": "en",
+            "template": "page-templates/template-airport-location.php",
+            "url": "http://localhost:10003/en/treviso-airport-car-rental-2/",
+            "provisioning_key": "treviso_airport"
+        },
+        {
+            "id": 5051,
+            "title": "\u00cenchirieri auto Aeroportul Treviso",
+            "slug": "inchirieri-auto-aeroport-treviso",
+            "status": "publish",
+            "language": "ro",
+            "template": "page-templates/template-airport-location.php",
+            "url": "http://localhost:10003/ro/inchirieri-auto-aeroport-treviso/",
+            "provisioning_key": "treviso_airport"
+        },
+        {
+            "id": 5052,
+            "title": "\u041f\u0440\u043e\u043a\u0430\u0442 \u0430\u0432\u0442\u043e \u0432 \u0430\u044d\u0440\u043e\u043f\u043e\u0440\u0442\u0443 \u0422\u0440\u0435\u0432\u0438\u0437\u043e",
+            "slug": "prokat-avto-aeroport-treviso",
+            "status": "publish",
+            "language": "ru",
+            "template": "page-templates/template-airport-location.php",
+            "url": "http://localhost:10003/ru/prokat-avto-aeroport-treviso/",
+            "provisioning_key": "treviso_airport"
+        }
+    ]
+}
