@@ -19,6 +19,7 @@ function get_posts() { return $GLOBALS['theme_seo_page_ids']; }
 function get_post_status( $id ) { return isset( $GLOBALS['theme_seo_post_status'][ $id ] ) ? $GLOBALS['theme_seo_post_status'][ $id ] : false; }
 function get_permalink( $id ) { return 'https://example.test/fleet-' . $id . '/'; }
 function home_url( $path = '/' ) { return 'https://example.test' . $path; }
+function wp_parse_url( $url, $component = -1 ) { return parse_url( $url, $component ); }
 function get_query_var( $key ) { return isset( $GLOBALS['theme_seo_query_vars'][ $key ] ) ? $GLOBALS['theme_seo_query_vars'][ $key ] : ''; }
 function is_page( $id = 0 ) { return $GLOBALS['theme_seo_is_page'] && ( ! $id || 110 === (int) $id ); }
 function is_front_page() { return false; }
@@ -61,19 +62,19 @@ function theme_seo_assert( $condition, $message ) { if ( ! $condition ) { fwrite
 
 add_filter( 'wpml_object_id', function( $id ) { return 110; } );
 theme_seo_assert( 110 === rentacar_venezia_v2_fleet_page_id(), 'A template-assigned fleet page resolves through WPML.' );
-theme_seo_assert( 'https://example.test/fleet-110/' === rentacar_venezia_v2_fleet_url(), 'The fleet URL uses the current-language page permalink.' );
+theme_seo_assert( 'https://example.test/fleet/' === rentacar_venezia_v2_fleet_url(), 'A suffixed translation permalink retains the established fleet route.' );
 
 $_GET = array();
 theme_seo_assert( ! rentacar_venezia_v2_is_filtered_fleet_request(), 'A clean fleet request is not treated as filtered.' );
-theme_seo_assert( 'https://example.test/fleet-110/' === rentacar_venezia_v2_fleet_canonical_url(), 'A clean fleet canonical is self-referencing.' );
+theme_seo_assert( 'https://example.test/fleet/' === rentacar_venezia_v2_fleet_canonical_url(), 'A clean fleet canonical is self-referencing.' );
 
 $GLOBALS['theme_seo_query_vars']['paged'] = 2;
-theme_seo_assert( 'https://example.test/fleet-110/page/2/' === rentacar_venezia_v2_fleet_canonical_url(), 'A paginated fleet canonical retains its page number.' );
+theme_seo_assert( 'https://example.test/fleet/page/2/' === rentacar_venezia_v2_fleet_canonical_url(), 'A paginated fleet canonical retains its page number.' );
 
 $GLOBALS['theme_seo_query_vars']['paged'] = 0;
 $_GET = array( 'transmission' => 'manual' );
 theme_seo_assert( rentacar_venezia_v2_is_filtered_fleet_request(), 'Recognized fleet filters are detected.' );
-theme_seo_assert( 'https://example.test/fleet-110/' === rentacar_venezia_v2_fleet_canonical_url(), 'A filtered fleet canonical points to the clean catalogue.' );
+theme_seo_assert( 'https://example.test/fleet/' === rentacar_venezia_v2_fleet_canonical_url(), 'A filtered fleet canonical points to the clean catalogue.' );
 $robots = rentacar_venezia_v2_fleet_robots( array() );
 theme_seo_assert( ! empty( $robots['noindex'] ) && ! empty( $robots['follow'] ), 'Filtered fleet requests are noindex,follow.' );
 

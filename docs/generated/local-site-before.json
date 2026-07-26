@@ -1,0 +1,345 @@
+{
+    "siteurl": "http://localhost:10003",
+    "home": "http://localhost:10003",
+    "theme": "rentacar-venezia-v2",
+    "pages": [
+        {
+            "ID": 6,
+            "title": "Terms and Conditions",
+            "slug": "term",
+            "status": "publish",
+            "template": "",
+            "provisioning_key": ""
+        },
+        {
+            "ID": 8,
+            "title": "Contact",
+            "slug": "contact",
+            "status": "publish",
+            "template": "page-templates/template-contact.php",
+            "provisioning_key": "contact"
+        },
+        {
+            "ID": 20,
+            "title": "Home page",
+            "slug": "rent-car-treviso",
+            "status": "publish",
+            "template": "template-homepage.php",
+            "provisioning_key": ""
+        },
+        {
+            "ID": 23,
+            "title": "\u0426\u0435\u043d\u044b \u0438 \u0430\u0432\u0442\u043e\u043c\u043e\u0431\u0438\u043b\u0438",
+            "slug": "%d0%b0%d1%80%d0%b5%d0%bd%d0%b4%d0%b0-%d0%b0%d0%b2%d1%82%d0%be-%d0%b2-%d0%b0%d1%8d%d1%80%d0%be%d0%bf%d0%be%d1%80%d1%82-%d0%bb%d0%b0%d1%80%d0%bd%d0%b0%d0%ba%d0%b0-%d0%b8-%d0%ba%d0%b8%d0%bf%d1%80%d0%b5",
+            "status": "publish",
+            "template": "template-homepage.php",
+            "provisioning_key": ""
+        },
+        {
+            "ID": 57,
+            "title": "\u041f\u0440\u0430\u0432\u0438\u043b\u0430 \u0438 \u0443\u0441\u043b\u043e\u0432\u0438\u044f",
+            "slug": "usloviya",
+            "status": "publish",
+            "template": "",
+            "provisioning_key": ""
+        },
+        {
+            "ID": 73,
+            "title": "\u041a\u043e\u043d\u0442\u0430\u043a\u0442\u044b",
+            "slug": "kontakty-i-pomoshch",
+            "status": "publish",
+            "template": "page-templates/template-contact.php",
+            "provisioning_key": ""
+        },
+        {
+            "ID": 122,
+            "title": "Results",
+            "slug": "prenotazioni",
+            "status": "publish",
+            "template": "template-results.php",
+            "provisioning_key": ""
+        },
+        {
+            "ID": 124,
+            "title": "\u0420\u0435\u0437\u0443\u043b\u044c\u0442\u0430\u0442\u044b",
+            "slug": "%d1%80%d0%b5%d0%b7%d1%83%d0%bb%d1%8c%d1%82%d0%b0%d1%82%d1%8b",
+            "status": "publish",
+            "template": "template-results.php",
+            "provisioning_key": ""
+        },
+        {
+            "ID": 135,
+            "title": "Your request has been sent successfully!",
+            "slug": "success",
+            "status": "publish",
+            "template": "template-success.php",
+            "provisioning_key": ""
+        },
+        {
+            "ID": 137,
+            "title": "\u0412\u0430\u0448 \u0437\u0430\u043f\u0440\u043e\u0441 \u043e\u0442\u043f\u0440\u0430\u0432\u043b\u0435\u043d \u0443\u0441\u043f\u0435\u0448\u043d\u043e!",
+            "slug": "%d0%b7%d0%b0%d0%bf%d1%80%d0%be%d1%81-%d0%be%d1%82%d0%bf%d1%80%d0%b0%d0%b2%d0%bb%d0%b5%d0%bd-%d1%83%d1%81%d0%bf%d0%b5%d1%88%d0%bd%d0%be",
+            "status": "publish",
+            "template": "template-success.php",
+            "provisioning_key": ""
+        },
+        {
+            "ID": 2408,
+            "title": "Auto \u0219i Pre\u021buri",
+            "slug": "inchirieri-auto-treviso-venezia",
+            "status": "publish",
+            "template": "template-homepage.php",
+            "provisioning_key": ""
+        },
+        {
+            "ID": 2426,
+            "title": "Contacte",
+            "slug": "contacte-si-asistenta",
+            "status": "publish",
+            "template": "page-templates/template-contact.php",
+            "provisioning_key": ""
+        },
+        {
+            "ID": 2440,
+            "title": "Termeni \u0219i condi\u021bii",
+            "slug": "termeni",
+            "status": "publish",
+            "template": "",
+            "provisioning_key": ""
+        },
+        {
+            "ID": 2691,
+            "title": "Solicitarea dvs. a fost trimis\u0103 cu succes!",
+            "slug": "solicitarea-dvs-a-fost-trimisa-cu-succes",
+            "status": "publish",
+            "template": "template-success.php",
+            "provisioning_key": ""
+        },
+        {
+            "ID": 3125,
+            "title": "Frequent Question",
+            "slug": "frequents",
+            "status": "publish",
+            "template": "",
+            "provisioning_key": ""
+        },
+        {
+            "ID": 3137,
+            "title": "Places to visit",
+            "slug": "placesto-visit",
+            "status": "publish",
+            "template": "",
+            "provisioning_key": ""
+        },
+        {
+            "ID": 3149,
+            "title": "\u0427\u0430\u0441\u0442\u043e \u0437\u0430\u0434\u0430\u0432\u0430\u0435\u043c\u044b\u0435 \u0432\u043e\u043f\u0440\u043e\u0441\u044b",
+            "slug": "chasto-zadavayemyye",
+            "status": "publish",
+            "template": "",
+            "provisioning_key": ""
+        },
+        {
+            "ID": 3158,
+            "title": "HOME PAGE",
+            "slug": "condition",
+            "status": "publish",
+            "template": "template-homepage.php",
+            "provisioning_key": ""
+        },
+        {
+            "ID": 3161,
+            "title": "Frequently asked questions",
+            "slug": "faq",
+            "status": "publish",
+            "template": "page-templates/template-faq.php",
+            "provisioning_key": "faq"
+        },
+        {
+            "ID": 3164,
+            "title": "Posti da vedere",
+            "slug": "posti",
+            "status": "publish",
+            "template": "",
+            "provisioning_key": ""
+        },
+        {
+            "ID": 3166,
+            "title": "Contatti",
+            "slug": "contatti",
+            "status": "publish",
+            "template": "page-templates/template-contact.php",
+            "provisioning_key": ""
+        },
+        {
+            "ID": 3208,
+            "title": "M\u0435\u0441\u0442\u0430 \u0434\u043b\u044f \u043f\u043e\u0441\u0435\u0449\u0435\u043d\u0438\u044f",
+            "slug": "mesta-dlya-poseshcheniya",
+            "status": "publish",
+            "template": "",
+            "provisioning_key": ""
+        },
+        {
+            "ID": 3214,
+            "title": "\u00centreb\u0103ri frecvente",
+            "slug": "intrebari-frecvente",
+            "status": "publish",
+            "template": "",
+            "provisioning_key": ""
+        },
+        {
+            "ID": 3216,
+            "title": "Termini e Condizioni",
+            "slug": "termini",
+            "status": "publish",
+            "template": "",
+            "provisioning_key": ""
+        },
+        {
+            "ID": 3219,
+            "title": "Locuri de vizitat",
+            "slug": "locuri-de-vizitat",
+            "status": "publish",
+            "template": "",
+            "provisioning_key": ""
+        },
+        {
+            "ID": 3231,
+            "title": "Rezultati",
+            "slug": "total",
+            "status": "publish",
+            "template": "template-results.php",
+            "provisioning_key": ""
+        },
+        {
+            "ID": 3232,
+            "title": "Results",
+            "slug": "results",
+            "status": "publish",
+            "template": "template-results.php",
+            "provisioning_key": ""
+        },
+        {
+            "ID": 3530,
+            "title": "La tua richiesta \u00e8 stata inviata con successo!",
+            "slug": "la-tua-richiesta-e-stata-inviata",
+            "status": "publish",
+            "template": "template-success.php",
+            "provisioning_key": ""
+        },
+        {
+            "ID": 5016,
+            "title": "Fleet",
+            "slug": "fleet",
+            "status": "publish",
+            "template": "page-templates/template-fleet.php",
+            "provisioning_key": "fleet"
+        },
+        {
+            "ID": 5017,
+            "title": "How it works",
+            "slug": "how-it-works",
+            "status": "publish",
+            "template": "page-templates/template-how-it-works.php",
+            "provisioning_key": "how_it_works"
+        },
+        {
+            "ID": 5018,
+            "title": "Rental requirements",
+            "slug": "rental-requirements",
+            "status": "publish",
+            "template": "page-templates/template-rental-requirements.php",
+            "provisioning_key": "rental_requirements"
+        },
+        {
+            "ID": 5021,
+            "title": "Terms and Conditions",
+            "slug": "terms-and-conditions",
+            "status": "publish",
+            "template": "page-templates/template-terms.php",
+            "provisioning_key": "terms"
+        },
+        {
+            "ID": 5022,
+            "title": "Guides",
+            "slug": "guides",
+            "status": "publish",
+            "template": "",
+            "provisioning_key": "guides"
+        },
+        {
+            "ID": 5023,
+            "title": "Venice Marco Polo Airport car rental",
+            "slug": "venice-marco-polo-airport-car-rental",
+            "status": "publish",
+            "template": "page-templates/template-airport-location.php",
+            "provisioning_key": "venice_marco_polo"
+        },
+        {
+            "ID": 5024,
+            "title": "Treviso Airport car rental",
+            "slug": "treviso-airport-car-rental",
+            "status": "publish",
+            "template": "page-templates/template-airport-location.php",
+            "provisioning_key": "treviso_airport"
+        }
+    ],
+    "menus": [
+        {
+            "term_id": 2,
+            "name": "Menu primary",
+            "slug": "menu-primary"
+        },
+        {
+            "term_id": 765,
+            "name": "Menu primary - EN",
+            "slug": "menu-primary-en"
+        },
+        {
+            "term_id": 763,
+            "name": "Menu primary - RO",
+            "slug": "menu-primary-ro"
+        },
+        {
+            "term_id": 764,
+            "name": "Menu primary - RU",
+            "slug": "menu-primary-ru"
+        },
+        {
+            "term_id": 471,
+            "name": "Menu1",
+            "slug": "menu1"
+        }
+    ],
+    "menu_locations": {
+        "primary": 2,
+        "footer": 0,
+        "primary___en": 765,
+        "primary___ro": 763,
+        "primary___ru": 764
+    },
+    "languages": [
+        "en",
+        "it",
+        "ro",
+        "ru"
+    ],
+    "plugins": [
+        "polylang/polylang.php",
+        "acf-repeater/acf-repeater.php",
+        "advanced-custom-fields/acf.php",
+        "all-in-one-wp-migration/all-in-one-wp-migration.php",
+        "classic-editor/classic-editor.php",
+        "classic-widgets/classic-widgets.php",
+        "click-to-chat-for-whatsapp/click-to-chat.php",
+        "contact-form-7/wp-contact-form-7.php",
+        "duracelltomi-google-tag-manager/duracelltomi-google-tag-manager-for-wordpress.php",
+        "litespeed-cache/litespeed-cache.php",
+        "regenerate-thumbnails/regenerate-thumbnails.php",
+        "rentacar-core/rentacar-core.php",
+        "update-theme-and-plugins-from-zip-file/update-theme-and-plugins-from-zip-file.php",
+        "updraftplus/updraftplus.php",
+        "wordpress-seo/wp-seo.php",
+        "wpforms-lite/wpforms.php"
+    ]
+}

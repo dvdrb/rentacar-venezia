@@ -28,8 +28,18 @@
             "provisioning_key": "faq"
         },
         {
+            "id": 3166,
+            "title": "Contatti",
+            "slug": "contatti",
+            "status": "publish",
+            "language": "it",
+            "template": "page-templates/template-contact.php",
+            "url": "http://localhost:10003/contatti/",
+            "provisioning_key": "contact"
+        },
+        {
             "id": 5016,
-            "title": "Fleet",
+            "title": "Auto a noleggio a Venezia e Treviso",
             "slug": "fleet",
             "status": "publish",
             "language": "it",
@@ -39,7 +49,7 @@
         },
         {
             "id": 5017,
-            "title": "How it works",
+            "title": "Come funziona",
             "slug": "how-it-works",
             "status": "publish",
             "language": "it",
@@ -49,7 +59,7 @@
         },
         {
             "id": 5018,
-            "title": "Rental requirements",
+            "title": "Requisiti di noleggio",
             "slug": "rental-requirements",
             "status": "publish",
             "language": "it",
@@ -59,7 +69,7 @@
         },
         {
             "id": 5021,
-            "title": "Terms and Conditions",
+            "title": "Termini e condizioni",
             "slug": "terms-and-conditions",
             "status": "publish",
             "language": "it",
@@ -69,7 +79,7 @@
         },
         {
             "id": 5022,
-            "title": "Guides",
+            "title": "Guide",
             "slug": "guides",
             "status": "publish",
             "language": "it",
@@ -79,7 +89,7 @@
         },
         {
             "id": 5023,
-            "title": "Venice Marco Polo Airport car rental",
+            "title": "Noleggio auto Aeroporto di Venezia Marco Polo",
             "slug": "venice-marco-polo-airport-car-rental",
             "status": "publish",
             "language": "it",
@@ -89,7 +99,7 @@
         },
         {
             "id": 5024,
-            "title": "Treviso Airport car rental",
+            "title": "Noleggio auto Aeroporto di Treviso",
             "slug": "treviso-airport-car-rental",
             "status": "publish",
             "language": "it",
@@ -99,7 +109,7 @@
         },
         {
             "id": 5032,
-            "title": "Fleet",
+            "title": "Rental cars in Venice and Treviso",
             "slug": "fleet-2",
             "status": "publish",
             "language": "en",
@@ -109,7 +119,7 @@
         },
         {
             "id": 5033,
-            "title": "Flota",
+            "title": "Ma\u0219ini de \u00eenchiriat \u00een Vene\u021bia \u0219i Treviso",
             "slug": "flota",
             "status": "publish",
             "language": "ro",
@@ -119,7 +129,7 @@
         },
         {
             "id": 5034,
-            "title": "\u0410\u0432\u0442\u043e\u043f\u0430\u0440\u043a",
+            "title": "\u0410\u0432\u0442\u043e\u043c\u043e\u0431\u0438\u043b\u0438 \u0432 \u0430\u0440\u0435\u043d\u0434\u0443 \u0432 \u0412\u0435\u043d\u0435\u0446\u0438\u0438 \u0438 \u0422\u0440\u0435\u0432\u0438\u0437\u043e",
             "slug": "avtopark",
             "status": "publish",
             "language": "ru",
