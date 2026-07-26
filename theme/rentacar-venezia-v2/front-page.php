@@ -11,7 +11,6 @@ $location_descriptions = array(
     'treviso_airport'   => __( 'A practical pickup point for Treviso Airport arrivals and trips across Veneto.', 'rentacar-venezia-v2' ),
 );
 $pickup_location = in_array( $trip['pickup_location'] ?? '', $location_options, true ) ? $trip['pickup_location'] : $default_location;
-$dropoff_location = in_array( $trip['dropoff_location'] ?? '', $location_options, true ) ? $trip['dropoff_location'] : $pickup_location;
 $whatsapp_url = rentacar_venezia_v2_whatsapp_url();
 $homepage_id = (int) get_option( 'page_on_front' );
 $homepage_content = $homepage_id && 'publish' === get_post_status( $homepage_id )
@@ -50,15 +49,6 @@ get_header();
                     <div class="trip-form__quick" aria-label="<?php esc_attr_e( 'Quick pickup selection', 'rentacar-venezia-v2' ); ?>">
                         <?php foreach ( $locations as $location ) : ?><button type="button" data-trip-location="<?php echo esc_attr( $location['value'] ); ?>" aria-pressed="<?php echo $pickup_location === $location['value'] ? 'true' : 'false'; ?>"><?php echo esc_html( $location['label'] ); ?></button><?php endforeach; ?>
                     </div>
-                    <details class="trip-form__advanced">
-                        <summary><?php esc_html_e( 'More trip details', 'rentacar-venezia-v2' ); ?></summary>
-                        <div class="trip-form__advanced-grid">
-                            <label><?php esc_html_e( 'Pickup time', 'rentacar-venezia-v2' ); ?><input name="pickup_time" type="time" value="<?php echo esc_attr( $trip['pickup_time'] ?? '' ); ?>"></label>
-                            <label><?php esc_html_e( 'Return time', 'rentacar-venezia-v2' ); ?><input name="return_time" type="time" value="<?php echo esc_attr( $trip['return_time'] ?? '' ); ?>"></label>
-                            <label class="trip-form__different-return"><input type="checkbox" data-trip-return-different<?php checked( $dropoff_location !== $pickup_location ); ?>> <span><?php esc_html_e( 'Return to a different location', 'rentacar-venezia-v2' ); ?></span></label>
-                            <label data-trip-return-location><?php esc_html_e( 'Return location', 'rentacar-venezia-v2' ); ?><select name="dropoff_location" data-trip-return-select><?php foreach ( $location_options as $location ) : ?><option value="<?php echo esc_attr( $location ); ?>"<?php selected( $dropoff_location, $location ); ?>><?php echo esc_html( $location ); ?></option><?php endforeach; ?></select></label>
-                        </div>
-                    </details>
                 </fieldset>
                 <button class="button" type="submit"><?php esc_html_e( 'See suitable cars', 'rentacar-venezia-v2' ); ?></button>
             </form>

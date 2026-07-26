@@ -98,22 +98,15 @@ document.addEventListener('pointerdown', (event) => {
 const tripForm = document.querySelector<HTMLFormElement>('[data-trip-form]');
 if (tripForm) {
   const pickup = tripForm.elements.namedItem('pickup_location') as HTMLSelectElement | null;
-  const dropoff = tripForm.elements.namedItem('dropoff_location') as HTMLSelectElement | null;
-  const returnDifferent = tripForm.querySelector<HTMLInputElement>('[data-trip-return-different]');
-  const returnLocation = tripForm.querySelector<HTMLElement>('[data-trip-return-location]');
   const quickLocations = Array.from(tripForm.querySelectorAll<HTMLButtonElement>('[data-trip-location]'));
 
   const syncTripLocations = (): void => {
-    const different = Boolean(returnDifferent?.checked);
-    if (returnLocation) returnLocation.hidden = !different;
-    if (!different && pickup && dropoff) dropoff.value = pickup.value;
     quickLocations.forEach((button) => {
       button.setAttribute('aria-pressed', String(button.dataset.tripLocation === pickup?.value));
     });
   };
 
   pickup?.addEventListener('change', syncTripLocations);
-  returnDifferent?.addEventListener('change', syncTripLocations);
   quickLocations.forEach((button) => button.addEventListener('click', () => {
     if (pickup && button.dataset.tripLocation) {
       pickup.value = button.dataset.tripLocation;

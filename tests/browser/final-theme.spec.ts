@@ -31,10 +31,10 @@ test.describe('final theme experience', () => {
     await expect(page.locator('.trip-filter-section__help')).toBeVisible();
     await expect(page.locator('.trip-form select[name="pickup_location"]')).toHaveCount(1);
     await expect(page.locator('.trip-form select[name="pickup_location"] option')).toHaveCount(2);
-    await expect(page.locator('.trip-form details')).toHaveCount(1);
+    await expect(page.locator('.trip-form details')).toHaveCount(0);
     await expect(page.locator('[data-trip-location]')).toHaveCount(2);
-    await expect(page.locator('[data-trip-return-different]')).toHaveCount(1);
-    await expect(page.locator('.trip-form select[name="dropoff_location"]')).toHaveCount(1);
+    await expect(page.locator('[data-trip-return-different]')).toHaveCount(0);
+    await expect(page.locator('.trip-form select[name="dropoff_location"]')).toHaveCount(0);
   });
 
   test('keeps the homepage filter limited to the two airport pickup options', async ({ page }) => {
@@ -44,7 +44,7 @@ test.describe('final theme experience', () => {
 
     await expect(pickup.locator('option')).toHaveCount(2);
     await expect(pickup).not.toContainText('We come where you need');
-    await expect(form.locator('input[name="pickup_time"], input[name="return_time"], select[name="dropoff_location"]')).toHaveCount(3);
+    await expect(form.locator('input[name="pickup_time"], input[name="return_time"], select[name="dropoff_location"]')).toHaveCount(0);
   });
 
   test('renders two crawlable airport arrival options without an empty image stage', async ({ page }) => {
