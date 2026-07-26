@@ -61,6 +61,72 @@ test.describe('final theme experience', () => {
     expect(await cards.evaluateAll((items) => items.every((item) => Boolean(item.querySelector('.arrival-card__media img, .arrival-card__media svg'))))).toBe(true);
   });
 
+  test('keeps the approved homepage section order and six real featured vehicles', async ({ page }) => {
+    await page.goto('/en/');
+    const sections = page.locator('.hero, .trip-filter-section, .trust-strip, .fleet-section, .arrivals-section, .process-section, .benefits-section, .final-cta');
+    const positions = await sections.evaluateAll((items) => items.map((item) => item.getBoundingClientRect().top));
+
+    expect(positions).toHaveLength(8);
+    expect(positions.every((position, index) => index === 0 || position > positions[index - 1])).toBe(true);
+    await expect(page.locator('.vehicle-grid--featured .vehicle-card')).toHaveCount(6);
+    await expect(page.locator('.vehicle-grid--featured [data-reservation-trigger]')).toHaveCount(6);
+    expect(await page.locator('.vehicle-grid--featured h3 a').evaluateAll((links) => links.every((link) => Boolean(link.getAttribute('href'))))).toBe(true);
+  });
+
+  test('keeps the approved benefits and conversion CTA in their intended hierarchy', async ({ page }) => {
+    await page.goto('/en/');
+    const benefits = page.locator('.benefits-section');
+    const finalCta = page.locator('.final-cta');
+
+    await expect(benefits.locator('.eyebrow')).toHaveText('Local service');
+    await expect(benefits.locator('h2')).toHaveText('Why choose Rent a Car Venezia?');
+    await expect(benefits.locator('.benefits-grid > li')).toHaveCount(4);
+    await expect(benefits).toContainText('No payment to send a request');
+    await expect(benefits.locator('svg[aria-hidden="true"]')).toHaveCount(4);
+    await expect(finalCta.locator('h2')).toHaveText('Ready to choose your car?');
+    await expect(finalCta).toContainText('Submitting this request does not immediately confirm the reservation.');
+    await expect(finalCta.locator('a.button').filter({ hasText: 'View all cars' })).toHaveAttribute('href', /\/en\/fleet\/$/);
+    expect(await benefits.evaluate((element) => element.getBoundingClientRect().top)).toBeLessThan(await finalCta.evaluate((element) => element.getBoundingClientRect().top));
+  });
+
+  test('keeps the homepage SEO head under Yoast ownership without duplicates', async ({ page }) => {
+    await page.goto('/en/');
+
+    await expect(page.locator('head title')).toHaveCount(1);
+    await expect(page.locator('link[rel="canonical"]')).toHaveCount(1);
+    expect(await page.locator('meta[name="description"]').count()).toBeLessThanOrEqual(1);
+    await expect(page.locator('meta[name="keywords"]')).toHaveCount(0);
+    const openGraphProperties = await page.locator('meta[property^="og:"]').evaluateAll((items) => items.map((item) => item.getAttribute('property')).filter(Boolean));
+    expect(new Set(openGraphProperties).size).toBe(openGraphProperties.length);
+  });
+
+  test('keeps the homepage filter and conversion sections usable without overflow at approved widths', async ({ page }) => {
+    for (const width of [1440, 1024, 768, 430, 390, 320]) {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto('/en/');
+      await expect(page.locator('[data-trip-form] select[name="pickup_location"]')).toBeVisible();
+      await expect(page.locator('.arrivals-grid .arrival-card')).toHaveCount(3);
+      await expect(page.locator('.benefits-grid > li')).toHaveCount(4);
+      await expect(page.locator('.final-cta a.button').filter({ hasText: 'View all cars' })).toBeVisible();
+      await expect(page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).resolves.toBeTruthy();
+    }
+  });
+
+  test('keeps the mobile pickup card below readable hero copy and preserves the fallback request URL', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/en/');
+    const heroCopy = page.locator('.hero__copy');
+    const pickupCard = page.locator('.hero-location-card');
+    const customArrival = page.locator('.arrivals-grid .arrival-card').nth(2);
+    const customArrivalUrl = new URL((await customArrival.getAttribute('href')) || '', page.url());
+    const pickupCardTop = await pickupCard.evaluate((element) => element.getBoundingClientRect().top);
+    const heroCopyTop = await heroCopy.evaluate((element) => element.getBoundingClientRect().top);
+
+    expect(pickupCardTop).toBeGreaterThan(heroCopyTop);
+    expect(customArrivalUrl.pathname).toBe('/en/fleet/');
+    expect(customArrivalUrl.searchParams.get('pickup_location')).toBe('Pickup where you need');
+  });
+
   test('renders three precise, equal-width customer assurances below the trip filter', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/en/');
@@ -219,15 +285,30 @@ test.describe('final theme experience', () => {
       ro: 'Mașini de închiriat în Veneția și Treviso',
       ru: 'Автомобили в аренду в Венеции и Тревизо',
     };
+    const heroHeadings: Record<string, string> = {
+      en: 'Car rental in Venice and Treviso, with personal confirmation',
+      it: 'Noleggio auto a Venezia e Treviso, con conferma personale',
+      ro: 'Închirieri auto în Veneția și Treviso, cu confirmare personală',
+      ru: 'Прокат автомобилей в Венеции и Тревизо с личным подтверждением',
+    };
+    const benefitHeadings: Record<string, string> = {
+      en: 'Why choose Rent a Car Venezia?',
+      it: 'Perché scegliere Rent a Car Venezia?',
+      ro: 'De ce să alegeți Rent a Car Venezia?',
+      ru: 'Почему выбирают Rent a Car Venezia?',
+    };
 
     for (const language of languages) {
       if (!language.href || !language.lang) continue;
       await page.goto(language.href);
       await expect(page.locator('html')).toHaveAttribute('lang', new RegExp(`^${language.lang}(?:-|$)`, 'i'));
       await expect(page.locator('h1')).toHaveCount(1);
+      const languageCode = language.lang.toLowerCase().slice(0, 2);
+      if (heroHeadings[languageCode]) await expect(page.locator('h1')).toHaveText(heroHeadings[languageCode]);
+      if (benefitHeadings[languageCode]) await expect(page.locator('.benefits-section h2')).toHaveText(benefitHeadings[languageCode]);
       const fleetLink = page.locator('a[href]').filter({ hasText: /View all cars|Vedi tutte|Vezi toate|Все/i }).first();
       await expect(fleetLink).toHaveCount(1);
-      const copy = trustCopy[language.lang.toLowerCase().slice(0, 2)];
+      const copy = trustCopy[languageCode];
       if (copy) {
         const strip = page.locator('.trust-strip');
         await expect(strip.locator('.trust-strip__item')).toHaveCount(3);
@@ -238,14 +319,25 @@ test.describe('final theme experience', () => {
       const fleetUrl = new URL(fleetHref || '', page.url());
       const expectedFleetPath = language.lang.toLowerCase().startsWith('it')
         ? '/fleet/'
-        : `/${language.lang.toLowerCase().slice(0, 2)}/fleet/`;
+        : `/${languageCode}/fleet/`;
       expect(fleetUrl.pathname).toBe(expectedFleetPath);
       await page.goto(fleetUrl.toString());
       await expect(page.locator('html')).toHaveAttribute('lang', new RegExp(`^${language.lang}(?:-|$)`, 'i'));
       await expect(page.locator('h1')).toHaveCount(1);
-      const expectedFleetHeading = fleetHeadings[language.lang.toLowerCase().slice(0, 2)];
+      const expectedFleetHeading = fleetHeadings[languageCode];
       if (expectedFleetHeading) await expect(page.locator('h1')).toHaveText(expectedFleetHeading);
     }
+  });
+
+  test('does not log browser console errors while loading the homepage', async ({ page }) => {
+    const errors: string[] = [];
+    page.on('console', (message) => {
+      if (message.type() === 'error') errors.push(message.text());
+    });
+
+    await page.goto('/en/');
+    await page.waitForLoadState('networkidle');
+    expect(errors).toEqual([]);
   });
 
   test('returns a real noindex 404 with useful internal links', async ({ page }) => {
