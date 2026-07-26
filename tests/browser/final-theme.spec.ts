@@ -16,7 +16,7 @@ test.describe('final theme experience', () => {
   });
 
   test('keeps the supplied responsive hero and trip filter flow', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/en/');
     const hero = page.locator('.hero');
 
     await expect(hero.locator('picture')).toHaveCount(1);
@@ -26,10 +26,39 @@ test.describe('final theme experience', () => {
     await expect(hero.locator('img')).toHaveAttribute('height', '941');
     await expect(hero.locator('img')).toHaveAttribute('fetchpriority', 'high');
     await expect(hero.locator('a[href="#trip-filter"]')).toHaveCount(1);
+    await expect(hero.locator('.hero-location-card li')).toHaveCount(3);
+    await expect(hero.locator('.hero-location-card')).toContainText('We come where you need');
     await expect(page.locator('.trip-form')).toHaveCount(1);
     await expect(page.locator('.trip-filter-section__help')).toBeVisible();
     await expect(page.locator('.trip-form select[name="pickup_location"]')).toHaveCount(1);
     await expect(page.locator('.trip-form select[name="dropoff_location"]')).toHaveCount(1);
+    await expect(page.locator('[data-trip-location]')).toHaveCount(3);
+  });
+
+  test('keeps the guided custom-pickup and different-return controls tied to native fields', async ({ page }) => {
+    await page.goto('/en/');
+    const form = page.locator('[data-trip-form]');
+    const pickup = form.locator('select[name="pickup_location"]');
+    const returnLocation = form.locator('[data-return-location]');
+
+    await form.locator('[data-trip-location]').filter({ hasText: 'We come where you need' }).click();
+    await expect(pickup).toHaveValue('Pickup where you need');
+    await form.locator('.trip-form__advanced summary').click();
+    await expect(returnLocation).toBeHidden();
+
+    await form.locator('[data-return-different]').check();
+    await expect(returnLocation).toBeVisible();
+    await expect(returnLocation.locator('select[name="dropoff_location"]')).toHaveCount(1);
+  });
+
+  test('renders three crawlable arrival options without an empty image stage', async ({ page }) => {
+    await page.goto('/en/');
+    const cards = page.locator('.arrivals-grid .arrival-card');
+
+    await expect(cards).toHaveCount(3);
+    await expect(cards.nth(2)).toContainText('We come where you need');
+    expect(await cards.evaluateAll((items) => items.every((item) => item instanceof HTMLAnchorElement && Boolean(item.getAttribute('href'))))).toBe(true);
+    expect(await cards.evaluateAll((items) => items.every((item) => Boolean(item.querySelector('.arrival-card__media img, .arrival-card__media svg'))))).toBe(true);
   });
 
   test('renders three precise, equal-width customer assurances below the trip filter', async ({ page }) => {

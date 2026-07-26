@@ -54,6 +54,8 @@ body {
 
 img { max-width: 100%; height: auto; }
 
+[hidden] { display: none !important; }
+
 a { color: var(--rc-navy-800); }
 
 a:hover { color: var(--rc-navy-950); }

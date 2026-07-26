@@ -22,6 +22,7 @@ function rentacar_venezia_v2_interface_translation_map() {
     $translations = array(
         'it' => array(
             'Car rental in Venice and Treviso' => 'Noleggio auto a Venezia e Treviso',
+            'We come where you need' => 'Veniamo dove ti serve',
             'Rental cars in Venice and Treviso' => 'Auto a noleggio a Venezia e Treviso',
             'Explore the vehicle fleet and choose the option that suits your trip.' => 'Esplora la flotta e scegli l’opzione più adatta al tuo viaggio.',
             'Choose a car. Send a request. We confirm personally.' => 'Scegli un’auto. Invia una richiesta. Confermiamo personalmente.',
@@ -155,6 +156,7 @@ function rentacar_venezia_v2_interface_translation_map() {
         ),
         'ro' => array(
             'Car rental in Venice and Treviso' => 'Închiriere auto în Veneția și Treviso',
+            'We come where you need' => 'Venim unde aveți nevoie',
             'Rental cars in Venice and Treviso' => 'Mașini de închiriat în Veneția și Treviso',
             'Explore the vehicle fleet and choose the option that suits your trip.' => 'Explorați flota de vehicule și alegeți opțiunea potrivită pentru călătoria dumneavoastră.',
             'Choose a car. Send a request. We confirm personally.' => 'Alegeți o mașină. Trimiteți o solicitare. Confirmăm personal.',
@@ -283,6 +285,7 @@ function rentacar_venezia_v2_interface_translation_map() {
         ),
         'ru' => array(
             'Car rental in Venice and Treviso' => 'Аренда автомобилей в Венеции и Тревизо',
+            'We come where you need' => 'Мы приедем туда, где вам нужно',
             'Rental cars in Venice and Treviso' => 'Автомобили в аренду в Венеции и Тревизо',
             'Explore the vehicle fleet and choose the option that suits your trip.' => 'Ознакомьтесь с автопарком и выберите вариант, подходящий для вашей поездки.',
             'Choose a car. Send a request. We confirm personally.' => 'Выберите автомобиль. Отправьте запрос. Мы подтвердим лично.',

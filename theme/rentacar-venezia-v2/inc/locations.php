@@ -7,7 +7,7 @@ function rentacar_venezia_v2_pickup_locations() {
         array(
             'venice_marco_polo' => array( 'value' => 'Airport Venice Marco Polo', 'label' => __( 'Venice Marco Polo Airport', 'rentacar-venezia-v2' ) ),
             'treviso_airport'   => array( 'value' => 'Treviso Airport Arrivals', 'label' => __( 'Treviso Airport', 'rentacar-venezia-v2' ) ),
-            'treviso_office'    => array( 'value' => 'Treviso Office', 'label' => __( 'Treviso office', 'rentacar-venezia-v2' ) ),
+            'custom_pickup'     => array( 'value' => 'Pickup where you need', 'label' => __( 'We come where you need', 'rentacar-venezia-v2' ) ),
         )
     );
 }

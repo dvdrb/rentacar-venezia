@@ -4,13 +4,13 @@ defined( 'ABSPATH' ) || exit;
 $vehicles = class_exists( 'Rentacar_Core_Vehicle_Repository' ) ? ( new Rentacar_Core_Vehicle_Repository() )->query( array( 'posts_per_page' => 6, 'orderby' => 'date', 'order' => 'DESC' ) ) : array();
 $trip = rentacar_venezia_v2_trip_query();
 $locations = rentacar_venezia_v2_pickup_locations();
-$public_locations = array_intersect_key( $locations, array_flip( array( 'venice_marco_polo', 'treviso_airport' ) ) );
+$public_locations = $locations;
 $location_options = wp_list_pluck( $locations, 'value' );
 $default_location = $location_options ? reset( $location_options ) : '';
 $location_descriptions = array(
     'venice_marco_polo' => __( 'Meet us close to Venice Marco Polo Airport and begin your journey with a locally confirmed pickup.', 'rentacar-venezia-v2' ),
     'treviso_airport'   => __( 'A practical pickup point for Treviso Airport arrivals and trips across Veneto.', 'rentacar-venezia-v2' ),
-    'treviso_office'    => __( 'Arrange collection from our Treviso office with clear timing confirmed by our team.', 'rentacar-venezia-v2' ),
+    'custom_pickup'     => __( 'Tell us where you need the car and when. We will review your request personally and explain the available options.', 'rentacar-venezia-v2' ),
 );
 $pickup_location = in_array( $trip['pickup_location'] ?? '', $location_options, true ) ? $trip['pickup_location'] : $default_location;
 $dropoff_location = in_array( $trip['dropoff_location'] ?? '', $location_options, true ) ? $trip['dropoff_location'] : $default_location;
