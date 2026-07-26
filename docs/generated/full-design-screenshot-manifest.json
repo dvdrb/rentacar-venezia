@@ -1,0 +1,12 @@
+{
+  "generated_at": "2026-07-26",
+  "base_url": "http://rentacar-venezia-local.local",
+  "screenshots": [
+    {"page": "homepage", "viewport": "1440", "path": "docs/generated/screenshots/homepage-desktop.png", "status": "reviewed"},
+    {"page": "fleet", "viewport": "1440", "path": "docs/generated/screenshots/fleet-desktop.png", "status": "reviewed"},
+    {"page": "reservation modal", "viewport": "390", "path": "docs/generated/screenshots/reservation-modal-mobile.png", "status": "reviewed"},
+    {"page": "contact", "viewport": "390", "path": "docs/generated/screenshots/contact-mobile.png", "status": "reviewed"},
+    {"page": "how it works", "viewport": "390", "path": "docs/generated/screenshots/how-it-works-mobile.png", "status": "reviewed"},
+    {"page": "terms", "viewport": "1440", "path": "docs/generated/screenshots/terms-desktop.png", "status": "reviewed"}
+  ]
+}

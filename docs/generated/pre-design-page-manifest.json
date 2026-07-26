@@ -1,0 +1,573 @@
+{
+    "generated_at": "2026-07-26T20:22:09+00:00",
+    "site_url": "http://rentacar-venezia-local.local/",
+    "theme": "Rentacar Venezia V2",
+    "languages": [
+        "en",
+        "it",
+        "ro",
+        "ru"
+    ],
+    "pages": [
+        {
+            "id": 6,
+            "status": "publish",
+            "title": "Terms and Conditions",
+            "slug": "term",
+            "language": "en",
+            "template": "",
+            "provisioning_key": "",
+            "url": "http://rentacar-venezia-local.local/en/term/"
+        },
+        {
+            "id": 8,
+            "status": "publish",
+            "title": "Contact",
+            "slug": "contact",
+            "language": "en",
+            "template": "page-templates/template-contact.php",
+            "provisioning_key": "contact",
+            "url": "http://rentacar-venezia-local.local/en/contact/"
+        },
+        {
+            "id": 20,
+            "status": "publish",
+            "title": "Home page",
+            "slug": "rent-car-treviso",
+            "language": "en",
+            "template": "template-homepage.php",
+            "provisioning_key": "",
+            "url": "http://localhost:10003/en/"
+        },
+        {
+            "id": 23,
+            "status": "publish",
+            "title": "\u0426\u0435\u043d\u044b \u0438 \u0430\u0432\u0442\u043e\u043c\u043e\u0431\u0438\u043b\u0438",
+            "slug": "%d0%b0%d1%80%d0%b5%d0%bd%d0%b4%d0%b0-%d0%b0%d0%b2%d1%82%d0%be-%d0%b2-%d0%b0%d1%8d%d1%80%d0%be%d0%bf%d0%be%d1%80%d1%82-%d0%bb%d0%b0%d1%80%d0%bd%d0%b0%d0%ba%d0%b0-%d0%b8-%d0%ba%d0%b8%d0%bf%d1%80%d0%b5",
+            "language": "ru",
+            "template": "template-homepage.php",
+            "provisioning_key": "",
+            "url": "http://localhost:10003/ru/"
+        },
+        {
+            "id": 57,
+            "status": "publish",
+            "title": "\u041f\u0440\u0430\u0432\u0438\u043b\u0430 \u0438 \u0443\u0441\u043b\u043e\u0432\u0438\u044f",
+            "slug": "usloviya",
+            "language": "ru",
+            "template": "",
+            "provisioning_key": "",
+            "url": "http://rentacar-venezia-local.local/ru/usloviya/"
+        },
+        {
+            "id": 73,
+            "status": "publish",
+            "title": "\u041a\u043e\u043d\u0442\u0430\u043a\u0442\u044b",
+            "slug": "kontakty-i-pomoshch",
+            "language": "ru",
+            "template": "page-templates/template-contact.php",
+            "provisioning_key": "",
+            "url": "http://rentacar-venezia-local.local/ru/kontakty-i-pomoshch/"
+        },
+        {
+            "id": 122,
+            "status": "publish",
+            "title": "Results",
+            "slug": "prenotazioni",
+            "language": "en",
+            "template": "template-results.php",
+            "provisioning_key": "",
+            "url": "http://rentacar-venezia-local.local/en/prenotazioni/"
+        },
+        {
+            "id": 124,
+            "status": "publish",
+            "title": "\u0420\u0435\u0437\u0443\u043b\u044c\u0442\u0430\u0442\u044b",
+            "slug": "%d1%80%d0%b5%d0%b7%d1%83%d0%bb%d1%8c%d1%82%d0%b0%d1%82%d1%8b",
+            "language": "ru",
+            "template": "template-results.php",
+            "provisioning_key": "",
+            "url": "http://rentacar-venezia-local.local/ru/%d1%80%d0%b5%d0%b7%d1%83%d0%bb%d1%8c%d1%82%d0%b0%d1%82%d1%8b/"
+        },
+        {
+            "id": 135,
+            "status": "publish",
+            "title": "Your request has been sent successfully!",
+            "slug": "success",
+            "language": "en",
+            "template": "template-success.php",
+            "provisioning_key": "",
+            "url": "http://rentacar-venezia-local.local/en/success/"
+        },
+        {
+            "id": 137,
+            "status": "publish",
+            "title": "\u0412\u0430\u0448 \u0437\u0430\u043f\u0440\u043e\u0441 \u043e\u0442\u043f\u0440\u0430\u0432\u043b\u0435\u043d \u0443\u0441\u043f\u0435\u0448\u043d\u043e!",
+            "slug": "%d0%b7%d0%b0%d0%bf%d1%80%d0%be%d1%81-%d0%be%d1%82%d0%bf%d1%80%d0%b0%d0%b2%d0%bb%d0%b5%d0%bd-%d1%83%d1%81%d0%bf%d0%b5%d1%88%d0%bd%d0%be",
+            "language": "ru",
+            "template": "template-success.php",
+            "provisioning_key": "",
+            "url": "http://rentacar-venezia-local.local/ru/%d0%b7%d0%b0%d0%bf%d1%80%d0%be%d1%81-%d0%be%d1%82%d0%bf%d1%80%d0%b0%d0%b2%d0%bb%d0%b5%d0%bd-%d1%83%d1%81%d0%bf%d0%b5%d1%88%d0%bd%d0%be/"
+        },
+        {
+            "id": 2408,
+            "status": "publish",
+            "title": "Auto \u0219i Pre\u021buri",
+            "slug": "inchirieri-auto-treviso-venezia",
+            "language": "ro",
+            "template": "template-homepage.php",
+            "provisioning_key": "",
+            "url": "http://localhost:10003/ro/"
+        },
+        {
+            "id": 2426,
+            "status": "publish",
+            "title": "Contacte",
+            "slug": "contacte-si-asistenta",
+            "language": "ro",
+            "template": "page-templates/template-contact.php",
+            "provisioning_key": "",
+            "url": "http://rentacar-venezia-local.local/ro/contacte-si-asistenta/"
+        },
+        {
+            "id": 2440,
+            "status": "publish",
+            "title": "Termeni \u0219i condi\u021bii",
+            "slug": "termeni",
+            "language": "ro",
+            "template": "",
+            "provisioning_key": "",
+            "url": "http://rentacar-venezia-local.local/ro/termeni/"
+        },
+        {
+            "id": 2691,
+            "status": "publish",
+            "title": "Solicitarea dvs. a fost trimis\u0103 cu succes!",
+            "slug": "solicitarea-dvs-a-fost-trimisa-cu-succes",
+            "language": "ro",
+            "template": "template-success.php",
+            "provisioning_key": "",
+            "url": "http://rentacar-venezia-local.local/ro/solicitarea-dvs-a-fost-trimisa-cu-succes/"
+        },
+        {
+            "id": 3125,
+            "status": "publish",
+            "title": "Frequent Question",
+            "slug": "frequents",
+            "language": "en",
+            "template": "page-templates/template-faq.php",
+            "provisioning_key": "",
+            "url": "http://rentacar-venezia-local.local/en/frequents/"
+        },
+        {
+            "id": 3137,
+            "status": "publish",
+            "title": "Places to visit",
+            "slug": "placesto-visit",
+            "language": "en",
+            "template": "",
+            "provisioning_key": "",
+            "url": "http://rentacar-venezia-local.local/en/placesto-visit/"
+        },
+        {
+            "id": 3149,
+            "status": "publish",
+            "title": "\u0427\u0430\u0441\u0442\u043e \u0437\u0430\u0434\u0430\u0432\u0430\u0435\u043c\u044b\u0435 \u0432\u043e\u043f\u0440\u043e\u0441\u044b",
+            "slug": "chasto-zadavayemyye",
+            "language": "ru",
+            "template": "page-templates/template-faq.php",
+            "provisioning_key": "",
+            "url": "http://rentacar-venezia-local.local/ru/chasto-zadavayemyye/"
+        },
+        {
+            "id": 3158,
+            "status": "publish",
+            "title": "HOME PAGE",
+            "slug": "condition",
+            "language": "it",
+            "template": "template-homepage.php",
+            "provisioning_key": "",
+            "url": "http://localhost:10003/"
+        },
+        {
+            "id": 3161,
+            "status": "publish",
+            "title": "Frequently asked questions",
+            "slug": "faq",
+            "language": "it",
+            "template": "page-templates/template-faq.php",
+            "provisioning_key": "faq",
+            "url": "http://rentacar-venezia-local.local/faq/"
+        },
+        {
+            "id": 3164,
+            "status": "publish",
+            "title": "Posti da vedere",
+            "slug": "posti",
+            "language": "it",
+            "template": "",
+            "provisioning_key": "",
+            "url": "http://rentacar-venezia-local.local/posti/"
+        },
+        {
+            "id": 3166,
+            "status": "publish",
+            "title": "Contatti",
+            "slug": "contatti",
+            "language": "it",
+            "template": "page-templates/template-contact.php",
+            "provisioning_key": "contact",
+            "url": "http://rentacar-venezia-local.local/contatti/"
+        },
+        {
+            "id": 3208,
+            "status": "publish",
+            "title": "M\u0435\u0441\u0442\u0430 \u0434\u043b\u044f \u043f\u043e\u0441\u0435\u0449\u0435\u043d\u0438\u044f",
+            "slug": "mesta-dlya-poseshcheniya",
+            "language": "ru",
+            "template": "",
+            "provisioning_key": "",
+            "url": "http://rentacar-venezia-local.local/ru/mesta-dlya-poseshcheniya/"
+        },
+        {
+            "id": 3214,
+            "status": "publish",
+            "title": "\u00centreb\u0103ri frecvente",
+            "slug": "intrebari-frecvente",
+            "language": "ro",
+            "template": "page-templates/template-faq.php",
+            "provisioning_key": "",
+            "url": "http://rentacar-venezia-local.local/ro/intrebari-frecvente/"
+        },
+        {
+            "id": 3216,
+            "status": "publish",
+            "title": "Termini e Condizioni",
+            "slug": "termini",
+            "language": "it",
+            "template": "",
+            "provisioning_key": "",
+            "url": "http://rentacar-venezia-local.local/termini/"
+        },
+        {
+            "id": 3219,
+            "status": "publish",
+            "title": "Locuri de vizitat",
+            "slug": "locuri-de-vizitat",
+            "language": "ro",
+            "template": "",
+            "provisioning_key": "",
+            "url": "http://rentacar-venezia-local.local/ro/locuri-de-vizitat/"
+        },
+        {
+            "id": 3231,
+            "status": "publish",
+            "title": "Rezultati",
+            "slug": "total",
+            "language": "it",
+            "template": "template-results.php",
+            "provisioning_key": "",
+            "url": "http://rentacar-venezia-local.local/total/"
+        },
+        {
+            "id": 3232,
+            "status": "publish",
+            "title": "Results",
+            "slug": "results",
+            "language": "ro",
+            "template": "template-results.php",
+            "provisioning_key": "",
+            "url": "http://rentacar-venezia-local.local/ro/results/"
+        },
+        {
+            "id": 3530,
+            "status": "publish",
+            "title": "La tua richiesta \u00e8 stata inviata con successo!",
+            "slug": "la-tua-richiesta-e-stata-inviata",
+            "language": "it",
+            "template": "template-success.php",
+            "provisioning_key": "",
+            "url": "http://rentacar-venezia-local.local/la-tua-richiesta-e-stata-inviata/"
+        },
+        {
+            "id": 5016,
+            "status": "publish",
+            "title": "Auto a noleggio a Venezia e Treviso",
+            "slug": "fleet",
+            "language": "it",
+            "template": "page-templates/template-fleet.php",
+            "provisioning_key": "fleet",
+            "url": "http://rentacar-venezia-local.local/fleet/"
+        },
+        {
+            "id": 5017,
+            "status": "publish",
+            "title": "Come funziona",
+            "slug": "how-it-works",
+            "language": "it",
+            "template": "page-templates/template-how-it-works.php",
+            "provisioning_key": "how_it_works",
+            "url": "http://rentacar-venezia-local.local/how-it-works/"
+        },
+        {
+            "id": 5018,
+            "status": "publish",
+            "title": "Requisiti di noleggio",
+            "slug": "rental-requirements",
+            "language": "it",
+            "template": "page-templates/template-rental-requirements.php",
+            "provisioning_key": "rental_requirements",
+            "url": "http://rentacar-venezia-local.local/rental-requirements/"
+        },
+        {
+            "id": 5021,
+            "status": "publish",
+            "title": "Termini e condizioni",
+            "slug": "terms-and-conditions",
+            "language": "it",
+            "template": "page-templates/template-terms.php",
+            "provisioning_key": "terms",
+            "url": "http://rentacar-venezia-local.local/terms-and-conditions/"
+        },
+        {
+            "id": 5022,
+            "status": "publish",
+            "title": "Guide",
+            "slug": "guides",
+            "language": "it",
+            "template": "",
+            "provisioning_key": "guides",
+            "url": "http://rentacar-venezia-local.local/guides/"
+        },
+        {
+            "id": 5023,
+            "status": "publish",
+            "title": "Noleggio auto Aeroporto di Venezia Marco Polo",
+            "slug": "venice-marco-polo-airport-car-rental",
+            "language": "it",
+            "template": "page-templates/template-airport-location.php",
+            "provisioning_key": "venice_marco_polo",
+            "url": "http://rentacar-venezia-local.local/venice-marco-polo-airport-car-rental/"
+        },
+        {
+            "id": 5024,
+            "status": "publish",
+            "title": "Noleggio auto Aeroporto di Treviso",
+            "slug": "treviso-airport-car-rental",
+            "language": "it",
+            "template": "page-templates/template-airport-location.php",
+            "provisioning_key": "treviso_airport",
+            "url": "http://rentacar-venezia-local.local/treviso-airport-car-rental/"
+        },
+        {
+            "id": 5032,
+            "status": "publish",
+            "title": "Rental cars in Venice and Treviso",
+            "slug": "fleet-2",
+            "language": "en",
+            "template": "page-templates/template-fleet.php",
+            "provisioning_key": "fleet",
+            "url": "http://rentacar-venezia-local.local/en/fleet-2/"
+        },
+        {
+            "id": 5033,
+            "status": "publish",
+            "title": "Ma\u0219ini de \u00eenchiriat \u00een Vene\u021bia \u0219i Treviso",
+            "slug": "flota",
+            "language": "ro",
+            "template": "page-templates/template-fleet.php",
+            "provisioning_key": "fleet",
+            "url": "http://rentacar-venezia-local.local/ro/flota/"
+        },
+        {
+            "id": 5034,
+            "status": "publish",
+            "title": "\u0410\u0432\u0442\u043e\u043c\u043e\u0431\u0438\u043b\u0438 \u0432 \u0430\u0440\u0435\u043d\u0434\u0443 \u0432 \u0412\u0435\u043d\u0435\u0446\u0438\u0438 \u0438 \u0422\u0440\u0435\u0432\u0438\u0437\u043e",
+            "slug": "avtopark",
+            "language": "ru",
+            "template": "page-templates/template-fleet.php",
+            "provisioning_key": "fleet",
+            "url": "http://rentacar-venezia-local.local/ru/avtopark/"
+        },
+        {
+            "id": 5035,
+            "status": "publish",
+            "title": "How it works",
+            "slug": "how-it-works-2",
+            "language": "en",
+            "template": "page-templates/template-how-it-works.php",
+            "provisioning_key": "how_it_works",
+            "url": "http://rentacar-venezia-local.local/en/how-it-works-2/"
+        },
+        {
+            "id": 5036,
+            "status": "publish",
+            "title": "Cum func\u021bioneaz\u0103",
+            "slug": "cum-functioneaza",
+            "language": "ro",
+            "template": "page-templates/template-how-it-works.php",
+            "provisioning_key": "how_it_works",
+            "url": "http://rentacar-venezia-local.local/ro/cum-functioneaza/"
+        },
+        {
+            "id": 5037,
+            "status": "publish",
+            "title": "\u041a\u0430\u043a \u044d\u0442\u043e \u0440\u0430\u0431\u043e\u0442\u0430\u0435\u0442",
+            "slug": "kak-eto-rabotaet",
+            "language": "ru",
+            "template": "page-templates/template-how-it-works.php",
+            "provisioning_key": "how_it_works",
+            "url": "http://rentacar-venezia-local.local/ru/kak-eto-rabotaet/"
+        },
+        {
+            "id": 5038,
+            "status": "publish",
+            "title": "Rental requirements",
+            "slug": "rental-requirements-2",
+            "language": "en",
+            "template": "page-templates/template-rental-requirements.php",
+            "provisioning_key": "rental_requirements",
+            "url": "http://rentacar-venezia-local.local/en/rental-requirements-2/"
+        },
+        {
+            "id": 5039,
+            "status": "publish",
+            "title": "Condi\u021bii de \u00eenchiriere",
+            "slug": "conditii-inchiriere",
+            "language": "ro",
+            "template": "page-templates/template-rental-requirements.php",
+            "provisioning_key": "rental_requirements",
+            "url": "http://rentacar-venezia-local.local/ro/conditii-inchiriere/"
+        },
+        {
+            "id": 5040,
+            "status": "publish",
+            "title": "\u0423\u0441\u043b\u043e\u0432\u0438\u044f \u0430\u0440\u0435\u043d\u0434\u044b",
+            "slug": "usloviya-arendy",
+            "language": "ru",
+            "template": "page-templates/template-rental-requirements.php",
+            "provisioning_key": "rental_requirements",
+            "url": "http://rentacar-venezia-local.local/ru/usloviya-arendy/"
+        },
+        {
+            "id": 5041,
+            "status": "publish",
+            "title": "Terms and Conditions",
+            "slug": "terms-and-conditions-2",
+            "language": "en",
+            "template": "page-templates/template-terms.php",
+            "provisioning_key": "terms",
+            "url": "http://rentacar-venezia-local.local/en/terms-and-conditions-2/"
+        },
+        {
+            "id": 5042,
+            "status": "publish",
+            "title": "Termeni \u0219i condi\u021bii",
+            "slug": "termeni-conditii",
+            "language": "ro",
+            "template": "page-templates/template-terms.php",
+            "provisioning_key": "terms",
+            "url": "http://rentacar-venezia-local.local/ro/termeni-conditii/"
+        },
+        {
+            "id": 5043,
+            "status": "publish",
+            "title": "\u0423\u0441\u043b\u043e\u0432\u0438\u044f \u0438 \u043f\u043e\u043b\u043e\u0436\u0435\u043d\u0438\u044f",
+            "slug": "usloviya-i-polozheniya",
+            "language": "ru",
+            "template": "page-templates/template-terms.php",
+            "provisioning_key": "terms",
+            "url": "http://rentacar-venezia-local.local/ru/usloviya-i-polozheniya/"
+        },
+        {
+            "id": 5044,
+            "status": "publish",
+            "title": "Guides",
+            "slug": "guides-2",
+            "language": "en",
+            "template": "",
+            "provisioning_key": "guides",
+            "url": "http://rentacar-venezia-local.local/en/guides-2/"
+        },
+        {
+            "id": 5045,
+            "status": "publish",
+            "title": "Ghiduri",
+            "slug": "ghiduri",
+            "language": "ro",
+            "template": "",
+            "provisioning_key": "guides",
+            "url": "http://rentacar-venezia-local.local/ro/ghiduri/"
+        },
+        {
+            "id": 5046,
+            "status": "publish",
+            "title": "\u041f\u0443\u0442\u0435\u0432\u043e\u0434\u0438\u0442\u0435\u043b\u0438",
+            "slug": "putevoditeli",
+            "language": "ru",
+            "template": "",
+            "provisioning_key": "guides",
+            "url": "http://rentacar-venezia-local.local/ru/putevoditeli/"
+        },
+        {
+            "id": 5047,
+            "status": "publish",
+            "title": "Venice Marco Polo Airport car rental",
+            "slug": "venice-marco-polo-airport-car-rental-2",
+            "language": "en",
+            "template": "page-templates/template-airport-location.php",
+            "provisioning_key": "venice_marco_polo",
+            "url": "http://rentacar-venezia-local.local/en/venice-marco-polo-airport-car-rental-2/"
+        },
+        {
+            "id": 5048,
+            "status": "publish",
+            "title": "\u00cenchirieri auto Aeroportul Vene\u021bia Marco Polo",
+            "slug": "inchirieri-auto-aeroport-venetia-marco-polo",
+            "language": "ro",
+            "template": "page-templates/template-airport-location.php",
+            "provisioning_key": "venice_marco_polo",
+            "url": "http://rentacar-venezia-local.local/ro/inchirieri-auto-aeroport-venetia-marco-polo/"
+        },
+        {
+            "id": 5049,
+            "status": "publish",
+            "title": "\u041f\u0440\u043e\u043a\u0430\u0442 \u0430\u0432\u0442\u043e \u0432 \u0430\u044d\u0440\u043e\u043f\u043e\u0440\u0442\u0443 \u0412\u0435\u043d\u0435\u0446\u0438\u044f \u041c\u0430\u0440\u043a\u043e \u041f\u043e\u043b\u043e",
+            "slug": "prokat-avto-aeroport-veneciya-marko-polo",
+            "language": "ru",
+            "template": "page-templates/template-airport-location.php",
+            "provisioning_key": "venice_marco_polo",
+            "url": "http://rentacar-venezia-local.local/ru/prokat-avto-aeroport-veneciya-marko-polo/"
+        },
+        {
+            "id": 5050,
+            "status": "publish",
+            "title": "Treviso Airport car rental",
+            "slug": "treviso-airport-car-rental-2",
+            "language": "en",
+            "template": "page-templates/template-airport-location.php",
+            "provisioning_key": "treviso_airport",
+            "url": "http://rentacar-venezia-local.local/en/treviso-airport-car-rental-2/"
+        },
+        {
+            "id": 5051,
+            "status": "publish",
+            "title": "\u00cenchirieri auto Aeroportul Treviso",
+            "slug": "inchirieri-auto-aeroport-treviso",
+            "language": "ro",
+            "template": "page-templates/template-airport-location.php",
+            "provisioning_key": "treviso_airport",
+            "url": "http://rentacar-venezia-local.local/ro/inchirieri-auto-aeroport-treviso/"
+        },
+        {
+            "id": 5052,
+            "status": "publish",
+            "title": "\u041f\u0440\u043e\u043a\u0430\u0442 \u0430\u0432\u0442\u043e \u0432 \u0430\u044d\u0440\u043e\u043f\u043e\u0440\u0442\u0443 \u0422\u0440\u0435\u0432\u0438\u0437\u043e",
+            "slug": "prokat-avto-aeroport-treviso",
+            "language": "ru",
+            "template": "page-templates/template-airport-location.php",
+            "provisioning_key": "treviso_airport",
+            "url": "http://rentacar-venezia-local.local/ru/prokat-avto-aeroport-treviso/"
+        }
+    ]
+}
