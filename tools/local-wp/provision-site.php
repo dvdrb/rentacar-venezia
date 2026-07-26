@@ -18,9 +18,11 @@ $pages = array(
 );
 $report = array();
 $localized_pages = array(
-    'en' => array(),
+    'en' => array(
+        'fleet' => array( 'title' => 'Rental cars in Venice and Treviso', 'slug' => 'fleet', 'content' => '<h2>Rental cars in Venice and Treviso</h2><p>Choose your preferred vehicle and send a request. Availability, final price and rental conditions are confirmed personally.</p>' ),
+    ),
     'ro' => array(
-        'fleet' => array( 'title' => 'Flota', 'slug' => 'flota', 'content' => '<h2>Mașini de închiriat în Veneția și Treviso</h2><p>Alegeți vehiculul preferat și trimiteți o solicitare. Disponibilitatea, prețul final și condițiile sunt confirmate personal.</p>' ),
+        'fleet' => array( 'title' => 'Mașini de închiriat în Veneția și Treviso', 'slug' => 'flota', 'content' => '<h2>Mașini de închiriat în Veneția și Treviso</h2><p>Alegeți vehiculul preferat și trimiteți o solicitare. Disponibilitatea, prețul final și condițiile sunt confirmate personal.</p>' ),
         'how_it_works' => array( 'title' => 'Cum funcționează', 'slug' => 'cum-functioneaza', 'content' => '<h2>O solicitare simplă, confirmată personal</h2><p>Alegeți o mașină, introduceți detaliile călătoriei și trimiteți solicitarea fără plată. Echipa noastră confirmă personal disponibilitatea, prețul final și condițiile.</p>' ),
         'rental_requirements' => array( 'title' => 'Condiții de închiriere', 'slug' => 'conditii-inchiriere', 'content' => '<h2>Înainte de solicitare</h2><p>Șoferii trebuie să aibă cel puțin 23 de ani și permis categoria B de minimum trei ani. Plata și depozitul se achită la preluare; prețurile includ TVA și RCA.</p>' ),
         'terms' => array( 'title' => 'Termeni și condiții', 'slug' => 'termeni-conditii', 'content' => '<h2>Condiții de închiriere</h2><p>Solicitările sunt supuse disponibilității și confirmării personale. Anularea este gratuită până la 24 de ore înainte de preluare.</p>' ),
@@ -29,7 +31,7 @@ $localized_pages = array(
         'treviso_airport' => array( 'title' => 'Închirieri auto Aeroportul Treviso', 'slug' => 'inchirieri-auto-aeroport-treviso', 'content' => '<h2>Preluare la Aeroportul Treviso</h2><p>Preluarea este organizată personal la Via Noalese 63/E, 31100 Treviso, Italia.</p>' ),
     ),
     'ru' => array(
-        'fleet' => array( 'title' => 'Автопарк', 'slug' => 'avtopark', 'content' => '<h2>Прокат автомобилей в Венеции и Тревизо</h2><p>Выберите автомобиль и отправьте запрос. Доступность, окончательная цена и условия подтверждаются лично.</p>' ),
+        'fleet' => array( 'title' => 'Автомобили в аренду в Венеции и Тревизо', 'slug' => 'avtopark', 'content' => '<h2>Автомобили в аренду в Венеции и Тревизо</h2><p>Выберите автомобиль и отправьте запрос. Доступность, окончательная цена и условия подтверждаются лично.</p>' ),
         'how_it_works' => array( 'title' => 'Как это работает', 'slug' => 'kak-eto-rabotaet', 'content' => '<h2>Простой запрос с личным подтверждением</h2><p>Выберите автомобиль, укажите детали поездки и отправьте запрос без оплаты. Наша команда лично подтверждает доступность, цену и условия.</p>' ),
         'rental_requirements' => array( 'title' => 'Условия аренды', 'slug' => 'usloviya-arendy', 'content' => '<h2>Перед отправкой запроса</h2><p>Водителю должно быть не менее 23 лет, а права категории B должны быть выданы не менее трёх лет назад. Оплата и депозит производятся при получении; цены включают НДС и RCA.</p>' ),
         'terms' => array( 'title' => 'Условия и положения', 'slug' => 'usloviya-i-polozheniya', 'content' => '<h2>Условия аренды</h2><p>Все запросы зависят от доступности и личного подтверждения. Бесплатная отмена возможна не позднее чем за 24 часа до получения.</p>' ),
@@ -76,8 +78,8 @@ if ( function_exists( 'pll_set_post_language' ) && function_exists( 'pll_save_po
         $source_id = (int) $source[0];
         $translations = (array) pll_get_post_translations( $source_id );
         foreach ( array( 'en', 'ro', 'ru' ) as $language ) {
-            if ( ! empty( $translations[ $language ] ) ) continue;
             $copy = isset( $localized_pages[ $language ][ $key ] ) ? $localized_pages[ $language ][ $key ] : array( 'title' => $page['title'], 'slug' => $page['slug'], 'content' => $page['content'] );
+            if ( ! empty( $translations[ $language ] ) ) { if ( $apply && isset( $copy['title'] ) ) wp_update_post( array( 'ID' => (int) $translations[ $language ], 'post_title' => $copy['title'] ) ); continue; }
             if ( ! $apply ) { $report[] = $key . ': would create ' . $language . ' translation'; continue; }
             $id = wp_insert_post( wp_slash( array( 'post_type' => 'page', 'post_status' => 'publish', 'post_title' => $copy['title'], 'post_name' => $copy['slug'], 'post_content' => $copy['content'] ) ), true );
             if ( is_wp_error( $id ) ) { $report[] = $key . ': ' . $language . ' ' . $id->get_error_message(); continue; }

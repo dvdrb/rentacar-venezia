@@ -348,10 +348,15 @@ test.describe('final theme experience', () => {
       const fleetHref = await fleetLink.getAttribute('href');
       expect(fleetHref).toBeTruthy();
       const fleetUrl = new URL(fleetHref || '', page.url());
-      const expectedFleetPath = language.lang.toLowerCase().startsWith('it')
-        ? '/fleet/'
-        : `/${languageCode}/fleet/`;
-      expect(fleetUrl.pathname).toBe(expectedFleetPath);
+      // The multilingual provider owns the translated page slug. Assert that
+      // the generated link stays in the active language without baking a
+      // particular translated slug into the test.
+      if (languageCode === 'it') {
+        expect(fleetUrl.pathname).toBe('/fleet/');
+      } else {
+        expect(fleetUrl.pathname).toMatch(new RegExp(`^/${languageCode}/[^/]+/$`));
+        expect(fleetUrl.pathname).not.toMatch(/\/fleet-\d+\/$/);
+      }
       await page.goto(fleetUrl.toString());
       await expect(page.locator('html')).toHaveAttribute('lang', new RegExp(`^${language.lang}(?:-|$)`, 'i'));
       await expect(page.locator('h1')).toHaveCount(1);
