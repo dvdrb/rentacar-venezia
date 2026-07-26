@@ -119,5 +119,11 @@ get_header();
         <?php endif; ?>
     </div>
 </main>
+<?php if ( $vehicle && rentacar_venezia_v2_whatsapp_url() ) : ?>
+    <nav class="mobile-action-bar mobile-action-bar--vehicle" aria-label="<?php esc_attr_e( 'Vehicle actions', 'rentacar-venezia-v2' ); ?>">
+        <a class="mobile-action-bar__whatsapp" href="<?php echo esc_url( rentacar_venezia_v2_whatsapp_url() ); ?>"><?php esc_html_e( 'WhatsApp', 'rentacar-venezia-v2' ); ?></a>
+        <button class="mobile-action-bar__primary" type="button" data-reservation-trigger data-vehicle-id="<?php echo esc_attr( $vehicle->get( 'id' ) ); ?>" data-vehicle-title="<?php echo esc_attr( rentacar_venezia_v2_vehicle_title( $vehicle ) ); ?>" data-vehicle-image="<?php echo esc_url( $image_url ); ?>" data-vehicle-specifications="<?php echo esc_attr( implode( ' · ', $specifications ) ); ?>" data-vehicle-price-bands="<?php echo esc_attr( implode( ' · ', $price_labels ) ); ?>"><?php esc_html_e( 'Reserve this car', 'rentacar-venezia-v2' ); ?></button>
+    </nav>
+<?php endif; ?>
 <?php get_template_part( 'template-parts/enquiry/reservation-modal' ); ?>
 <?php get_footer(); ?>

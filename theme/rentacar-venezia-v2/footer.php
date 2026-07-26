@@ -19,6 +19,24 @@
     </div>
     <div class="site-footer__bottom rc-container"><small>&copy; <?php echo esc_html( wp_date( 'Y' ) ); ?> <?php bloginfo( 'name' ); ?></small><?php if ( get_privacy_policy_url() ) : ?><a href="<?php echo esc_url( get_privacy_policy_url() ); ?>"><?php esc_html_e( 'Privacy Policy', 'rentacar-venezia-v2' ); ?></a><?php endif; ?></div>
 </footer>
+<?php
+$mobile_whatsapp = rentacar_venezia_v2_whatsapp_url();
+$mobile_action_label = '';
+$mobile_action_url = '';
+if ( is_front_page() || is_page_template( 'page-templates/template-airport-location.php' ) ) {
+    $mobile_action_label = __( 'Explore the fleet', 'rentacar-venezia-v2' );
+    $mobile_action_url   = rentacar_venezia_v2_fleet_url();
+} elseif ( is_page_template( 'page-templates/template-fleet.php' ) ) {
+    $mobile_action_label = __( 'Filters', 'rentacar-venezia-v2' );
+    $mobile_action_url   = '#fleet-filters';
+}
+?>
+<?php if ( $mobile_whatsapp && $mobile_action_url ) : ?>
+    <nav class="mobile-action-bar" aria-label="<?php esc_attr_e( 'Quick actions', 'rentacar-venezia-v2' ); ?>">
+        <a class="mobile-action-bar__whatsapp" href="<?php echo esc_url( $mobile_whatsapp ); ?>"><?php esc_html_e( 'WhatsApp', 'rentacar-venezia-v2' ); ?></a>
+        <a class="mobile-action-bar__primary" href="<?php echo esc_url( $mobile_action_url ); ?>"<?php echo '#fleet-filters' === $mobile_action_url ? ' data-mobile-filter-trigger' : ''; ?>><?php echo esc_html( $mobile_action_label ); ?></a>
+    </nav>
+<?php endif; ?>
 <?php wp_footer(); ?>
 </body>
 </html>

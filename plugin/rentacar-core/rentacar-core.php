@@ -41,6 +41,7 @@ require_once RENTACAR_CORE_PATH . 'src/Enquiries/BusinessNotification.php';
 require_once RENTACAR_CORE_PATH . 'src/Enquiries/CustomerAcknowledgement.php';
 require_once RENTACAR_CORE_PATH . 'src/Enquiries/ReservationRateLimiter.php';
 require_once RENTACAR_CORE_PATH . 'src/Enquiries/ReservationController.php';
+require_once RENTACAR_CORE_PATH . 'src/Enquiries/ContactController.php';
 
 add_action( 'init', array( 'Rentacar_Core_Cars_Post_Type', 'register_when_legacy_absent' ), 9 );
 add_filter( 'pll_get_post_types', function( $post_types, $is_settings = false ) { $post_types['cars'] = 'cars'; return $post_types; }, 10, 2 );
@@ -51,4 +52,6 @@ add_action( 'admin_menu', array( 'Rentacar_Core_Reservation_Extra_Settings', 're
 add_action( 'rest_api_init', array( 'Rentacar_Core_Estimate_Controller', 'register_routes' ) );
 add_action( 'admin_post_nopriv_rentacar_submit_reservation', array( 'Rentacar_Core_Reservation_Controller', 'handle' ) );
 add_action( 'admin_post_rentacar_submit_reservation', array( 'Rentacar_Core_Reservation_Controller', 'handle' ) );
+add_action( 'admin_post_nopriv_rentacar_submit_contact', array( 'Rentacar_Core_Contact_Controller', 'handle' ) );
+add_action( 'admin_post_rentacar_submit_contact', array( 'Rentacar_Core_Contact_Controller', 'handle' ) );
 add_action( 'admin_notices', array( 'Rentacar_Core_Reservation_Controller', 'admin_notice' ) );

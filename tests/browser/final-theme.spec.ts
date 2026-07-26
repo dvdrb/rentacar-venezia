@@ -177,6 +177,8 @@ test.describe('final theme experience', () => {
     await expect(extras.nth(1)).toHaveAttribute('value', 'additional_driver');
     await expect(page.locator('[data-reservation-form] input[value="gps"], [data-reservation-form] input[value="internet_sim"]')).toHaveCount(0);
     await expect(page.locator('.reservation-extras small')).toHaveCount(2);
+    await expect(page.locator('[data-reservation-step="1"] .reservation-form__options summary')).toContainText(/customize|personalizza|personalizați|настройте/i);
+    await expect(page.locator('[data-reservation-step="2"] .reservation-form__options')).toHaveCount(0);
     await expect(page.locator('.reservation-flight, input[name="flight_number"], input[name="airline"]')).toHaveCount(0);
     await expect(page.locator('[data-reservation-progress]')).toContainText('Step 1 of 2');
   });
@@ -255,7 +257,26 @@ test.describe('final theme experience', () => {
     await page.goto('/contatti/');
     await expect(page.locator('.contact-page')).toBeVisible();
     await expect(page.locator('.contact-page h1')).toHaveCount(1);
+    await expect(page.locator('.contact-form input[name="name"]')).toBeVisible();
+    await expect(page.locator('.contact-form select[name="topic"]')).toBeVisible();
+    await expect(page.locator('.contact-form input[name="privacy"]')).toBeVisible();
     await expect(page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).resolves.toBeTruthy();
+  });
+
+  test('sends the separate general contact form through the protected contact endpoint', async ({ page }) => {
+    await page.goto('/contatti/');
+    const form = page.locator('.contact-form form');
+    await form.locator('input[name="name"]').fill('Local Contact Test');
+    await form.locator('input[name="phone"]').fill('+39000000000');
+    await form.locator('input[name="email"]').fill(`contact-browser-${Date.now()}@example.invalid`);
+    await form.locator('select[name="topic"]').selectOption('general');
+    await form.locator('textarea[name="message"]').fill('This checks the LocalWP contact request path.');
+    await form.locator('input[name="privacy"]').check();
+    await Promise.all([
+      page.waitForURL(/contact_status=sent/),
+      form.locator('button[type="submit"]').click(),
+    ]);
+    await expect(page.locator('.contact-form__status--success')).toBeVisible();
   });
 
   test('keeps fleet indexing signals specific to clean, filtered and paginated catalogue requests', async ({ page }) => {
@@ -417,6 +438,55 @@ test.describe('final theme experience', () => {
     await switcher.locator('[data-language-trigger]').click();
     await expect(switcher.locator('[data-language-menu]')).toBeVisible();
     await expect(page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).resolves.toBeTruthy();
+  });
+
+  test('uses an inert, escapable mobile navigation drawer', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/');
+    const toggle = page.locator('[data-menu-toggle]');
+    await toggle.click();
+    await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+    await expect(page.locator('#main-content')).toHaveAttribute('inert', '');
+    await page.keyboard.press('Escape');
+    await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    await expect(page.locator('#main-content')).not.toHaveAttribute('inert', '');
+    await expect(toggle).toBeFocused();
+  });
+
+  test('shows context-aware mobile conversion actions', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/');
+    await expect(page.locator('.mobile-action-bar')).toBeVisible();
+    await expect(page.locator('.mobile-action-bar__whatsapp')).toBeVisible();
+
+    await page.goto('/fleet/');
+    await page.locator('[data-mobile-filter-trigger]').click();
+    await expect(page.locator('.fleet-filter-drawer[open]')).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(page.locator('.fleet-filter-drawer')).toHaveCount(0);
+
+    const vehicleUrl = await page.locator('.vehicle-card h3 a').first().getAttribute('href');
+    test.skip(!vehicleUrl, 'A published vehicle is required for mobile vehicle actions.');
+    await page.goto(vehicleUrl!);
+    await expect(page.locator('.mobile-action-bar--vehicle [data-reservation-trigger]')).toBeVisible();
+  });
+
+  test('renders structured airport and information pages without legacy flight collection', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/en/venice-marco-polo-airport-car-rental/');
+    await expect(page.locator('h1')).toHaveCount(1);
+    await expect(page.locator('.airport-page__process li')).toHaveCount(3);
+    await expect(page.locator('.airport-page__practical')).toContainText('VCE');
+    await expect(page.locator('body')).not.toContainText(/flight number/i);
+    await expect(page.locator('.mobile-action-bar')).toBeVisible();
+
+    await page.goto('/en/how-it-works/');
+    await expect(page.locator('.information-steps li')).toHaveCount(5);
+    await expect(page.locator('body')).not.toContainText(/flight number/i);
+
+    await page.goto('/en/rental-requirements/');
+    await expect(page.locator('.requirements-grid section')).toHaveCount(6);
+    await expect(page.locator('.requirements-grid')).toContainText('150 km');
   });
 
   test('keeps multilingual configuration and flag asset paths out of the theme source', async () => {

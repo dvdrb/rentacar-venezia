@@ -73,6 +73,12 @@ const setNavigation = (open: boolean): void => {
   toggle.setAttribute('aria-label', open ? strings.menuClose : strings.menuOpen);
   navigation.classList.toggle('is-open', open);
   document.body.classList.toggle('menu-open', open);
+  document.querySelectorAll<HTMLElement>('#main-content, .site-footer, .mobile-action-bar').forEach((target) => {
+    target.toggleAttribute('inert', open);
+    target.setAttribute('aria-hidden', String(open));
+    if (!open) target.removeAttribute('aria-hidden');
+  });
+  if (open) requestAnimationFrame(() => navigation.querySelector<HTMLElement>('a, button')?.focus());
 };
 
 if (toggle && navigation) {
@@ -126,6 +132,62 @@ if (tripForm) {
 
 document.querySelectorAll<HTMLFormElement>('[data-fleet-filters]').forEach((fleetFilters) => {
   fleetFilters.addEventListener('submit', () => track('fleet_filter_apply'));
+});
+
+const fleetFilters = document.querySelector<HTMLDetailsElement>('#fleet-filters');
+const fleetFilterForm = fleetFilters?.querySelector<HTMLFormElement>('[data-fleet-filters]');
+const fleetFilterDrawerTrigger = document.querySelector<HTMLButtonElement>('[data-fleet-filter-drawer]');
+let fleetFilterFormParent: ParentNode | null = null;
+let fleetFilterFormNextSibling: ChildNode | null = null;
+let fleetFilterLastTrigger: HTMLElement | null = null;
+
+const useFleetFilterDrawer = (): boolean => window.matchMedia('(max-width: 767px)').matches && typeof HTMLDialogElement !== 'undefined';
+
+const restoreFleetFilterForm = (): void => {
+  if (!fleetFilterForm || !fleetFilterFormParent) return;
+  fleetFilterFormParent.insertBefore(fleetFilterForm, fleetFilterFormNextSibling);
+  fleetFilterFormParent = null;
+  fleetFilterFormNextSibling = null;
+  fleetFilterLastTrigger?.focus();
+};
+
+const openFleetFilterDrawer = (trigger: HTMLElement): void => {
+  if (!fleetFilters || !fleetFilterForm || !useFleetFilterDrawer()) {
+    if (fleetFilters) fleetFilters.open = true;
+    requestAnimationFrame(() => fleetFilters?.querySelector<HTMLElement>('summary')?.focus());
+    return;
+  }
+
+  fleetFilterLastTrigger = trigger;
+  fleetFilters.open = false;
+  fleetFilterFormParent = fleetFilterForm.parentNode;
+  fleetFilterFormNextSibling = fleetFilterForm.nextSibling;
+  const dialog = document.createElement('dialog');
+  dialog.className = 'fleet-filter-drawer';
+  dialog.setAttribute('aria-label', fleetFilterDrawerTrigger?.textContent?.trim() || 'Filters');
+  const header = document.createElement('header');
+  const title = document.createElement('h2');
+  title.textContent = fleetFilterDrawerTrigger?.textContent?.trim() || 'Filters';
+  const close = document.createElement('button');
+  close.type = 'button';
+  close.className = 'fleet-filter-drawer__close';
+  close.setAttribute('aria-label', 'Close filters');
+  close.textContent = '×';
+  close.addEventListener('click', () => dialog.close());
+  header.append(title, close);
+  dialog.append(header, fleetFilterForm);
+  dialog.addEventListener('close', () => {
+    restoreFleetFilterForm();
+    dialog.remove();
+  }, { once: true });
+  document.body.append(dialog);
+  dialog.showModal();
+  requestAnimationFrame(() => dialog.querySelector<HTMLElement>('select, input, button')?.focus());
+};
+
+fleetFilterDrawerTrigger?.addEventListener('click', () => openFleetFilterDrawer(fleetFilterDrawerTrigger));
+document.querySelectorAll<HTMLElement>('[data-mobile-filter-trigger]').forEach((trigger) => {
+  trigger.addEventListener('click', () => openFleetFilterDrawer(trigger));
 });
 
 document.querySelectorAll<HTMLAnchorElement>('a[href^="tel:"], a[href*="wa.me"], a[href*="whatsapp"]')
@@ -319,6 +381,19 @@ document.addEventListener('keydown', (event) => {
     setNavigation(false);
     toggle?.focus();
     return;
+  }
+
+  if (event.key === 'Tab' && navigationOpen && navigation && toggle) {
+    const items = [toggle, ...Array.from(navigation.querySelectorAll<HTMLElement>('a, button'))];
+    const first = items[0];
+    const last = items[items.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
   }
 
   if (event.key === 'Tab' && modal && !modal.hidden) {

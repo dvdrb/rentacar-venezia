@@ -45,6 +45,20 @@ function rentacar_venezia_v2_core_airport_locations( $locations ) {
 }
 add_filter( 'rentacar_core_airport_locations', 'rentacar_venezia_v2_core_airport_locations' );
 
+/** The public contact form uses the approved business inbox unless an owner override is configured. */
+function rentacar_venezia_v2_contact_recipient( $recipient ) {
+    return is_email( $recipient ) ? $recipient : 'info@rentacarvenezia.it';
+}
+add_filter( 'rentacar_core_contact_recipient', 'rentacar_venezia_v2_contact_recipient' );
+
+/** LocalWP must never deliver test messages to the business inbox. */
+function rentacar_venezia_v2_intercept_local_mail( $pre, $atts ) {
+    $host = (string) wp_parse_url( home_url( '/' ), PHP_URL_HOST );
+
+    return false !== strpos( $host, '.local' ) ? true : $pre;
+}
+add_filter( 'pre_wp_mail', 'rentacar_venezia_v2_intercept_local_mail', 10, 2 );
+
 function rentacar_venezia_v2_register_home_patterns() {
     if ( ! function_exists( 'register_block_pattern' ) ) {
         return;
@@ -396,11 +410,7 @@ function rentacar_venezia_v2_language_links() {
 }
 
 function rentacar_venezia_v2_whatsapp_url() {
-    /**
-     * The number is intentionally not supplied until it has owner approval.
-     * A theme/plugin setting can provide it in a later request-flow phase.
-     */
-    return apply_filters( 'rentacar_venezia_v2_whatsapp_url', '' );
+    return (string) apply_filters( 'rentacar_venezia_v2_whatsapp_url', 'https://wa.me/393445068823' );
 }
 
 function rentacar_venezia_v2_trip_query() {

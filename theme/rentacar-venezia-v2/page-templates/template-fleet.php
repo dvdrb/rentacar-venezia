@@ -67,7 +67,8 @@ get_header();
             </section>
         <?php endif; ?>
         <?php get_template_part( 'template-parts/global/notice' ); ?>
-        <details class="fleet-filters" open>
+        <button class="fleet-filter-drawer-trigger" type="button" data-fleet-filter-drawer aria-haspopup="dialog"><?php esc_html_e( 'Filters', 'rentacar-venezia-v2' ); ?></button>
+        <details id="fleet-filters" class="fleet-filters" open>
             <summary><?php esc_html_e( 'Filter and sort cars', 'rentacar-venezia-v2' ); ?></summary>
             <form class="fleet-filters__form" method="get" action="<?php echo esc_url( rentacar_venezia_v2_fleet_url() ); ?>" data-fleet-filters>
                 <?php foreach ( $trip as $key => $value ) : ?><input type="hidden" name="<?php echo esc_attr( $key ); ?>" value="<?php echo esc_attr( $value ); ?>"><?php endforeach; ?>

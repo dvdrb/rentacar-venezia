@@ -52,7 +52,7 @@ final class Rentacar_Core_Reservation_Validator {
             $errors->add( 'started_at', __( 'Please review the form and try again.', 'rentacar-core' ) );
         }
 
-        if ( strlen( (string) ( $input['message'] ?? '' ) ) > 2000 || strlen( (string) ( $input['flight_number'] ?? '' ) ) > 24 || strlen( (string) ( $input['pickup_location'] ?? '' ) ) > 120 || strlen( (string) ( $input['return_location'] ?? '' ) ) > 120 ) {
+        if ( strlen( (string) ( $input['message'] ?? '' ) ) > 2000 || strlen( (string) ( $input['pickup_location'] ?? '' ) ) > 120 || strlen( (string) ( $input['return_location'] ?? '' ) ) > 120 ) {
             $errors->add( 'size', __( 'One or more values are too long.', 'rentacar-core' ) );
         }
 
