@@ -69,7 +69,7 @@ get_header();
         <?php get_template_part( 'template-parts/global/notice' ); ?>
         <details class="fleet-filters" open>
             <summary><?php esc_html_e( 'Filter and sort cars', 'rentacar-venezia-v2' ); ?></summary>
-            <form class="fleet-filters__form" method="get" action="<?php echo esc_url( rentacar_venezia_v2_fleet_url() ); ?>">
+            <form class="fleet-filters__form" method="get" action="<?php echo esc_url( rentacar_venezia_v2_fleet_url() ); ?>" data-fleet-filters>
                 <?php foreach ( $trip as $key => $value ) : ?><input type="hidden" name="<?php echo esc_attr( $key ); ?>" value="<?php echo esc_attr( $value ); ?>"><?php endforeach; ?>
                 <?php if ( $transmissions ) : ?><label><?php esc_html_e( 'Transmission', 'rentacar-venezia-v2' ); ?><select name="transmission"><option value=""><?php esc_html_e( 'Any transmission', 'rentacar-venezia-v2' ); ?></option><?php foreach ( $transmissions as $gearbox ) : ?><option value="<?php echo esc_attr( $gearbox ); ?>"<?php selected( $transmission, $gearbox ); ?>><?php echo esc_html( rentacar_venezia_v2_vehicle_transmission_label( $gearbox ) ); ?></option><?php endforeach; ?></select></label><?php endif; ?>
                 <?php if ( $passenger_values ) : ?><label><?php esc_html_e( 'Passengers', 'rentacar-venezia-v2' ); ?><select name="passengers"><option value="0"><?php esc_html_e( 'Any capacity', 'rentacar-venezia-v2' ); ?></option><?php foreach ( $passenger_values as $count ) : ?><option value="<?php echo esc_attr( $count ); ?>"<?php selected( $passengers, $count ); ?>><?php echo esc_html( $count . '+' ); ?></option><?php endforeach; ?></select></label><?php endif; ?>

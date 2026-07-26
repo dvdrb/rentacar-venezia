@@ -17,6 +17,13 @@ type ReservationConfig = {
 
 type RentacarWindow = Window & typeof globalThis & { rentacarVenezia?: ReservationConfig };
 
+type AnalyticsWindow = Window & typeof globalThis & { dataLayer?: Array<Record<string, unknown>> };
+
+const track = (event: string): void => {
+  const analytics = window as AnalyticsWindow;
+  if (Array.isArray(analytics.dataLayer)) analytics.dataLayer.push({ event });
+};
+
 const configuration = (window as RentacarWindow).rentacarVenezia;
 const strings: ReservationStrings = configuration?.strings || {
   menuOpen: 'Open navigation',
@@ -113,8 +120,20 @@ if (tripForm) {
       syncTripLocations();
     }
   }));
+  tripForm.addEventListener('submit', () => track('trip_filter_submit'));
   syncTripLocations();
 }
+
+document.querySelectorAll<HTMLFormElement>('[data-fleet-filters]').forEach((fleetFilters) => {
+  fleetFilters.addEventListener('submit', () => track('fleet_filter_apply'));
+});
+
+document.querySelectorAll<HTMLAnchorElement>('a[href^="tel:"], a[href*="wa.me"], a[href*="whatsapp"]')
+  .forEach((link) => link.addEventListener('click', () => track(link.href.startsWith('tel:') ? 'phone_click' : 'whatsapp_click')));
+
+document.querySelectorAll<HTMLElement>('.arrival-card').forEach((card) => card.addEventListener('click', () => track('airport_page_click')));
+
+document.querySelectorAll<HTMLElement>('[data-guide-cta]').forEach((cta) => cta.addEventListener('click', () => track('guide_cta_click')));
 
 const revealItems = Array.from(document.querySelectorAll<HTMLElement>('.reveal-on-scroll'));
 if (revealItems.length) {
@@ -256,6 +275,7 @@ const openModal = (button: HTMLElement): void => {
   if (!modal || !form) return;
   setNavigation(false);
   trigger = button;
+  track('reservation_modal_open');
   resetVisibleState();
   modal.hidden = false;
   document.body.classList.add('reservation-open');
@@ -372,6 +392,7 @@ if (form) {
   form.addEventListener('submit', async (event) => {
     if (!window.fetch) return;
     event.preventDefault();
+    track('reservation_request_submit');
 
     const clientErrors = nativeErrors();
     if (Object.keys(clientErrors).length) {
@@ -403,6 +424,7 @@ if (form) {
 
       formWrap?.setAttribute('hidden', '');
       success?.removeAttribute('hidden');
+      track('reservation_request_success');
       const reference = modal?.querySelector<HTMLElement>('[data-reservation-reference]');
       if (reference && body.data.reference) {
         reference.textContent = strings.reference.replace('%s', body.data.reference);
