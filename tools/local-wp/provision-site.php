@@ -85,4 +85,27 @@ if ( function_exists( 'pll_set_post_language' ) && function_exists( 'pll_save_po
         }
     }
 }
+
+if ( function_exists( 'wp_create_nav_menu' ) && function_exists( 'pll_get_post' ) ) {
+    $menu_keys = array(
+        'primary' => array( 'fleet', 'venice_marco_polo', 'treviso_airport', 'how_it_works', 'faq', 'guides', 'contact' ),
+        'footer'  => array( 'fleet', 'how_it_works', 'rental_requirements', 'faq', 'guides', 'contact', 'terms' ),
+    );
+    foreach ( array( 'it', 'en', 'ro', 'ru' ) as $language ) {
+        foreach ( $menu_keys as $location => $keys ) {
+            $menu_name = 'Rentacar ' . ucfirst( $location ) . ' ' . strtoupper( $language );
+            $menu = wp_get_nav_menu_object( $menu_name );
+            if ( ! $menu && ! $apply ) { $report[] = 'would create ' . $menu_name; continue; }
+            $menu_id = $menu ? (int) $menu->term_id : wp_create_nav_menu( $menu_name );
+            if ( is_wp_error( $menu_id ) ) { $report[] = $menu_name . ': ' . $menu_id->get_error_message(); continue; }
+            if ( function_exists( 'pll_set_term_language' ) ) pll_set_term_language( $menu_id, $language );
+            if ( ! wp_get_nav_menu_items( $menu_id ) ) foreach ( $keys as $position => $key ) {
+                $source = get_posts( array( 'post_type' => 'page', 'post_status' => 'publish', 'posts_per_page' => 1, 'meta_key' => '_rc_provisioning_key', 'meta_value' => $key, 'fields' => 'ids' ) );
+                $page_id = $source ? (int) pll_get_post( $source[0], $language ) : 0;
+                if ( $page_id ) wp_update_nav_menu_item( $menu_id, 0, array( 'menu-item-object-id' => $page_id, 'menu-item-object' => 'page', 'menu-item-type' => 'post_type', 'menu-item-status' => 'publish', 'menu-item-position' => $position + 1 ) );
+            }
+            $locations = get_theme_mod( 'nav_menu_locations', array() ); $locations[ $location . '___' . $language ] = $menu_id; if ( 'it' === $language ) $locations[ $location ] = $menu_id; set_theme_mod( 'nav_menu_locations', $locations ); $report[] = $menu_name . ': ' . $menu_id;
+        }
+    }
+}
 WP_CLI::success( ( $apply ? 'Applied: ' : 'Dry run: ' ) . implode( '; ', $report ) );
