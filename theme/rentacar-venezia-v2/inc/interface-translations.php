@@ -22,6 +22,8 @@ function rentacar_venezia_v2_interface_translation_map() {
     $translations = array(
         'it' => array(
             'Car rental in Venice and Treviso' => 'Noleggio auto a Venezia e Treviso',
+            'Rental cars in Venice and Treviso' => 'Auto a noleggio a Venezia e Treviso',
+            'Explore the vehicle fleet and choose the option that suits your trip.' => 'Esplora la flotta e scegli l’opzione più adatta al tuo viaggio.',
             'Choose a car. Send a request. We confirm personally.' => 'Scegli un’auto. Invia una richiesta. Confermiamo personalmente.',
             'Select your preferred vehicle, complete one short reservation form, and our team will check availability and contact you.' => 'Scegli il veicolo che preferisci, compila un breve modulo di prenotazione e il nostro team verificherà la disponibilità e ti contatterà.',
             'Choose your car' => 'Scegli la tua auto',
@@ -153,6 +155,8 @@ function rentacar_venezia_v2_interface_translation_map() {
         ),
         'ro' => array(
             'Car rental in Venice and Treviso' => 'Închiriere auto în Veneția și Treviso',
+            'Rental cars in Venice and Treviso' => 'Mașini de închiriat în Veneția și Treviso',
+            'Explore the vehicle fleet and choose the option that suits your trip.' => 'Explorați flota de vehicule și alegeți opțiunea potrivită pentru călătoria dumneavoastră.',
             'Choose a car. Send a request. We confirm personally.' => 'Alegeți o mașină. Trimiteți o solicitare. Confirmăm personal.',
             'Select your preferred vehicle, complete one short reservation form, and our team will check availability and contact you.' => 'Alegeți vehiculul preferat, completați un formular scurt de rezervare, iar echipa noastră va verifica disponibilitatea și vă va contacta.',
             'Choose your car' => 'Alegeți mașina',
@@ -279,6 +283,8 @@ function rentacar_venezia_v2_interface_translation_map() {
         ),
         'ru' => array(
             'Car rental in Venice and Treviso' => 'Аренда автомобилей в Венеции и Тревизо',
+            'Rental cars in Venice and Treviso' => 'Автомобили в аренду в Венеции и Тревизо',
+            'Explore the vehicle fleet and choose the option that suits your trip.' => 'Ознакомьтесь с автопарком и выберите вариант, подходящий для вашей поездки.',
             'Choose a car. Send a request. We confirm personally.' => 'Выберите автомобиль. Отправьте запрос. Мы подтвердим лично.',
             'Select your preferred vehicle, complete one short reservation form, and our team will check availability and contact you.' => 'Выберите подходящий автомобиль, заполните короткую форму запроса, и наша команда проверит доступность и свяжется с вами.',
             'Choose your car' => 'Выберите автомобиль',

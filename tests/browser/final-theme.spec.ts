@@ -185,6 +185,11 @@ test.describe('final theme experience', () => {
       ro: ['Preluare la aeroporturile din Veneția și Treviso', 'Nu este necesară nicio plată pentru a trimite o solicitare', 'Disponibilitatea, prețul final și condițiile de închiriere sunt confirmate personal'],
       ru: ['Получение в аэропортах Венеции и Тревизо', 'Для отправки запроса оплата не требуется', 'Доступность, окончательная цена и условия аренды подтверждаются лично'],
     };
+    const fleetHeadings: Record<string, string> = {
+      en: 'Rental cars in Venice and Treviso',
+      ro: 'Mașini de închiriat în Veneția și Treviso',
+      ru: 'Автомобили в аренду в Венеции и Тревизо',
+    };
 
     for (const language of languages) {
       if (!language.href || !language.lang) continue;
@@ -209,6 +214,8 @@ test.describe('final theme experience', () => {
       await page.goto(fleetUrl.toString());
       await expect(page.locator('html')).toHaveAttribute('lang', new RegExp(`^${language.lang}(?:-|$)`, 'i'));
       await expect(page.locator('h1')).toHaveCount(1);
+      const expectedFleetHeading = fleetHeadings[language.lang.toLowerCase().slice(0, 2)];
+      if (expectedFleetHeading) await expect(page.locator('h1')).toHaveText(expectedFleetHeading);
     }
   });
 
