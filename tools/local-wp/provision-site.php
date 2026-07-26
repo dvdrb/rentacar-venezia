@@ -17,6 +17,27 @@ $pages = array(
     'treviso_airport' => array( 'title' => 'Treviso Airport car rental', 'slug' => 'treviso-airport-car-rental', 'template' => 'page-templates/template-airport-location.php', 'location_key' => 'treviso_airport', 'content' => '<h2>Car rental at Treviso Airport</h2><p>Pickup is arranged personally for Treviso Airport, Via Noalese 63/E, 31100 Treviso, Italy. Send your preferred vehicle and flight details; we confirm the practical details before the reservation is final.</p>' ),
 );
 $report = array();
+$localized_pages = array(
+    'en' => array(),
+    'ro' => array(
+        'fleet' => array( 'title' => 'Flota', 'slug' => 'flota', 'content' => '<h2>Mașini de închiriat în Veneția și Treviso</h2><p>Alegeți vehiculul preferat și trimiteți o solicitare. Disponibilitatea, prețul final și condițiile sunt confirmate personal.</p>' ),
+        'how_it_works' => array( 'title' => 'Cum funcționează', 'slug' => 'cum-functioneaza', 'content' => '<h2>O solicitare simplă, confirmată personal</h2><p>Alegeți o mașină, introduceți detaliile călătoriei și trimiteți solicitarea fără plată. Echipa noastră confirmă personal disponibilitatea, prețul final și condițiile.</p>' ),
+        'rental_requirements' => array( 'title' => 'Condiții de închiriere', 'slug' => 'conditii-inchiriere', 'content' => '<h2>Înainte de solicitare</h2><p>Șoferii trebuie să aibă cel puțin 23 de ani și permis categoria B de minimum trei ani. Plata și depozitul se achită la preluare; prețurile includ TVA și RCA.</p>' ),
+        'terms' => array( 'title' => 'Termeni și condiții', 'slug' => 'termeni-conditii', 'content' => '<h2>Condiții de închiriere</h2><p>Solicitările sunt supuse disponibilității și confirmării personale. Anularea este gratuită până la 24 de ore înainte de preluare.</p>' ),
+        'guides' => array( 'title' => 'Ghiduri', 'slug' => 'ghiduri', 'content' => '<h2>Ghiduri pentru Veneția și Treviso</h2><p>Informații practice pentru preluarea de la aeroport, condus și pregătirea solicitării de închiriere.</p>' ),
+        'venice_marco_polo' => array( 'title' => 'Închirieri auto Aeroportul Veneția Marco Polo', 'slug' => 'inchirieri-auto-aeroport-venetia-marco-polo', 'content' => '<h2>Preluare la Aeroportul Veneția Marco Polo</h2><p>Preluarea este organizată personal lângă Viale Galileo Galilei 30, 30173 Venezia VE, Italia.</p>' ),
+        'treviso_airport' => array( 'title' => 'Închirieri auto Aeroportul Treviso', 'slug' => 'inchirieri-auto-aeroport-treviso', 'content' => '<h2>Preluare la Aeroportul Treviso</h2><p>Preluarea este organizată personal la Via Noalese 63/E, 31100 Treviso, Italia.</p>' ),
+    ),
+    'ru' => array(
+        'fleet' => array( 'title' => 'Автопарк', 'slug' => 'avtopark', 'content' => '<h2>Прокат автомобилей в Венеции и Тревизо</h2><p>Выберите автомобиль и отправьте запрос. Доступность, окончательная цена и условия подтверждаются лично.</p>' ),
+        'how_it_works' => array( 'title' => 'Как это работает', 'slug' => 'kak-eto-rabotaet', 'content' => '<h2>Простой запрос с личным подтверждением</h2><p>Выберите автомобиль, укажите детали поездки и отправьте запрос без оплаты. Наша команда лично подтверждает доступность, цену и условия.</p>' ),
+        'rental_requirements' => array( 'title' => 'Условия аренды', 'slug' => 'usloviya-arendy', 'content' => '<h2>Перед отправкой запроса</h2><p>Водителю должно быть не менее 23 лет, а права категории B должны быть выданы не менее трёх лет назад. Оплата и депозит производятся при получении; цены включают НДС и RCA.</p>' ),
+        'terms' => array( 'title' => 'Условия и положения', 'slug' => 'usloviya-i-polozheniya', 'content' => '<h2>Условия аренды</h2><p>Все запросы зависят от доступности и личного подтверждения. Бесплатная отмена возможна не позднее чем за 24 часа до получения.</p>' ),
+        'guides' => array( 'title' => 'Путеводители', 'slug' => 'putevoditeli', 'content' => '<h2>Путеводители по Венеции и Тревизо</h2><p>Практическая информация о получении в аэропорту, вождении и подготовке запроса на аренду.</p>' ),
+        'venice_marco_polo' => array( 'title' => 'Прокат авто в аэропорту Венеция Марко Поло', 'slug' => 'prokat-avto-aeroport-veneciya-marko-polo', 'content' => '<h2>Получение в аэропорту Венеция Марко Поло</h2><p>Получение организуется лично рядом с Viale Galileo Galilei 30, 30173 Venezia VE, Италия.</p>' ),
+        'treviso_airport' => array( 'title' => 'Прокат авто в аэропорту Тревизо', 'slug' => 'prokat-avto-aeroport-treviso', 'content' => '<h2>Получение в аэропорту Тревизо</h2><p>Получение организуется лично по адресу Via Noalese 63/E, 31100 Treviso, Италия.</p>' ),
+    ),
+);
 foreach ( $pages as $key => $page ) {
     $existing = get_posts( array( 'post_type' => 'page', 'post_status' => 'any', 'posts_per_page' => 1, 'meta_key' => '_rc_provisioning_key', 'meta_value' => $key, 'fields' => 'ids' ) );
     if ( ! $existing ) $existing = get_posts( array( 'post_type' => 'page', 'post_status' => 'any', 'name' => $page['slug'], 'posts_per_page' => 1, 'fields' => 'ids' ) );
@@ -46,5 +67,22 @@ foreach ( $pages as $key => $page ) {
     if ( $page['template'] ) update_post_meta( $id, '_wp_page_template', $page['template'] );
     if ( ! empty( $page['location_key'] ) ) update_post_meta( $id, '_rentacar_location_key', $page['location_key'] );
     $report[] = $key . ': ' . $id;
+}
+
+if ( function_exists( 'pll_set_post_language' ) && function_exists( 'pll_save_post_translations' ) ) {
+    foreach ( $pages as $key => $page ) {
+        $source = get_posts( array( 'post_type' => 'page', 'post_status' => 'publish', 'posts_per_page' => 1, 'meta_key' => '_rc_provisioning_key', 'meta_value' => $key, 'fields' => 'ids' ) );
+        if ( ! $source ) continue;
+        $source_id = (int) $source[0];
+        $translations = (array) pll_get_post_translations( $source_id );
+        foreach ( array( 'en', 'ro', 'ru' ) as $language ) {
+            if ( ! empty( $translations[ $language ] ) ) continue;
+            $copy = isset( $localized_pages[ $language ][ $key ] ) ? $localized_pages[ $language ][ $key ] : array( 'title' => $page['title'], 'slug' => $page['slug'], 'content' => $page['content'] );
+            if ( ! $apply ) { $report[] = $key . ': would create ' . $language . ' translation'; continue; }
+            $id = wp_insert_post( wp_slash( array( 'post_type' => 'page', 'post_status' => 'publish', 'post_title' => $copy['title'], 'post_name' => $copy['slug'], 'post_content' => $copy['content'] ) ), true );
+            if ( is_wp_error( $id ) ) { $report[] = $key . ': ' . $language . ' ' . $id->get_error_message(); continue; }
+            pll_set_post_language( $id, $language ); update_post_meta( $id, '_rc_provisioning_key', $key ); update_post_meta( $id, '_rc_provisioning_version', $version ); if ( $page['template'] ) update_post_meta( $id, '_wp_page_template', $page['template'] ); if ( ! empty( $page['location_key'] ) ) update_post_meta( $id, '_rentacar_location_key', $page['location_key'] ); $translations[ $language ] = $id; pll_save_post_translations( $translations ); $report[] = $key . ': created ' . $language . ' ' . $id;
+        }
+    }
 }
 WP_CLI::success( ( $apply ? 'Applied: ' : 'Dry run: ' ) . implode( '; ', $report ) );
