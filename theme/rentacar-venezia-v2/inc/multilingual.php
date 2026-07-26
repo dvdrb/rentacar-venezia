@@ -116,6 +116,30 @@ function rentacar_venezia_v2_languages() {
 }
 
 /**
+ * Returns a current-language home URL without assuming a language directory.
+ * This is deliberately limited to internal recovery/navigation links; normal
+ * page permalinks continue to come from WordPress and Polylang directly.
+ */
+function rentacar_venezia_v2_home_url( $path = '/' ) {
+    $path = (string) $path;
+    $url = home_url( $path );
+
+    if ( 'polylang' === rentacar_venezia_v2_multilingual_provider() ) {
+        $localized_home = trailingslashit( pll_home_url( rentacar_venezia_v2_current_language() ) );
+
+        return '/' === $path || '' === $path
+            ? $localized_home
+            : $localized_home . ltrim( $path, '/' );
+    }
+
+    if ( has_filter( 'wpml_permalink' ) ) {
+        return (string) apply_filters( 'wpml_permalink', $url, rentacar_venezia_v2_current_language() );
+    }
+
+    return $url;
+}
+
+/**
  * Localizes a provider-agnostic fallback URL such as the legacy fleet route.
  */
 function rentacar_venezia_v2_localized_fallback_url( $url ) {

@@ -74,7 +74,7 @@ function rentacar_venezia_v2_brand_mark( $inverse = false ) {
     printf(
         '<a class="%1$s" href="%2$s" rel="home" aria-label="%3$s"><span class="site-brand__main">%4$s</span><span class="site-brand__sub">%5$s</span></a>',
         esc_attr( $classes ),
-        esc_url( home_url( '/' ) ),
+        esc_url( rentacar_venezia_v2_home_url() ),
         esc_attr__( 'Rent A Car Venezia', 'rentacar-venezia-v2' ),
         esc_html__( 'RENT A CAR', 'rentacar-venezia-v2' ),
         esc_html__( 'VENEZIA', 'rentacar-venezia-v2' )
@@ -262,12 +262,21 @@ function rentacar_venezia_v2_asset_manifest() {
 }
 
 function rentacar_venezia_v2_register_routes() {
-    if ( rentacar_venezia_v2_fleet_page_id() ) {
-        return;
+    if ( ! rentacar_venezia_v2_fleet_page_id() ) {
+        add_rewrite_rule( '^fleet/?$', 'index.php?rc_fleet=1', 'top' );
+        add_rewrite_rule( '^fleet/page/([0-9]+)/?$', 'index.php?rc_fleet=1&paged=$matches[1]', 'top' );
     }
 
-    add_rewrite_rule( '^fleet/?$', 'index.php?rc_fleet=1', 'top' );
-    add_rewrite_rule( '^fleet/page/([0-9]+)/?$', 'index.php?rc_fleet=1&paged=$matches[1]', 'top' );
+    /*
+     * A fleet page can exist only in the default language while migration is
+     * in progress. Let Polylang receive its own language query var for the
+     * custom fallback instead of redirecting a translated fleet link to that
+     * default-language page. A real translated page still wins below.
+     */
+    if ( 'polylang' === rentacar_venezia_v2_multilingual_provider() ) {
+        add_rewrite_rule( '^([^/]+)/fleet/?$', 'index.php?rc_fleet=1&lang=$matches[1]', 'top' );
+        add_rewrite_rule( '^([^/]+)/fleet/page/([0-9]+)/?$', 'index.php?rc_fleet=1&lang=$matches[1]&paged=$matches[2]', 'top' );
+    }
 }
 add_action( 'init', 'rentacar_venezia_v2_register_routes' );
 
@@ -338,7 +347,7 @@ function rentacar_venezia_v2_hide_current_home_menu_item( $items, $args ) {
         return $items;
     }
 
-    $home_path = untrailingslashit( (string) wp_parse_url( home_url( '/' ), PHP_URL_PATH ) );
+    $home_path = untrailingslashit( (string) wp_parse_url( rentacar_venezia_v2_home_url(), PHP_URL_PATH ) );
 
     foreach ( $items as $index => $item ) {
         $item_path = untrailingslashit( (string) wp_parse_url( $item->url, PHP_URL_PATH ) );

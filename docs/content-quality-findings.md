@@ -1,7 +1,9 @@
 # Content-quality findings
 
-This is an audit of presentation risks only. No database, media, ACF, WPML or
-legacy data was changed.
+This is an audit of presentation risks only. The local Polylang migration
+updated translation relationships and approved shared vehicle presentation
+fields through WordPress APIs; it did not rewrite editor-owned content, prices,
+media records or public URLs.
 
 ## Needs owner confirmation
 
@@ -43,8 +45,7 @@ legacy data was changed.
 
 ## Translation follow-up
 
-All new interface strings use the `rentacar-venezia-v2` text domain. The prior
-runtime audit identifies Italian, English, Romanian and Russian as enabled
-languages. Actual translated string coverage cannot be verified while the
-local WordPress runtime is unavailable; do not silently mix languages. Review
-missing theme-string translations in WPML before production.
+All new interface strings use the `rentacar-venezia-v2` text domain. The local
+runtime identifies Italian, English, Romanian and Russian as enabled Polylang
+languages. Review any missing theme-string translations in Polylang before a
+production migration; do not silently mix languages.

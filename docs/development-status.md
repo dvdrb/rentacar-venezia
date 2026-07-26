@@ -1,33 +1,37 @@
 # Development status
 
-## Current phase
+## Current local phase
 
-Phase 6 — homepage, staged but not activated.
+The owned `rentacar-venezia-v2` theme and `rentacar-core` plugin are active in
+the LocalWP clone. The local site now uses Polylang for Italian, English,
+Romanian and Russian; the WPML runtime plugins are inactive and retained only
+as rollback evidence while local acceptance testing continues.
 
-## Confirmed
+## Completed locally
 
-- Working branch: `feat/rentacar-venezia-v2`.
-- LocalWP theme and plugin symlinks target this workspace.
-- Legacy reference is redacted and may now be safely tracked.
-- Local email is intercepted through a local-only MU-plugin before any redesign work begins.
-- `rentacar-core` now contains PHP 7.4-compatible, read-only vehicle value objects,
-  a repository, a mapper for the established `cars`/ACF data model, and a WPML
-  translation resolver.
-- The plugin remains inactive. Its `cars` registration has a legacy-theme guard,
-  so it cannot duplicate the existing post type during the eventual local-only
-  activation check.
-- Dependency-free vehicle-domain checks pass using the LocalWP PHP 7.4 binary.
-- The inactive theme now has a semantic header/footer, WordPress menu locations,
-  guarded WPML language links, an accessible progressive-enhancement mobile menu,
-  skip link, reduced-motion handling, and an availability notice component.
-- The inactive homepage is server-rendered and shows a limited six-vehicle
-  catalogue through the core vehicle repository. Its trip form intentionally
-  collects preferences only and never asserts live availability.
+- Server-rendered homepage, trip filter, vehicle catalogue, vehicle details,
+  pricing bands, request modal, manual-confirmation journey, FAQ/editorial
+  templates, archives and 404 experience are active.
+- Native fleet filters, pagination, responsive image stages, language selector,
+  visible breadcrumbs, fleet indexing rules and vehicle schema compatibility
+  are implemented in the owned theme.
+- The reservation backend validates requests and calculates vehicle, insurance
+  and optional-extra estimates from authoritative WordPress settings.
+- The Polylang migration has repaired translation groups, synchronized only
+  approved shared vehicle fields, and verified the default and translated
+  vehicle routes under LocalWP PHP 8.3.
+- PHP domain checks, SEO checks, type checking, ESLint, Stylelint, the Vite
+  production build, PHP lint and the browser suite are run against the local
+  application before each hand-off.
 
-## Not started
+## Before production is considered
 
-The theme has not been activated, so the baseline LocalWP site has no visible
-change. The dedicated catalogue, detail experience, pricing service and
-availability-request flow remain unimplemented. Activation of `rentacar-core`
-remains a later local-only verification step after its runtime integration
-coverage is added.
+- Complete owner-led visual and content acceptance on the LocalWP site,
+  including the configured logo, contact/WhatsApp details, privacy policy and
+  business notification recipient.
+- Review translated interface strings and any editor-owned content in all four
+  languages.
+- Keep the WPML plugins and pre-migration backup until a separate, approved
+  production migration plan and rollback window exist.
+- Production deployment, production database migration and removal of legacy
+  WPML data are deliberately not part of this workspace.

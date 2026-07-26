@@ -25,7 +25,7 @@ if ( '' === trim( wp_strip_all_tags( $archive_title ) ) ) {
             </div>
             <?php the_posts_pagination( array( 'mid_size' => 1, 'prev_text' => __( 'Previous', 'rentacar-venezia-v2' ), 'next_text' => __( 'Next', 'rentacar-venezia-v2' ) ) ); ?>
         <?php else : ?>
-            <section class="empty-state"><h2><?php esc_html_e( 'Nothing has been published here yet.', 'rentacar-venezia-v2' ); ?></h2><a class="button" href="<?php echo esc_url( home_url( '/' ) ); ?>"><?php esc_html_e( 'Back to home', 'rentacar-venezia-v2' ); ?></a></section>
+            <section class="empty-state"><h2><?php esc_html_e( 'Nothing has been published here yet.', 'rentacar-venezia-v2' ); ?></h2><a class="button" href="<?php echo esc_url( rentacar_venezia_v2_home_url() ); ?>"><?php esc_html_e( 'Back to home', 'rentacar-venezia-v2' ); ?></a></section>
         <?php endif; ?>
     </div>
 </main>

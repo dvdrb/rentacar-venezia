@@ -172,10 +172,10 @@ test.describe('final theme experience', () => {
     expect(schema.join('\n')).not.toMatch(/"Offer"|"availability"|"InStock"|"aggregateRating"|"review"/i);
   });
 
-  test('keeps current-language URLs intact when navigating enabled WPML languages', async ({ page }) => {
+  test('keeps current-language URLs intact when navigating enabled languages', async ({ page }) => {
     await page.goto('/');
     const switcher = page.locator('[data-language-switcher]');
-    test.skip(await switcher.count() === 0, 'WPML must have at least two enabled languages for this test.');
+    test.skip(await switcher.count() === 0, 'At least two enabled languages are required for this test.');
     await switcher.locator('[data-language-trigger]').click();
     const languages = await switcher.locator('.language-switcher__link').evaluateAll((links) => links.map((link) => ({ href: link.getAttribute('href'), lang: link.getAttribute('lang') })));
 
@@ -199,23 +199,35 @@ test.describe('final theme experience', () => {
         await expect(strip.locator('.trust-strip__item')).toHaveCount(3);
         for (const line of copy) await expect(strip).toContainText(line);
       }
+      const fleetHref = await fleetLink.getAttribute('href');
+      expect(fleetHref).toBeTruthy();
+      const fleetUrl = new URL(fleetHref || '', page.url());
+      const expectedFleetPath = language.lang.toLowerCase().startsWith('it')
+        ? '/fleet/'
+        : `/${language.lang.toLowerCase().slice(0, 2)}/fleet/`;
+      expect(fleetUrl.pathname).toBe(expectedFleetPath);
+      await page.goto(fleetUrl.toString());
+      await expect(page.locator('html')).toHaveAttribute('lang', new RegExp(`^${language.lang}(?:-|$)`, 'i'));
+      await expect(page.locator('h1')).toHaveCount(1);
     }
   });
 
   test('returns a real noindex 404 with useful internal links', async ({ page }) => {
-    const response = await page.goto('/this-route-does-not-exist/');
+    const response = await page.goto('/en/this-route-does-not-exist/');
     expect(response?.status()).toBe(404);
     await expect(page.locator('h1')).toHaveCount(1);
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/i);
     await expect(page.locator('a[href]').filter({ hasText: /home|home page|iniziale|acasă|глав/i })).not.toHaveCount(0);
     await expect(page.locator('a[href]').filter({ hasText: /fleet|flotta|flotă|автопарк/i })).not.toHaveCount(0);
+    await expect(page.locator('a[href]').filter({ hasText: /back to home/i })).toHaveAttribute('href', /\/en\/$/);
+    await expect(page.locator('a[href]').filter({ hasText: /view the fleet/i })).toHaveAttribute('href', /\/en\/fleet\/$/);
   });
 
-  test('renders an accessible WPML language disclosure instead of separate language buttons', async ({ page }) => {
+  test('renders an accessible language disclosure instead of separate language buttons', async ({ page }) => {
     await page.goto('/');
     const switcher = page.locator('[data-language-switcher]');
 
-    test.skip(await switcher.count() === 0, 'WPML must have at least two enabled languages for this test.');
+    test.skip(await switcher.count() === 0, 'At least two enabled languages are required for this test.');
     await expect(switcher).toHaveCount(1);
 
     const trigger = switcher.locator('[data-language-trigger]');
@@ -250,7 +262,7 @@ test.describe('final theme experience', () => {
     await page.goto('/');
     const switcher = page.locator('[data-language-switcher]');
 
-    test.skip(await switcher.count() === 0, 'WPML must have at least two enabled languages for this test.');
+    test.skip(await switcher.count() === 0, 'At least two enabled languages are required for this test.');
     await switcher.locator('[data-language-trigger]').click();
     await expect(switcher.locator('[data-language-menu]')).toBeVisible();
     await expect(page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).resolves.toBeTruthy();

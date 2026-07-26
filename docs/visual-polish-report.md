@@ -7,21 +7,24 @@
 - The booking flow is unchanged: a vehicle Reservation button opens the
   existing modal, which keeps its selected-vehicle binding, validation,
   submission endpoint and manual-confirmation copy.
-- No WordPress records, pricing data, media attachments, WPML configuration or
-  plugin code were changed.
+- The local Polylang migration preserves WordPress content, vehicle pricing,
+  media attachments, public URLs and the request-based reservation behaviour.
+  It does not alter the production site.
 
 ## Visual changes
 
 - Typography now uses one local Inter/system sans-serif stack throughout;
   decorative serif display styling has been removed.
 - Header controls use the real custom logo, a balanced 76px desktop rhythm,
-  readable navigation, and the existing WPML-powered language disclosure.
+  readable navigation, and the existing Polylang-powered language disclosure.
 - The existing hero image is presented with a controlled navy overlay, a
   compact text column and clear primary CTA. The trip filter remains directly
   beneath it as an elevated panel and explicitly states that availability is
   personally confirmed.
-- The trust strip is evenly distributed, adds its WhatsApp item only when
-  configured, and becomes a two-column mobile grid.
+- The trust strip has exactly three customer assurances: combined Venice Marco
+  Polo/Treviso pickup, no payment to send a request, and personal confirmation
+  of availability, final price and rental conditions. It uses equal desktop
+  columns and readable stacked mobile rows.
 - Featured vehicles use a fixed contain image stage, a genuine minimum
   “Starting from” price derived from existing valid pricing bands, full price
   bands, a full-width Reservation action and secondary details link.
@@ -55,7 +58,7 @@
 ## Accessibility and responsive behaviour
 
 - Keyboard focus, existing modal focus management, native filter controls and
-  WPML disclosure semantics are retained.
+  Polylang disclosure semantics are retained.
 - Buttons and filter inputs use at least 44px touch targets. Card, filter and
   trust layouts collapse for narrow viewports without horizontal controls.
 - Image-stage adjustments are presentation-only and documented in
@@ -63,10 +66,11 @@
 
 ## Validation status
 
-- Passed after the consolidated theme update: production build, TypeScript
-  typecheck, ESLint, Stylelint, PHP 7.4 lint for every theme file, vehicle and
-  reservation domain checks, `git diff --check`, and all 9 Playwright tests.
-- Live browser validation confirmed the compact WPML selector, native fleet
+- Passed after the local PHP 8.3 migration validation: production build,
+  TypeScript typecheck, ESLint, Stylelint, PHP lint for every theme and core
+  plugin PHP file, multilingual/vehicle/reservation/SEO domain checks,
+  `git diff --check`, and all 16 Playwright tests.
+- Live browser validation confirmed the compact Polylang selector, native fleet
   filters, real catalogue cards, selected-vehicle modal, and no console errors.
 - Responsive checks at 1440, 1024, 768, 430, 390 and 320px found no horizontal
   overflow. The desktop hero asset loaded through 768px; the supplied mobile

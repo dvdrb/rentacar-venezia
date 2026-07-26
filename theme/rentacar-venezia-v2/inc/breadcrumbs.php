@@ -13,7 +13,7 @@ function rentacar_venezia_v2_breadcrumb_items( $post_id = 0 ) {
     $items = array(
         array(
             'label' => __( 'Home', 'rentacar-venezia-v2' ),
-            'url'   => home_url( '/' ),
+            'url'   => rentacar_venezia_v2_home_url(),
         ),
     );
 
