@@ -59,3 +59,28 @@ function rentacar_venezia_v2_location_page_image_id( $location_key ) {
     $page_id = rentacar_venezia_v2_location_page_id( $location_key );
     return $page_id ? (int) get_post_thumbnail_id( $page_id ) : 0;
 }
+
+/** Theme-owned location imagery is a presentation fallback, not CMS media. */
+function rentacar_venezia_v2_location_theme_image( $location_key ) {
+    $images = array(
+        'venice_marco_polo' => array(
+            'path'   => '/assets/images/locations/venice-marco-polo-airport.webp',
+            'width'  => 2000,
+            'height' => 667,
+        ),
+        'treviso_airport' => array(
+            'path'   => '/assets/images/locations/treviso-airport.webp',
+            'width'  => 2880,
+            'height' => 1620,
+        ),
+    );
+
+    if ( empty( $images[ $location_key ] ) ) {
+        return array();
+    }
+
+    $image = $images[ $location_key ];
+    $image['url'] = get_theme_file_uri( $image['path'] );
+
+    return (array) apply_filters( 'rentacar_venezia_v2_location_theme_image', $image, $location_key );
+}

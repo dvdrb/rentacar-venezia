@@ -83,11 +83,13 @@ get_header();
                 <p><?php esc_html_e( 'Choose the pickup point that suits your trip. We confirm the practical details personally before your reservation is final.', 'rentacar-venezia-v2' ); ?></p>
             </header>
             <div class="arrivals-grid">
-                <?php foreach ( $locations as $key => $location ) : $location_image_id = rentacar_venezia_v2_location_page_image_id( $key ); ?>
+                <?php foreach ( $locations as $key => $location ) : $location_image_id = rentacar_venezia_v2_location_page_image_id( $key ); $location_theme_image = rentacar_venezia_v2_location_theme_image( $key ); ?>
                     <a class="arrival-card reveal-on-scroll" href="<?php echo esc_url( rentacar_venezia_v2_location_page_url( $key ) ); ?>" aria-label="<?php echo esc_attr( sprintf( __( 'Choose %s pickup', 'rentacar-venezia-v2' ), $location['label'] ) ); ?>">
                         <span class="arrival-card__media">
                             <?php if ( $location_image_id ) : ?>
                                 <?php echo wp_get_attachment_image( $location_image_id, 'medium_large', false, array( 'loading' => 'lazy', 'decoding' => 'async' ) ); ?>
+                            <?php elseif ( $location_theme_image ) : ?>
+                                <img src="<?php echo esc_url( $location_theme_image['url'] ); ?>" width="<?php echo esc_attr( $location_theme_image['width'] ); ?>" height="<?php echo esc_attr( $location_theme_image['height'] ); ?>" alt="" loading="lazy" decoding="async">
                             <?php else : ?>
                                 <svg viewBox="0 0 320 180" aria-hidden="true" focusable="false"><path d="M0 145 72 91l56 40 63-78 129 92v35H0Z" fill="currentColor" opacity=".16"/><circle cx="239" cy="52" r="25" fill="currentColor" opacity=".14"/><path d="M78 145V93l36-23 36 23v52M184 145V75h56v70" fill="none" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/></svg>
                             <?php endif; ?>
