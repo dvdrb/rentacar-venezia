@@ -2,6 +2,8 @@
 defined( 'ABSPATH' ) || exit;
 
 final class Rentacar_Core_Reservation_Extra_Settings {
+    const RECIPIENT_OPTION = 'rentacar_core_reservation_recipient';
+
     public static function register_setting() {
         register_setting(
             'rentacar_core_reservation_extras',
@@ -19,6 +21,15 @@ final class Rentacar_Core_Reservation_Extra_Settings {
                 'type'              => 'array',
                 'sanitize_callback' => array( 'Rentacar_Core_Rental_Policy', 'sanitize' ),
                 'default'           => Rentacar_Core_Rental_Policy::defaults(),
+            )
+        );
+        register_setting(
+            'rentacar_core_email_delivery',
+            self::RECIPIENT_OPTION,
+            array(
+                'type'              => 'string',
+                'sanitize_callback' => 'sanitize_email',
+                'default'           => '',
             )
         );
     }
@@ -43,6 +54,9 @@ final class Rentacar_Core_Reservation_Extra_Settings {
         <div class="wrap">
             <h1><?php esc_html_e( 'Rentacar settings', 'rentacar-core' ); ?></h1>
             <p><?php esc_html_e( 'These settings are the authoritative source for reservation estimates. Final availability and rental conditions are always confirmed personally.', 'rentacar-core' ); ?></p>
+            <h2><?php esc_html_e( 'Reservation email delivery', 'rentacar-core' ); ?></h2>
+            <?php self::render_delivery_form(); ?>
+            <hr>
             <h2><?php esc_html_e( 'Reservation policy', 'rentacar-core' ); ?></h2>
             <?php self::render_policy_form(); ?>
             <hr>
@@ -72,6 +86,20 @@ final class Rentacar_Core_Reservation_Extra_Settings {
                 <?php submit_button(); ?>
             </form>
         </div>
+        <?php
+    }
+
+    private static function render_delivery_form() {
+        $recipient = (string) get_option( self::RECIPIENT_OPTION, '' );
+        ?>
+        <form action="options.php" method="post">
+            <?php settings_fields( 'rentacar_core_email_delivery' ); ?>
+            <table class="form-table" role="presentation"><tbody><tr>
+                <th scope="row"><label for="rentacar-core-reservation-recipient"><?php esc_html_e( 'Business recipient', 'rentacar-core' ); ?></label></th>
+                <td><input id="rentacar-core-reservation-recipient" class="regular-text" name="<?php echo esc_attr( self::RECIPIENT_OPTION ); ?>" type="email" value="<?php echo esc_attr( $recipient ); ?>" autocomplete="email"><p class="description"><?php esc_html_e( 'Reservation notifications are sent here. Customer acknowledgements are sent to the email supplied in the request.', 'rentacar-core' ); ?></p></td>
+            </tr></tbody></table>
+            <?php submit_button( __( 'Save email delivery settings', 'rentacar-core' ) ); ?>
+        </form>
         <?php
     }
 

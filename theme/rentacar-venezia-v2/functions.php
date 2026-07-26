@@ -51,14 +51,6 @@ function rentacar_venezia_v2_contact_recipient( $recipient ) {
 }
 add_filter( 'rentacar_core_contact_recipient', 'rentacar_venezia_v2_contact_recipient' );
 
-/** LocalWP must never deliver test messages to the business inbox. */
-function rentacar_venezia_v2_intercept_local_mail( $pre, $atts ) {
-    $host = (string) wp_parse_url( home_url( '/' ), PHP_URL_HOST );
-
-    return false !== strpos( $host, '.local' ) ? true : $pre;
-}
-add_filter( 'pre_wp_mail', 'rentacar_venezia_v2_intercept_local_mail', 10, 2 );
-
 function rentacar_venezia_v2_register_home_patterns() {
     if ( ! function_exists( 'register_block_pattern' ) ) {
         return;

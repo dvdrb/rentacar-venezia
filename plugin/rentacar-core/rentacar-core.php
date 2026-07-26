@@ -55,3 +55,8 @@ add_action( 'admin_post_rentacar_submit_reservation', array( 'Rentacar_Core_Rese
 add_action( 'admin_post_nopriv_rentacar_submit_contact', array( 'Rentacar_Core_Contact_Controller', 'handle' ) );
 add_action( 'admin_post_rentacar_submit_contact', array( 'Rentacar_Core_Contact_Controller', 'handle' ) );
 add_action( 'admin_notices', array( 'Rentacar_Core_Reservation_Controller', 'admin_notice' ) );
+add_filter( 'rentacar_core_reservation_recipient', function( $recipient ) {
+    $configured_recipient = (string) get_option( Rentacar_Core_Reservation_Extra_Settings::RECIPIENT_OPTION, '' );
+
+    return is_email( $configured_recipient ) ? $configured_recipient : $recipient;
+} );
