@@ -35,12 +35,6 @@ get_header();
                 <p><?php esc_html_e( 'Choose your preferred vehicle and send your dates without making a payment. Our local team will confirm availability, final price and rental conditions.', 'rentacar-venezia-v2' ); ?></p>
                 <div class="hero__actions"><a class="button" href="#trip-filter"><?php esc_html_e( 'Choose your car', 'rentacar-venezia-v2' ); ?></a><?php if ( $whatsapp_url ) : ?><a class="button button--whatsapp" href="<?php echo esc_url( $whatsapp_url ); ?>"><?php esc_html_e( 'WhatsApp', 'rentacar-venezia-v2' ); ?></a><?php endif; ?></div>
             </div>
-            <aside class="hero-location-card" aria-label="<?php esc_attr_e( 'Pickup locations', 'rentacar-venezia-v2' ); ?>">
-                <p><?php esc_html_e( 'Pickup locations', 'rentacar-venezia-v2' ); ?></p>
-                <ul>
-                    <?php foreach ( $locations as $location ) : ?><li><?php echo esc_html( $location['label'] ); ?></li><?php endforeach; ?>
-                </ul>
-            </aside>
         </div>
     </section>
     <section id="trip-filter" class="trip-filter-section" aria-labelledby="trip-filter-title">

@@ -26,7 +26,7 @@ test.describe('final theme experience', () => {
     await expect(hero.locator('img')).toHaveAttribute('height', '941');
     await expect(hero.locator('img')).toHaveAttribute('fetchpriority', 'high');
     await expect(hero.locator('a[href="#trip-filter"]')).toHaveCount(1);
-    await expect(hero.locator('.hero-location-card')).toHaveCount(1);
+    await expect(hero.locator('.hero-location-card')).toHaveCount(0);
     await expect(page.locator('.trip-form')).toHaveCount(1);
     await expect(page.locator('.trip-filter-section__help')).toBeVisible();
     await expect(page.locator('.trip-form select[name="pickup_location"]')).toHaveCount(1);
@@ -108,11 +108,11 @@ test.describe('final theme experience', () => {
     }
   });
 
-  test('keeps the mobile hero compact and limits arrival choices to airports', async ({ page }) => {
+  test('keeps the mobile hero focused and limits arrival choices to airports', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/en/');
 
-    await expect(page.locator('.hero-location-card')).toBeHidden();
+    await expect(page.locator('.hero-location-card')).toHaveCount(0);
     await expect(page.locator('.arrivals-grid .arrival-card')).toHaveCount(2);
     await expect(page.locator('.arrivals-grid')).not.toContainText('We come where you need');
   });

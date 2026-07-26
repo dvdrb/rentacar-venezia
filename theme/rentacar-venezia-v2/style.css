@@ -508,24 +508,6 @@ textarea { font: inherit; }
 
 .hero__actions { display:flex; flex-wrap:wrap; gap:var(--rc-space-3); margin-top:var(--rc-space-5); }
 
-.hero-location-card {
-  width:min(100%, 270px);
-  padding:var(--rc-space-4);
-  border:1px solid rgb(255 255 255 / 22%);
-  border-radius:var(--rc-radius-sm);
-  background:rgb(7 27 58 / 62%);
-  box-shadow:0 12px 28px rgb(7 27 58 / 18%);
-  backdrop-filter:blur(8px);
-}
-
-.hero-location-card p { margin:0 0 var(--rc-space-2); color:var(--rc-yellow-500); font-size:.76rem; font-weight:750; letter-spacing:.08em; text-transform:uppercase; }
-
-.hero-location-card ul { display:grid; gap:8px; padding:0; margin:0; list-style:none; }
-
-.hero-location-card li { position:relative; padding-left:17px; color:#fff; font-size:.91rem; font-weight:650; line-height:1.35; }
-
-.hero-location-card li::before { position:absolute; top:.48em; left:0; width:7px; height:7px; border-radius:50%; background:var(--rc-yellow-500); content:""; }
-
 .trip-filter-section {
   position: relative;
   z-index: 4;
@@ -1306,8 +1288,6 @@ textarea { font: inherit; }
   .hero__inner { display:block; min-height:0; }
 
   .hero__copy { max-width:100%; }
-
-  .hero-location-card { display:none; }
 
   .hero__actions .button { width:100%; }
 
