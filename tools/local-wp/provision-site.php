@@ -130,6 +130,13 @@ if ( function_exists( 'wp_create_nav_menu' ) && function_exists( 'pll_get_post' 
         'primary' => array( 'fleet', 'venice_marco_polo', 'treviso_airport', 'how_it_works', 'faq', 'guides', 'contact' ),
         'footer'  => array( 'fleet', 'how_it_works', 'rental_requirements', 'faq', 'guides', 'contact', 'terms' ),
     );
+    $menu_labels = array(
+        'it' => array( 'fleet' => 'Flotta', 'venice_marco_polo' => 'Aeroporto Venezia Marco Polo', 'treviso_airport' => 'Aeroporto Treviso', 'how_it_works' => 'Come funziona', 'faq' => 'FAQ', 'guides' => 'Guide', 'contact' => 'Contatti', 'rental_requirements' => 'Requisiti di noleggio', 'terms' => 'Termini e condizioni' ),
+        'en' => array( 'fleet' => 'Fleet', 'venice_marco_polo' => 'Venice Marco Polo Airport', 'treviso_airport' => 'Treviso Airport', 'how_it_works' => 'How it works', 'faq' => 'FAQ', 'guides' => 'Guides', 'contact' => 'Contact', 'rental_requirements' => 'Rental requirements', 'terms' => 'Terms and Conditions' ),
+        'ro' => array( 'fleet' => 'Flotă', 'venice_marco_polo' => 'Aeroportul Veneția Marco Polo', 'treviso_airport' => 'Aeroportul Treviso', 'how_it_works' => 'Cum funcționează', 'faq' => 'Întrebări frecvente', 'guides' => 'Ghiduri', 'contact' => 'Contacte', 'rental_requirements' => 'Condiții de închiriere', 'terms' => 'Termeni și condiții' ),
+        'ru' => array( 'fleet' => 'Автопарк', 'venice_marco_polo' => 'Аэропорт Венеция Марко Поло', 'treviso_airport' => 'Аэропорт Тревизо', 'how_it_works' => 'Как это работает', 'faq' => 'Частые вопросы', 'guides' => 'Путеводители', 'contact' => 'Контакты', 'rental_requirements' => 'Условия аренды', 'terms' => 'Условия и положения' ),
+    );
+    $menu_assignments = array();
     foreach ( array( 'it', 'en', 'ro', 'ru' ) as $language ) {
         foreach ( $menu_keys as $location => $keys ) {
             $menu_name = 'Rentacar ' . ucfirst( $location ) . ' ' . strtoupper( $language );
@@ -138,12 +145,37 @@ if ( function_exists( 'wp_create_nav_menu' ) && function_exists( 'pll_get_post' 
             $menu_id = $menu ? (int) $menu->term_id : wp_create_nav_menu( $menu_name );
             if ( is_wp_error( $menu_id ) ) { $report[] = $menu_name . ': ' . $menu_id->get_error_message(); continue; }
             if ( function_exists( 'pll_set_term_language' ) ) pll_set_term_language( $menu_id, $language );
-            if ( ! wp_get_nav_menu_items( $menu_id ) ) foreach ( $keys as $position => $key ) {
+            $items = wp_get_nav_menu_items( $menu_id );
+            if ( ! $items ) foreach ( $keys as $position => $key ) {
                 $source = get_posts( array( 'post_type' => 'page', 'post_status' => 'publish', 'posts_per_page' => 1, 'meta_key' => '_rc_provisioning_key', 'meta_value' => $key, 'fields' => 'ids' ) );
                 $page_id = $source ? (int) pll_get_post( $source[0], $language ) : 0;
-                if ( $page_id ) wp_update_nav_menu_item( $menu_id, 0, array( 'menu-item-object-id' => $page_id, 'menu-item-object' => 'page', 'menu-item-type' => 'post_type', 'menu-item-status' => 'publish', 'menu-item-position' => $position + 1 ) );
+                if ( $page_id ) wp_update_nav_menu_item( $menu_id, 0, array( 'menu-item-object-id' => $page_id, 'menu-item-object' => 'page', 'menu-item-type' => 'post_type', 'menu-item-status' => 'publish', 'menu-item-position' => $position + 1, 'menu-item-title' => $menu_labels[ $language ][ $key ] ) );
             }
-            $locations = get_theme_mod( 'nav_menu_locations', array() ); $locations[ $location . '___' . $language ] = $menu_id; if ( 'it' === $language ) $locations[ $location ] = $menu_id; set_theme_mod( 'nav_menu_locations', $locations ); $report[] = $menu_name . ': ' . $menu_id;
+            foreach ( (array) $items as $position => $item ) {
+                $key = isset( $keys[ $position ] ) ? $keys[ $position ] : '';
+                if ( ! $key ) continue;
+                $source = get_posts( array( 'post_type' => 'page', 'post_status' => 'publish', 'posts_per_page' => 1, 'meta_key' => '_rc_provisioning_key', 'meta_value' => $key, 'fields' => 'ids' ) );
+                $page_id = $source ? (int) pll_get_post( $source[0], $language ) : 0;
+                if ( $page_id ) wp_update_nav_menu_item( $menu_id, $item->ID, array( 'menu-item-title' => $menu_labels[ $language ][ $key ], 'menu-item-object-id' => $page_id, 'menu-item-object' => 'page', 'menu-item-type' => 'post_type', 'menu-item-status' => 'publish', 'menu-item-position' => $position + 1 ) );
+            }
+            $menu_assignments[ $location . '___' . $language ] = $menu_id;
+            if ( 'it' === $language ) $menu_assignments[ $location ] = $menu_id;
+            $report[] = $menu_name . ': ' . $menu_id;
+        }
+    }
+    if ( $apply && $menu_assignments ) {
+        $locations = (array) get_theme_mod( 'nav_menu_locations', array() );
+        set_theme_mod( 'nav_menu_locations', array_merge( $locations, $menu_assignments ) );
+        if ( function_exists( 'PLL' ) && isset( PLL()->options ) && method_exists( PLL()->options, 'get' ) && method_exists( PLL()->options, 'set' ) ) {
+            $polylang_locations = (array) PLL()->options->get( 'nav_menus' );
+            $stylesheet = wp_get_theme()->get_stylesheet();
+            foreach ( $menu_keys as $location => $keys ) {
+                foreach ( array( 'it', 'en', 'ro', 'ru' ) as $language ) {
+                    $assignment = $location . '___' . $language;
+                    if ( isset( $menu_assignments[ $assignment ] ) ) $polylang_locations[ $stylesheet ][ $location ][ $language ] = (int) $menu_assignments[ $assignment ];
+                }
+            }
+            PLL()->options->set( 'nav_menus', $polylang_locations );
         }
     }
 }

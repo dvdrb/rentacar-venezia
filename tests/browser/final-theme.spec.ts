@@ -365,6 +365,23 @@ test.describe('final theme experience', () => {
     }
   });
 
+  test('renders the managed primary menu in every enabled language', async ({ page }) => {
+    const navigation: Record<string, string[]> = {
+      '/': ['Flotta', 'Aeroporto Venezia Marco Polo', 'Aeroporto Treviso', 'Come funziona', 'FAQ', 'Guide', 'Contatti'],
+      '/en/': ['Fleet', 'Venice Marco Polo Airport', 'Treviso Airport', 'How it works', 'FAQ', 'Guides', 'Contact'],
+      '/ro/': ['Flotă', 'Aeroportul Veneția Marco Polo', 'Aeroportul Treviso', 'Cum funcționează', 'Întrebări frecvente', 'Ghiduri', 'Contacte'],
+      '/ru/': ['Автопарк', 'Аэропорт Венеция Марко Поло', 'Аэропорт Тревизо', 'Как это работает', 'Частые вопросы', 'Путеводители', 'Контакты'],
+    };
+
+    for (const [path, labels] of Object.entries(navigation)) {
+      await page.goto(path);
+      const links = page.locator('.primary-navigation__list > li > a');
+      await expect(links).toHaveCount(labels.length);
+      await expect(links).toHaveText(labels);
+      expect(await links.evaluateAll((items) => items.every((item) => Boolean(item.getAttribute('href'))))).toBe(true);
+    }
+  });
+
   test('does not log browser console errors while loading the homepage', async ({ page }) => {
     const errors: string[] = [];
     page.on('console', (message) => {
