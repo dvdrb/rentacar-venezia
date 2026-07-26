@@ -279,9 +279,9 @@ function rentacar_venezia_v2_register_routes() {
      * default-language page. A real translated page still wins below.
      */
     if ( 'polylang' === rentacar_venezia_v2_multilingual_provider() ) {
-        add_rewrite_rule( '^([^/]+)/fleet/?$', 'index.php?rc_fleet=1&lang=$matches[1]', 'top' );
-        add_rewrite_rule( '^([^/]+)/fleet/page/([0-9]+)/?$', 'index.php?rc_fleet=1&lang=$matches[1]&paged=$matches[2]', 'top' );
     }
+    add_rewrite_rule( '^([^/]+)/fleet/?$', 'index.php?rc_fleet=1&lang=$matches[1]', 'top' );
+    add_rewrite_rule( '^([^/]+)/fleet/page/([0-9]+)/?$', 'index.php?rc_fleet=1&lang=$matches[1]&paged=$matches[2]', 'top' );
 }
 add_action( 'init', 'rentacar_venezia_v2_register_routes' );
 

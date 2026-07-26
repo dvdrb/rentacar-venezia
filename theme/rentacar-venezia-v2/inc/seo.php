@@ -77,6 +77,11 @@ function rentacar_venezia_v2_fleet_url() {
     $fleet_page_id = rentacar_venezia_v2_fleet_page_id();
     if ( $fleet_page_id ) {
         $fleet_url = get_permalink( $fleet_page_id );
+        // WordPress can suffix a translated page slug even though the
+        // established multilingual catalogue route remains /{lang}/fleet/.
+        if ( preg_match( '#/fleet-[0-9]+/?$#', (string) wp_parse_url( $fleet_url, PHP_URL_PATH ) ) && function_exists( 'rentacar_venezia_v2_localized_fallback_url' ) ) {
+            $fleet_url = rentacar_venezia_v2_localized_fallback_url( home_url( '/fleet/' ) );
+        }
     } else {
         $fleet_url = home_url( '/fleet/' );
 
