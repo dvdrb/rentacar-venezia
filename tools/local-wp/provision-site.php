@@ -1,8 +1,10 @@
 <?php
-/** Local-only idempotent page provisioner. Run with: wp eval-file tools/local-wp/provision-site.php */
+/** Local-only idempotent page provisioner. Set RENTACAR_LOCAL_APPLY=1 to make changes. */
 defined( 'ABSPATH' ) || exit( 1 );
 
-$version = '2026-07-25.1';
+$version = '2026-07-26.1';
+$arguments = isset( $assoc_args ) && is_array( $assoc_args ) ? $assoc_args : array();
+$apply = ! empty( $arguments['apply'] ) || '1' === getenv( 'RENTACAR_LOCAL_APPLY' );
 $pages = array(
     'fleet' => array( 'title' => 'Fleet', 'slug' => 'fleet', 'template' => 'page-templates/template-fleet.php', 'content' => '<h2>Rental cars in Venice and Treviso</h2><p>Choose your preferred vehicle and send a request. Availability, final price and rental conditions are confirmed personally.</p>' ),
     'how_it_works' => array( 'title' => 'How it works', 'slug' => 'how-it-works', 'template' => 'page-templates/template-how-it-works.php', 'content' => '<h2>Send a rental request in clear steps</h2><ol><li>Choose your preferred vehicle.</li><li>Add pickup, return and airport flight details where applicable.</li><li>Select insurance and optional extras.</li><li>Send the request without payment.</li><li>Our team checks availability and confirms final price and rental conditions personally.</li><li>Confirm directly with our team before collection.</li></ol><p><strong>Submitting this request does not immediately confirm the reservation. We will check availability and contact you.</strong></p>' ),
@@ -11,16 +13,38 @@ $pages = array(
     'contact' => array( 'title' => 'Contact', 'slug' => 'contact', 'template' => 'page-templates/template-contact.php', 'content' => '<h2>Contact Rent a Car Venezia</h2><p>Phone and WhatsApp: <a href="tel:+393445068823">+39 344 506 8823</a><br>Email: <a href="mailto:info@rentacarvenezia.it">info@rentacarvenezia.it</a><br>Office hours: Monday–Friday, 08:00–17:00.</p><p>Requests can be sent online at any time. For a reservation request, please use the vehicle request flow.</p>' ),
     'terms' => array( 'title' => 'Terms and Conditions', 'slug' => 'terms-and-conditions', 'template' => 'page-templates/template-terms.php', 'content' => '<h2>Rental terms</h2><p>Requests are subject to availability and personal confirmation. Free cancellation is available up to 24 hours before pickup; later cancellation or no-show may result in consequences communicated in the confirmation.</p><h2>Vehicle use and return</h2><p>Drivers must obey traffic, ZTL, parking and toll rules. Cross-border travel requires advance authorization. Report accidents, theft or breakdowns immediately and do not arrange repairs without authorization. Return instructions are confirmed personally.</p><h2>Insurance and deposit</h2><p>Insurance options, exclusions and remaining responsibilities are confirmed in the rental contract. Damage-protection limits are not deductibles. Deposits are released after return inspection, subject to bank processing time.</p>' ),
     'guides' => array( 'title' => 'Guides', 'slug' => 'guides', 'template' => '', 'content' => '<h2>Venice and Treviso travel guides</h2><p>Practical guidance for airport pickup, driving, parking and rental preparation.</p>' ),
-    'venice_marco_polo' => array( 'title' => 'Venice Marco Polo Airport car rental', 'slug' => 'venice-marco-polo-airport-car-rental', 'template' => 'page-templates/template-airport-location.php', 'content' => '<h2>Car rental at Venice Marco Polo Airport</h2><p>Pickup is arranged personally near Venice Marco Polo Airport, Viale Galileo Galilei 30, 30173 Venezia VE, Italy. Send your preferred vehicle and flight details; we confirm the practical details before the reservation is final.</p>' ),
-    'treviso_airport' => array( 'title' => 'Treviso Airport car rental', 'slug' => 'treviso-airport-car-rental', 'template' => 'page-templates/template-airport-location.php', 'content' => '<h2>Car rental at Treviso Airport</h2><p>Pickup is arranged personally for Treviso Airport, Via Noalese 63/E, 31100 Treviso, Italy. Send your preferred vehicle and flight details; we confirm the practical details before the reservation is final.</p>' ),
+    'venice_marco_polo' => array( 'title' => 'Venice Marco Polo Airport car rental', 'slug' => 'venice-marco-polo-airport-car-rental', 'template' => 'page-templates/template-airport-location.php', 'location_key' => 'venice_marco_polo', 'content' => '<h2>Car rental at Venice Marco Polo Airport</h2><p>Pickup is arranged personally near Venice Marco Polo Airport, Viale Galileo Galilei 30, 30173 Venezia VE, Italy. Send your preferred vehicle and flight details; we confirm the practical details before the reservation is final.</p>' ),
+    'treviso_airport' => array( 'title' => 'Treviso Airport car rental', 'slug' => 'treviso-airport-car-rental', 'template' => 'page-templates/template-airport-location.php', 'location_key' => 'treviso_airport', 'content' => '<h2>Car rental at Treviso Airport</h2><p>Pickup is arranged personally for Treviso Airport, Via Noalese 63/E, 31100 Treviso, Italy. Send your preferred vehicle and flight details; we confirm the practical details before the reservation is final.</p>' ),
 );
 $report = array();
 foreach ( $pages as $key => $page ) {
     $existing = get_posts( array( 'post_type' => 'page', 'post_status' => 'any', 'posts_per_page' => 1, 'meta_key' => '_rc_provisioning_key', 'meta_value' => $key, 'fields' => 'ids' ) );
     if ( ! $existing ) $existing = get_posts( array( 'post_type' => 'page', 'post_status' => 'any', 'name' => $page['slug'], 'posts_per_page' => 1, 'fields' => 'ids' ) );
     $post = array( 'post_title' => $page['title'], 'post_name' => $page['slug'], 'post_status' => 'publish', 'post_type' => 'page' );
-    if ( $existing ) { $post['ID'] = (int) $existing[0]; if ( '' === trim( (string) get_post_field( 'post_content', $post['ID'] ) ) ) $post['post_content'] = $page['content']; $id = wp_update_post( wp_slash( $post ), true ); } else { $post['post_content'] = $page['content']; $id = wp_insert_post( wp_slash( $post ), true ); }
+    if ( $existing ) {
+        $post['ID'] = (int) $existing[0];
+        $content_is_empty = '' === trim( (string) get_post_field( 'post_content', $post['ID'] ) );
+        if ( $content_is_empty ) {
+            $post['post_content'] = $page['content'];
+        }
+        if ( ! $apply ) {
+            $report[] = $key . ': would update ' . $post['ID'] . ( $content_is_empty ? ' (empty content populated)' : ' (existing content preserved)' );
+            continue;
+        }
+        $id = wp_update_post( wp_slash( $post ), true );
+    } else {
+        if ( ! $apply ) {
+            $report[] = $key . ': would create';
+            continue;
+        }
+        $post['post_content'] = $page['content'];
+        $id = wp_insert_post( wp_slash( $post ), true );
+    }
     if ( is_wp_error( $id ) ) { $report[] = $key . ': ' . $id->get_error_message(); continue; }
-    update_post_meta( $id, '_rc_provisioning_key', $key ); update_post_meta( $id, '_rc_provisioning_version', $version ); if ( $page['template'] ) update_post_meta( $id, '_wp_page_template', $page['template'] ); $report[] = $key . ': ' . $id;
+    update_post_meta( $id, '_rc_provisioning_key', $key );
+    update_post_meta( $id, '_rc_provisioning_version', $version );
+    if ( $page['template'] ) update_post_meta( $id, '_wp_page_template', $page['template'] );
+    if ( ! empty( $page['location_key'] ) ) update_post_meta( $id, '_rentacar_location_key', $page['location_key'] );
+    $report[] = $key . ': ' . $id;
 }
-WP_CLI::success( implode( '; ', $report ) );
+WP_CLI::success( ( $apply ? 'Applied: ' : 'Dry run: ' ) . implode( '; ', $report ) );

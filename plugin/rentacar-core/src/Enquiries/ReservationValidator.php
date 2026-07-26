@@ -39,6 +39,10 @@ final class Rentacar_Core_Reservation_Validator {
         }
         if ( empty( $input['terms'] ) ) $errors->add( 'terms', __( 'Please accept the terms and conditions.', 'rentacar-core' ) );
         if ( ! Rentacar_Core_Rental_Policy::insurance( $input['insurance'] ?? '' ) ) $errors->add( 'insurance', __( 'Please select a configured insurance package.', 'rentacar-core' ) );
+        $airport_locations = apply_filters( 'rentacar_core_airport_locations', array( 'Airport Venice Marco Polo', 'Treviso Airport Arrivals' ) );
+        if ( is_array( $airport_locations ) && in_array( $input['pickup_location'] ?? '', $airport_locations, true ) && empty( $input['flight_number'] ) ) {
+            $errors->add( 'flight_number', __( 'Please enter your flight number for airport pickup.', 'rentacar-core' ) );
+        }
         foreach ( Rentacar_Core_Reservation_Extras::validate_selection( (array) ( $input['extras'] ?? array() ) ) as $message ) {
             $errors->add( 'extras', $message );
         }
@@ -52,7 +56,7 @@ final class Rentacar_Core_Reservation_Validator {
             $errors->add( 'started_at', __( 'Please review the form and try again.', 'rentacar-core' ) );
         }
 
-        if ( strlen( (string) ( $input['message'] ?? '' ) ) > 2000 || strlen( (string) ( $input['pickup_location'] ?? '' ) ) > 120 || strlen( (string) ( $input['return_location'] ?? '' ) ) > 120 ) {
+        if ( strlen( (string) ( $input['message'] ?? '' ) ) > 2000 || strlen( (string) ( $input['flight_number'] ?? '' ) ) > 24 || strlen( (string) ( $input['pickup_location'] ?? '' ) ) > 120 || strlen( (string) ( $input['return_location'] ?? '' ) ) > 120 ) {
             $errors->add( 'size', __( 'One or more values are too long.', 'rentacar-core' ) );
         }
 

@@ -95,6 +95,34 @@ document.addEventListener('pointerdown', (event) => {
   }
 });
 
+const tripForm = document.querySelector<HTMLFormElement>('[data-trip-form]');
+if (tripForm) {
+  const pickup = tripForm.elements.namedItem('pickup_location') as HTMLSelectElement | null;
+  const dropoff = tripForm.elements.namedItem('dropoff_location') as HTMLSelectElement | null;
+  const returnDifferent = tripForm.querySelector<HTMLInputElement>('[data-trip-return-different]');
+  const returnLocation = tripForm.querySelector<HTMLElement>('[data-trip-return-location]');
+  const quickLocations = Array.from(tripForm.querySelectorAll<HTMLButtonElement>('[data-trip-location]'));
+
+  const syncTripLocations = (): void => {
+    const different = Boolean(returnDifferent?.checked);
+    if (returnLocation) returnLocation.hidden = !different;
+    if (!different && pickup && dropoff) dropoff.value = pickup.value;
+    quickLocations.forEach((button) => {
+      button.setAttribute('aria-pressed', String(button.dataset.tripLocation === pickup?.value));
+    });
+  };
+
+  pickup?.addEventListener('change', syncTripLocations);
+  returnDifferent?.addEventListener('change', syncTripLocations);
+  quickLocations.forEach((button) => button.addEventListener('click', () => {
+    if (pickup && button.dataset.tripLocation) {
+      pickup.value = button.dataset.tripLocation;
+      syncTripLocations();
+    }
+  }));
+  syncTripLocations();
+}
+
 const revealItems = Array.from(document.querySelectorAll<HTMLElement>('.reveal-on-scroll'));
 if (revealItems.length) {
   if (!('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -118,6 +146,48 @@ const success = document.querySelector<HTMLElement>('[data-reservation-success]'
 const errorBox = document.querySelector<HTMLElement>('[data-reservation-errors]');
 const inertTargets = Array.from(document.querySelectorAll<HTMLElement>('[data-site-header], #main-content, .site-footer'));
 let trigger: HTMLElement | null = null;
+
+const setupReservationDetails = (): void => {
+  if (!form) return;
+  const pickup = form.querySelector<HTMLSelectElement>('[data-reservation-pickup-location]');
+  const returnLocation = form.querySelector<HTMLSelectElement>('[data-reservation-return-location]');
+  const returnDifferent = form.querySelector<HTMLInputElement>('[data-reservation-return-different]');
+  const returnWrapper = form.querySelector<HTMLElement>('[data-reservation-return-location]')?.closest('label');
+  const flight = form.querySelector<HTMLElement>('[data-reservation-flight]');
+  const airline = form.querySelector<HTMLInputElement>('[data-reservation-airline]');
+  const flightNumber = form.querySelector<HTMLInputElement>('[data-reservation-flight-number]');
+  let airports: string[] = [];
+
+  try {
+    const configuredAirports = JSON.parse(form.dataset.airportLocations || '[]');
+    airports = Array.isArray(configuredAirports) ? configuredAirports.filter((item): item is string => typeof item === 'string') : [];
+  } catch {
+    airports = [];
+  }
+
+  const sync = (): void => {
+    const different = Boolean(returnDifferent?.checked);
+    if (returnWrapper) returnWrapper.hidden = !different;
+    if (!different && pickup && returnLocation) returnLocation.value = pickup.value;
+
+    const airportPickup = Boolean(pickup && airports.includes(pickup.value));
+    if (flight) flight.hidden = !airportPickup;
+    if (airline) {
+      airline.disabled = !airportPickup;
+      if (!airportPickup) airline.value = '';
+    }
+    if (flightNumber) {
+      flightNumber.required = airportPickup;
+      flightNumber.disabled = !airportPickup;
+      if (!airportPickup) flightNumber.value = '';
+    }
+  };
+
+  pickup?.addEventListener('change', () => { sync(); void refreshEstimate(); });
+  returnDifferent?.addEventListener('change', () => { sync(); void refreshEstimate(); });
+  returnLocation?.addEventListener('change', () => { void refreshEstimate(); });
+  sync();
+};
 
 const refreshEstimate = async (): Promise<void> => {
   if (!form) return;
@@ -186,6 +256,8 @@ if (modal) {
     requestAnimationFrame(() => modal.querySelector<HTMLElement>('[data-reservation-close]')?.focus());
   }
 }
+
+setupReservationDetails();
 
 const openModal = (button: HTMLElement): void => {
   if (!modal || !form) return;

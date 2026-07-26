@@ -508,6 +508,24 @@ textarea { font: inherit; }
 
 .hero__actions { display:flex; flex-wrap:wrap; gap:var(--rc-space-3); margin-top:var(--rc-space-5); }
 
+.hero-location-card {
+  width:min(100%, 270px);
+  padding:var(--rc-space-4);
+  border:1px solid rgb(255 255 255 / 22%);
+  border-radius:var(--rc-radius-sm);
+  background:rgb(7 27 58 / 62%);
+  box-shadow:0 12px 28px rgb(7 27 58 / 18%);
+  backdrop-filter:blur(8px);
+}
+
+.hero-location-card p { margin:0 0 var(--rc-space-2); color:var(--rc-yellow-500); font-size:.76rem; font-weight:750; letter-spacing:.08em; text-transform:uppercase; }
+
+.hero-location-card ul { display:grid; gap:8px; padding:0; margin:0; list-style:none; }
+
+.hero-location-card li { position:relative; padding-left:17px; color:#fff; font-size:.91rem; font-weight:650; line-height:1.35; }
+
+.hero-location-card li::before { position:absolute; top:.48em; left:0; width:7px; height:7px; border-radius:50%; background:var(--rc-yellow-500); content:""; }
+
 .trip-filter-section {
   position: relative;
   z-index: 4;
@@ -532,6 +550,22 @@ textarea { font: inherit; }
 .trip-form legend { margin-bottom: var(--rc-space-3); color: var(--rc-navy-950); font-size: 1.05rem; font-weight: 750; letter-spacing: -.015em; }
 
 .trip-form__grid { display: grid; gap: var(--rc-space-3); }
+
+.trip-form__quick { display:flex; flex-wrap:wrap; gap:8px; margin-top:var(--rc-space-3); }
+
+.trip-form__quick button { min-height:36px; padding:6px 10px; border:1px solid var(--rc-line); border-radius:999px; background:var(--rc-surface-muted); color:var(--rc-navy-950); font-size:.82rem; font-weight:650; cursor:pointer; }
+
+.trip-form__quick button[aria-pressed="true"] { border-color:var(--rc-navy-800); background:var(--rc-navy-950); color:#fff; }
+
+.trip-form__advanced { margin-top:var(--rc-space-3); border-top:1px solid var(--rc-line); }
+
+.trip-form__advanced summary { min-height:42px; display:flex; align-items:center; color:var(--rc-navy-800); font-size:.88rem; font-weight:700; cursor:pointer; }
+
+.trip-form__advanced-grid { display:grid; gap:var(--rc-space-3); padding:0 0 var(--rc-space-2); }
+
+.trip-form__different-return { display:flex !important; min-height:44px; align-items:center; gap:8px; }
+
+.trip-form__different-return input { width:18px; min-width:18px; height:18px; min-height:18px; margin:0; accent-color:var(--rc-navy-800); }
 
 .trip-form label,
 .fleet-filters__form label,
@@ -1108,6 +1142,24 @@ textarea { font: inherit; }
 
 .reservation-form__privacy { margin-top:var(--rc-space-4); }
 
+.reservation-form__different-return { align-self:end; min-height:44px; }
+
+.reservation-flight { padding:var(--rc-space-4) !important; border:1px solid #dce5ee !important; border-radius:var(--rc-radius-sm); background:var(--rc-surface-muted); }
+
+.reservation-flight p,
+.reservation-form__hint,
+.reservation-form__disclaimer { margin:0 0 var(--rc-space-3); color:var(--rc-muted); font-size:.88rem; line-height:1.5; }
+
+.reservation-form__hint { margin:var(--rc-space-3) 0 0; }
+
+.reservation-form__similar { margin:-4px 0 var(--rc-space-4); }
+
+.reservation-form__consents { display:grid; gap:var(--rc-space-3); margin-top:var(--rc-space-5) !important; }
+
+.reservation-form__consents .reservation-form__privacy { margin-top:0; }
+
+.reservation-form__disclaimer { padding-top:var(--rc-space-3); margin-bottom:var(--rc-space-3); border-top:1px solid var(--rc-line); }
+
 .reservation-location-fee { margin:-2px 0 var(--rc-space-5); color:var(--rc-navy-800); font-size:.875rem; font-weight:650; line-height:1.5; }
 
 .reservation-extras { display:grid; gap:8px; padding:0; }
@@ -1117,6 +1169,8 @@ textarea { font: inherit; }
 .reservation-extras__item:last-child { border-bottom:0; }
 
 .reservation-extras__item strong { display:block; }
+
+.reservation-extras__item small { display:block; margin-top:2px; color:var(--rc-muted); font-size:.8rem; font-weight:500; }
 
 .reservation-form .button { width:100%; }
 
@@ -1157,7 +1211,8 @@ textarea { font: inherit; }
 
 @media (min-width:640px) {
   .trip-form__grid,
-  .reservation-form__two { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .reservation-form__two,
+  .trip-form__advanced-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
 
   .vehicle-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
 
@@ -1235,9 +1290,13 @@ textarea { font: inherit; }
 
   .hero__copy { max-width:100%; }
 
+  .hero-location-card { display:none; }
+
   .hero__actions .button { width:100%; }
 
   .trip-filter-section { margin-top:0; padding-block:22px; background:var(--rc-surface-muted); }
+
+  .trip-form__quick button { flex:1 1 160px; }
 
   .trust-strip__list { grid-template-columns:1fr; }
 

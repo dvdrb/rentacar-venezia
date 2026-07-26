@@ -26,12 +26,15 @@ test.describe('final theme experience', () => {
     await expect(hero.locator('img')).toHaveAttribute('height', '941');
     await expect(hero.locator('img')).toHaveAttribute('fetchpriority', 'high');
     await expect(hero.locator('a[href="#trip-filter"]')).toHaveCount(1);
-    await expect(hero.locator('.hero-location-card')).toHaveCount(0);
+    await expect(hero.locator('.hero-location-card')).toHaveCount(1);
     await expect(page.locator('.trip-form')).toHaveCount(1);
     await expect(page.locator('.trip-filter-section__help')).toBeVisible();
     await expect(page.locator('.trip-form select[name="pickup_location"]')).toHaveCount(1);
     await expect(page.locator('.trip-form select[name="pickup_location"] option')).toHaveCount(2);
-    await expect(page.locator('.trip-form details, [data-trip-location], [data-return-different], .trip-form select[name="dropoff_location"]')).toHaveCount(0);
+    await expect(page.locator('.trip-form details')).toHaveCount(1);
+    await expect(page.locator('[data-trip-location]')).toHaveCount(2);
+    await expect(page.locator('[data-trip-return-different]')).toHaveCount(1);
+    await expect(page.locator('.trip-form select[name="dropoff_location"]')).toHaveCount(1);
   });
 
   test('keeps the homepage filter limited to the two airport pickup options', async ({ page }) => {
@@ -41,7 +44,7 @@ test.describe('final theme experience', () => {
 
     await expect(pickup.locator('option')).toHaveCount(2);
     await expect(pickup).not.toContainText('We come where you need');
-    await expect(form.locator('input[name="pickup_time"], input[name="return_time"], select[name="dropoff_location"]')).toHaveCount(0);
+    await expect(form.locator('input[name="pickup_time"], input[name="return_time"], select[name="dropoff_location"]')).toHaveCount(3);
   });
 
   test('renders two crawlable airport arrival options without an empty image stage', async ({ page }) => {
@@ -105,11 +108,11 @@ test.describe('final theme experience', () => {
     }
   });
 
-  test('keeps the mobile hero free of pickup cards and limits arrival choices to airports', async ({ page }) => {
+  test('keeps the mobile hero compact and limits arrival choices to airports', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/en/');
 
-    await expect(page.locator('.hero-location-card')).toHaveCount(0);
+    await expect(page.locator('.hero-location-card')).toBeHidden();
     await expect(page.locator('.arrivals-grid .arrival-card')).toHaveCount(2);
     await expect(page.locator('.arrivals-grid')).not.toContainText('We come where you need');
   });
@@ -180,7 +183,10 @@ test.describe('final theme experience', () => {
     await expect(extras.nth(0)).toHaveAttribute('value', 'child_seat');
     await expect(extras.nth(1)).toHaveAttribute('value', 'additional_driver');
     await expect(page.locator('[data-reservation-form] input[value="gps"], [data-reservation-form] input[value="internet_sim"]')).toHaveCount(0);
-    await expect(page.locator('.reservation-extras small, .reservation-insurance .form-help, .reservation-flight, input[name="flight_number"], input[name="airline"]')).toHaveCount(0);
+    await expect(page.locator('.reservation-extras small')).toHaveCount(2);
+    await expect(page.locator('.reservation-flight')).toBeVisible();
+    await expect(page.locator('input[name="flight_number"]')).toHaveAttribute('required', '');
+    await expect(page.locator('input[name="airline"]')).toHaveCount(1);
   });
 
   test('uses only airport selects and sends the authoritative inter-airport locations for an estimate', async ({ page }) => {
@@ -198,6 +204,7 @@ test.describe('final theme experience', () => {
     await form.locator('input[name="return_date"]').fill('2027-04-13');
     await form.locator('input[name="return_time"]').fill('10:00');
     await form.locator('select[name="pickup_location"]').selectOption('Airport Venice Marco Polo');
+    await form.locator('[data-reservation-return-different]').check();
     const estimateRequest = page.waitForRequest((request) => request.url().includes('/wp-json/rentacar/v1/estimate') && request.postData()?.includes('return_location=Treviso+Airport+Arrivals'));
     await form.locator('select[name="return_location"]').selectOption('Treviso Airport Arrivals');
     await expect(await estimateRequest).toBeTruthy();
@@ -225,11 +232,12 @@ test.describe('final theme experience', () => {
     await form.locator('input[name="return_date"]').fill('2027-04-12');
     await form.locator('input[name="return_time"]').fill('10:00');
     await form.locator('select[name="pickup_location"]').selectOption('Airport Venice Marco Polo');
-    await form.locator('select[name="return_location"]').selectOption('Airport Venice Marco Polo');
+    await form.locator('input[name="flight_number"]').fill('AZ123');
     await form.locator('input[name="first_name"]').fill('Local');
     await form.locator('input[name="last_name"]').fill('Test');
     await form.locator('input[name="phone"]').fill('+39000000000');
     await form.locator('input[name="email"]').fill('local-test@example.invalid');
+    await form.locator('input[name="terms"]').check();
     await form.locator('input[name="privacy"]').check();
     await form.locator('button[type="submit"]').click();
     await expect(page.locator('[data-reservation-success]')).toContainText(/Request received|Richiesta ricevuta/);
