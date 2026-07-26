@@ -37,9 +37,10 @@ $inter_airport_fee  = class_exists( 'Rentacar_Core_Rental_Policy' ) && count( $l
           <?php wp_nonce_field( 'rentacar_submit_reservation', 'rentacar_reservation_nonce' ); ?>
           <p id="reservation-errors" class="reservation-form__error" data-reservation-errors tabindex="-1" aria-live="assertive"></p>
           <div class="honeypot" aria-hidden="true"><label><?php esc_html_e( 'Website', 'rentacar-venezia-v2' ); ?><input name="website" tabindex="-1" autocomplete="off"></label></div>
+          <p class="reservation-form__intro"><?php esc_html_e( 'A few details are all we need. We confirm availability and the final price personally.', 'rentacar-venezia-v2' ); ?></p>
 
-          <fieldset>
-            <legend><?php esc_html_e( 'Rental details', 'rentacar-venezia-v2' ); ?></legend>
+          <fieldset class="reservation-form__section">
+            <legend><?php esc_html_e( 'Your trip', 'rentacar-venezia-v2' ); ?></legend>
             <div class="reservation-form__two">
               <label><?php esc_html_e( 'Pickup date', 'rentacar-venezia-v2' ); ?><input name="pickup_date" type="date" required value="<?php echo esc_attr( $trip['pickup_date'] ?? '' ); ?>"></label>
               <label><?php esc_html_e( 'Pickup time', 'rentacar-venezia-v2' ); ?><input name="pickup_time" type="time" required value="<?php echo esc_attr( $trip['pickup_time'] ?? '' ); ?>"></label>
@@ -53,7 +54,7 @@ $inter_airport_fee  = class_exists( 'Rentacar_Core_Rental_Policy' ) && count( $l
           <?php if ( $inter_airport_fee ) : ?><p class="reservation-location-fee"><?php echo esc_html( sprintf( __( 'A €%s transfer fee applies when pickup and return airports differ.', 'rentacar-venezia-v2' ), number_format_i18n( $inter_airport_fee, 2 ) ) ); ?></p><?php endif; ?>
 
           <fieldset class="reservation-flight" data-reservation-flight>
-            <legend><?php esc_html_e( 'Flight details', 'rentacar-venezia-v2' ); ?></legend>
+            <legend><?php esc_html_e( 'Your flight', 'rentacar-venezia-v2' ); ?></legend>
             <p><?php esc_html_e( 'We monitor the flight when a valid flight number is provided. Please also contact us if your flight or arrival plans change.', 'rentacar-venezia-v2' ); ?></p>
             <div class="reservation-form__two">
               <label><?php esc_html_e( 'Airline (optional)', 'rentacar-venezia-v2' ); ?><input name="airline" autocomplete="organization" data-reservation-airline></label>
@@ -61,34 +62,32 @@ $inter_airport_fee  = class_exists( 'Rentacar_Core_Rental_Policy' ) && count( $l
             </div>
           </fieldset>
 
-          <fieldset>
-            <legend><?php esc_html_e( 'Your details', 'rentacar-venezia-v2' ); ?></legend>
-            <div class="reservation-form__two">
-              <label><?php esc_html_e( 'First name', 'rentacar-venezia-v2' ); ?><input name="first_name" autocomplete="given-name" required></label>
-              <label><?php esc_html_e( 'Last name', 'rentacar-venezia-v2' ); ?><input name="last_name" autocomplete="family-name" required></label>
-            </div>
+          <fieldset class="reservation-form__section">
+            <legend><?php esc_html_e( 'How can we reach you?', 'rentacar-venezia-v2' ); ?></legend>
+            <label><?php esc_html_e( 'Full name', 'rentacar-venezia-v2' ); ?><input name="full_name" autocomplete="name" required></label>
             <label><?php esc_html_e( 'Phone or WhatsApp', 'rentacar-venezia-v2' ); ?><input name="phone" autocomplete="tel" required></label>
             <label><?php esc_html_e( 'Email', 'rentacar-venezia-v2' ); ?><input name="email" type="email" autocomplete="email" required></label>
           </fieldset>
 
-          <fieldset class="reservation-insurance">
-            <legend><?php esc_html_e( 'Insurance', 'rentacar-venezia-v2' ); ?></legend>
-            <?php foreach ( $insurance_packages as $key => $package ) : if ( empty( $package['enabled'] ) ) { continue; } ?>
-              <label class="check-label"><input name="insurance" type="radio" value="<?php echo esc_attr( $key ); ?>" required<?php checked( 'base', $key ); ?>><span><?php echo esc_html( $package['label'] ); ?> — <?php echo esc_html( sprintf( '€%s %s', number_format_i18n( $package['daily_cents'] / 100, 2 ), __( 'per rental day', 'rentacar-venezia-v2' ) ) ); ?></span></label>
-            <?php endforeach; ?>
-            <p class="reservation-form__hint"><?php esc_html_e( 'Coverage, exclusions and any remaining customer responsibility are confirmed in the rental contract. Prices include VAT; base rental prices include RCA.', 'rentacar-venezia-v2' ); ?></p>
-          </fieldset>
-
-          <?php if ( $reservation_extras ) : ?>
-            <fieldset class="reservation-extras"><legend><?php esc_html_e( 'Optional extras', 'rentacar-venezia-v2' ); ?></legend>
-              <?php foreach ( $reservation_extras as $extra ) : ?>
-                <label class="check-label reservation-extras__item"><input name="extras[]" type="checkbox" value="<?php echo esc_attr( $extra['key'] ); ?>"><span><strong><?php echo esc_html( $extra['label'] ); ?></strong><small><?php esc_html_e( 'Price confirmed by our team', 'rentacar-venezia-v2' ); ?></small></span></label>
-              <?php endforeach; ?>
-            </fieldset>
-          <?php endif; ?>
-
-          <label class="check-label reservation-form__similar"><input name="similar_vehicle" type="checkbox" value="1"><span><?php esc_html_e( 'I accept a similar vehicle if the selected model is unavailable.', 'rentacar-venezia-v2' ); ?></span></label>
-          <label><?php esc_html_e( 'Message (optional)', 'rentacar-venezia-v2' ); ?><textarea name="message" rows="3"></textarea></label>
+          <details class="reservation-form__options">
+            <summary><?php esc_html_e( 'Protection and optional extras', 'rentacar-venezia-v2' ); ?></summary>
+            <div class="reservation-form__options-body">
+              <fieldset class="reservation-insurance">
+                <legend><?php esc_html_e( 'Insurance', 'rentacar-venezia-v2' ); ?></legend>
+                <?php foreach ( $insurance_packages as $key => $package ) : if ( empty( $package['enabled'] ) ) { continue; } ?>
+                  <label class="check-label"><input name="insurance" type="radio" value="<?php echo esc_attr( $key ); ?>" required<?php checked( 'base', $key ); ?>><span><?php echo esc_html( $package['label'] ); ?> — <?php echo esc_html( sprintf( '€%s %s', number_format_i18n( $package['daily_cents'] / 100, 2 ), __( 'per rental day', 'rentacar-venezia-v2' ) ) ); ?></span></label>
+                <?php endforeach; ?>
+                <p class="reservation-form__hint"><?php esc_html_e( 'Coverage, exclusions and any remaining customer responsibility are confirmed in the rental contract. Prices include VAT; base rental prices include RCA.', 'rentacar-venezia-v2' ); ?></p>
+              </fieldset>
+              <?php if ( $reservation_extras ) : ?>
+                <fieldset class="reservation-extras"><legend><?php esc_html_e( 'Optional extras', 'rentacar-venezia-v2' ); ?></legend>
+                  <?php foreach ( $reservation_extras as $extra ) : ?><label class="check-label reservation-extras__item"><input name="extras[]" type="checkbox" value="<?php echo esc_attr( $extra['key'] ); ?>"><span><strong><?php echo esc_html( $extra['label'] ); ?></strong><small><?php esc_html_e( 'Price confirmed by our team', 'rentacar-venezia-v2' ); ?></small></span></label><?php endforeach; ?>
+                </fieldset>
+              <?php endif; ?>
+              <label class="check-label reservation-form__similar"><input name="similar_vehicle" type="checkbox" value="1"><span><?php esc_html_e( 'I accept a similar vehicle if the selected model is unavailable.', 'rentacar-venezia-v2' ); ?></span></label>
+              <label><?php esc_html_e( 'Message (optional)', 'rentacar-venezia-v2' ); ?><textarea name="message" rows="3"></textarea></label>
+            </div>
+          </details>
           <section class="reservation-estimate" aria-live="polite" data-reservation-estimate hidden><h3><?php esc_html_e( 'Indicative estimate', 'rentacar-venezia-v2' ); ?></h3><div data-reservation-estimate-content></div><p><?php esc_html_e( 'Deposit is paid separately at pickup. Availability, final price and rental conditions are confirmed personally.', 'rentacar-venezia-v2' ); ?></p></section>
           <fieldset class="reservation-form__consents">
             <legend class="screen-reader-text"><?php esc_html_e( 'Request confirmations', 'rentacar-venezia-v2' ); ?></legend>
