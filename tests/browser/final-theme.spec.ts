@@ -8,7 +8,7 @@ test.describe('final theme experience', () => {
   test.skip(!localRuntimeConfigured, 'Set PLAYWRIGHT_BASE_URL after starting the LocalWP site.');
 
   test('renders the data-driven homepage with one H1 and vehicle cards', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/en/');
     await expect(page.locator('h1')).toHaveCount(1);
     await expect(page.locator('.vehicle-card').first()).toBeVisible();
     await expect(page.locator('[data-reservation-trigger]').first()).toHaveAttribute('data-vehicle-id', /\d+/);
@@ -34,7 +34,7 @@ test.describe('final theme experience', () => {
 
   test('renders three precise, equal-width customer assurances below the trip filter', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/');
+    await page.goto('/en/');
     const strip = page.locator('.trust-strip');
     const items = strip.locator('.trust-strip__item');
 
@@ -59,7 +59,7 @@ test.describe('final theme experience', () => {
   test('stacks the three trust assurances without clipping on narrow screens', async ({ page }) => {
     for (const width of [320, 390]) {
       await page.setViewportSize({ width, height: 780 });
-      await page.goto('/');
+      await page.goto('/en/');
       const items = page.locator('.trust-strip__item');
       await expect(items).toHaveCount(3);
       await expect(page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).resolves.toBeTruthy();
@@ -121,7 +121,8 @@ test.describe('final theme experience', () => {
     await form.locator('input[name="return_time"]').fill('10:00');
     await form.locator('input[name="pickup_location"]').fill('Venice');
     await form.locator('input[name="return_location"]').fill('Venice');
-    await form.locator('input[name="full_name"]').fill('Local test');
+    await form.locator('input[name="first_name"]').fill('Local');
+    await form.locator('input[name="last_name"]').fill('Test');
     await form.locator('input[name="phone"]').fill('+39000000000');
     await form.locator('input[name="email"]').fill('local-test@example.invalid');
     await form.locator('input[name="privacy"]').check();
@@ -167,8 +168,8 @@ test.describe('final theme experience', () => {
     await expect(breadcrumbs.locator('a')).toHaveCount(2);
     await expect(breadcrumbs.locator('[aria-current="page"]')).toHaveCount(1);
     await expect(page.locator('.vehicle-gallery__image--primary img')).toHaveAttribute('alt', /\S+/);
-    const schema = await page.locator('script[type="application/ld+json"]').filter({ hasText: 'Product' }).textContent();
-    expect(schema || '').not.toMatch(/"Offer"|"availability"|"InStock"|"aggregateRating"|"review"/i);
+    const schema = await page.locator('script[type="application/ld+json"]').filter({ hasText: 'Product' }).allTextContents();
+    expect(schema.join('\n')).not.toMatch(/"Offer"|"availability"|"InStock"|"aggregateRating"|"review"/i);
   });
 
   test('keeps current-language URLs intact when navigating enabled WPML languages', async ({ page }) => {
@@ -255,11 +256,13 @@ test.describe('final theme experience', () => {
     await expect(page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).resolves.toBeTruthy();
   });
 
-  test('keeps WPML language configuration and flag asset paths out of the theme source', async () => {
+  test('keeps multilingual configuration and flag asset paths out of the theme source', async () => {
     const component = await readFile(resolve('theme/rentacar-venezia-v2/template-parts/global/language-switcher.php'), 'utf8');
     const functions = await readFile(resolve('theme/rentacar-venezia-v2/functions.php'), 'utf8');
+    const multilingual = await readFile(resolve('theme/rentacar-venezia-v2/inc/multilingual.php'), 'utf8');
 
-    expect(functions).toContain("'wpml_active_languages'");
+    expect(functions).not.toContain("'wpml_active_languages'");
+    expect(multilingual).toContain("'wpml_active_languages'");
     expect(component).not.toContain('/wp-content/plugins/sitepress-multilingual-cms/res/flags/');
     expect(component).not.toMatch(/(?:\bRU\b|\bRO\b|\bIT\b|\bEN\b).*https?:/);
   });

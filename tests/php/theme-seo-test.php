@@ -39,12 +39,15 @@ function wp_json_encode( $value, $flags = 0 ) { return json_encode( $value, $fla
 function get_the_title( $id = 0 ) { return 'Example title ' . $id; }
 function get_post_ancestors() { return array(); }
 function wp_get_document_title() { return 'Archive'; }
+function determine_locale() { return 'en_US'; }
+function get_post_type( $post_id ) { return 'page'; }
 
 require_once dirname( __DIR__, 2 ) . '/plugin/rentacar-core/src/Vehicles/PricingBand.php';
 require_once dirname( __DIR__, 2 ) . '/plugin/rentacar-core/src/Vehicles/PricingBandCollection.php';
 require_once dirname( __DIR__, 2 ) . '/plugin/rentacar-core/src/Vehicles/Vehicle.php';
 require_once dirname( __DIR__, 2 ) . '/plugin/rentacar-core/src/Vehicles/VehicleGallery.php';
 require_once dirname( __DIR__, 2 ) . '/theme/rentacar-venezia-v2/inc/presentation.php';
+require_once dirname( __DIR__, 2 ) . '/theme/rentacar-venezia-v2/inc/multilingual.php';
 require_once dirname( __DIR__, 2 ) . '/theme/rentacar-venezia-v2/inc/seo.php';
 require_once dirname( __DIR__, 2 ) . '/theme/rentacar-venezia-v2/inc/breadcrumbs.php';
 

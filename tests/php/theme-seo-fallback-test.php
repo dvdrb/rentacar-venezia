@@ -16,8 +16,11 @@ function wp_unslash( $value ) { return $value; }
 function trailingslashit( $value ) { return rtrim( $value, '/' ) . '/'; }
 function esc_url( $value ) { return $value; }
 function __( $text ) { return $text; }
+function determine_locale() { return 'en_US'; }
+function get_post_type( $post_id ) { return 'page'; }
 require_once dirname( __DIR__, 2 ) . '/plugin/rentacar-core/src/Vehicles/Vehicle.php';
 require_once dirname( __DIR__, 2 ) . '/theme/rentacar-venezia-v2/inc/presentation.php';
+require_once dirname( __DIR__, 2 ) . '/theme/rentacar-venezia-v2/inc/multilingual.php';
 require_once dirname( __DIR__, 2 ) . '/theme/rentacar-venezia-v2/inc/seo.php';
 if ( 'https://example.test/fleet/' !== rentacar_venezia_v2_fleet_url() ) { fwrite( STDERR, "FAIL: Custom fleet fallback URL was not retained.\n" ); exit( 1 ); }
 echo "Theme SEO fallback checks passed.\n";

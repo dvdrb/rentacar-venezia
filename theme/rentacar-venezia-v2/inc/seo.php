@@ -48,7 +48,9 @@ function rentacar_venezia_v2_fleet_page_id() {
         $page_id = absint( $page_id );
         $translated_id = $page_id;
 
-        $translated_id = rentacar_venezia_v2_translated_post_id( $page_id );
+        $translated_id = function_exists( 'rentacar_venezia_v2_translated_post_id' )
+            ? rentacar_venezia_v2_translated_post_id( $page_id )
+            : $page_id;
 
         if ( $translated_id && 'publish' === get_post_status( $translated_id ) ) {
             $fleet_page_id = $translated_id;
@@ -78,7 +80,9 @@ function rentacar_venezia_v2_fleet_url() {
     } else {
         $fleet_url = home_url( '/fleet/' );
 
-        $fleet_url = rentacar_venezia_v2_localized_fallback_url( $fleet_url );
+        if ( function_exists( 'rentacar_venezia_v2_localized_fallback_url' ) ) {
+            $fleet_url = rentacar_venezia_v2_localized_fallback_url( $fleet_url );
+        }
     }
 
     $fleet_url = (string) apply_filters( 'rentacar_venezia_v2_fleet_url', $fleet_url, $fleet_page_id );
@@ -181,6 +185,20 @@ function rentacar_venezia_v2_fleet_page_canonical( $canonical, $post ) {
     return rentacar_venezia_v2_fleet_canonical_url();
 }
 add_filter( 'get_canonical_url', 'rentacar_venezia_v2_fleet_page_canonical', 10, 2 );
+
+/**
+ * Keep the catalogue's indexing rules intact when Yoast owns the document
+ * canonical. Yoast remains responsible for all ordinary WordPress pages;
+ * this only covers the fleet's filter and pagination states.
+ */
+function rentacar_venezia_v2_yoast_fleet_canonical( $canonical ) {
+    if ( ! rentacar_venezia_v2_external_seo_plugin_active() || ! rentacar_venezia_v2_is_fleet_request() ) {
+        return $canonical;
+    }
+
+    return rentacar_venezia_v2_fleet_canonical_url();
+}
+add_filter( 'wpseo_canonical', 'rentacar_venezia_v2_yoast_fleet_canonical' );
 
 function rentacar_venezia_v2_document_title( $parts ) {
     if ( get_query_var( 'rc_fleet' ) && ! rentacar_venezia_v2_external_seo_plugin_active() ) {
