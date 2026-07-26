@@ -10,11 +10,12 @@ function __( $text ) { return $text; }
 function absint( $value ) { return abs( (int) $value ); }
 function number_format_i18n( $number, $decimals = 0 ) { return number_format( $number, $decimals, '.', '' ); }
 function get_bloginfo() { return 'Rentacar test'; }
-function wp_mail( $recipient, $subject, $message ) { $GLOBALS['reservation_extra_mail'] = compact( 'recipient', 'subject', 'message' ); return true; }
+function wp_mail( $recipient, $subject, $message, $headers = array() ) { $GLOBALS['reservation_extra_mail'] = compact( 'recipient', 'subject', 'message', 'headers' ); return true; }
 
 require_once dirname( __DIR__, 2 ) . '/plugin/rentacar-core/src/Settings/ReservationExtras.php';
 require_once dirname( __DIR__, 2 ) . '/plugin/rentacar-core/src/Pricing/RentalDurationCalculator.php';
 require_once dirname( __DIR__, 2 ) . '/plugin/rentacar-core/src/Enquiries/ReservationRequest.php';
+require_once dirname( __DIR__, 2 ) . '/plugin/rentacar-core/src/Enquiries/ReservationEmailTemplate.php';
 require_once dirname( __DIR__, 2 ) . '/plugin/rentacar-core/src/Enquiries/BusinessNotification.php';
 
 function reservation_extra_assert( $condition, $message ) { if ( ! $condition ) { fwrite( STDERR, "FAIL: {$message}\n" ); exit( 1 ); } }
@@ -55,5 +56,7 @@ $request = new Rentacar_Core_Reservation_Request( array(
 ) );
 ( new Rentacar_Core_Business_Notification() )->send( $request, 'team@example.test' );
 reservation_extra_assert( false !== strpos( $GLOBALS['reservation_extra_mail']['message'], 'Child seat — per_day; €8.00; Subtotal: €16.00' ), 'Business notifications use authoritative extra prices and subtotals.' );
+reservation_extra_assert( false !== strpos( $GLOBALS['reservation_extra_mail']['message'], '<!doctype html>' ), 'Business notifications use the HTML email template.' );
+reservation_extra_assert( in_array( 'Content-Type: text/html; charset=UTF-8', $GLOBALS['reservation_extra_mail']['headers'], true ), 'Business notifications declare an HTML content type.' );
 
 echo "Reservation extra checks passed.\n";

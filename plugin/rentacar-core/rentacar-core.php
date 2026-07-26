@@ -36,6 +36,7 @@ require_once RENTACAR_CORE_PATH . 'src/Pricing/EstimateService.php';
 require_once RENTACAR_CORE_PATH . 'src/Rest/EstimateController.php';
 require_once RENTACAR_CORE_PATH . 'src/Enquiries/ReservationReference.php';
 require_once RENTACAR_CORE_PATH . 'src/Enquiries/ReservationRequest.php';
+require_once RENTACAR_CORE_PATH . 'src/Enquiries/ReservationEmailTemplate.php';
 require_once RENTACAR_CORE_PATH . 'src/Enquiries/ReservationValidator.php';
 require_once RENTACAR_CORE_PATH . 'src/Enquiries/BusinessNotification.php';
 require_once RENTACAR_CORE_PATH . 'src/Enquiries/CustomerAcknowledgement.php';
