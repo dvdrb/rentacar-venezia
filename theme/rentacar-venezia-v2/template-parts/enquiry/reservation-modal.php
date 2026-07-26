@@ -6,6 +6,12 @@ $trip = rentacar_venezia_v2_trip_query();
 $privacy_policy_url = function_exists( 'get_privacy_policy_url' ) ? get_privacy_policy_url() : '';
 $reservation_extras = class_exists( 'Rentacar_Core_Reservation_Extras' ) ? Rentacar_Core_Reservation_Extras::enabled() : array();
 $insurance_packages = class_exists( 'Rentacar_Core_Rental_Policy' ) ? Rentacar_Core_Rental_Policy::get()['insurance'] : array();
+$locations = rentacar_venezia_v2_pickup_locations();
+$location_values = array_values( wp_list_pluck( $locations, 'value' ) );
+$default_location = $location_values ? reset( $location_values ) : '';
+$pickup_location = in_array( $trip['pickup_location'] ?? '', $location_values, true ) ? $trip['pickup_location'] : $default_location;
+$return_location = in_array( $trip['dropoff_location'] ?? '', $location_values, true ) ? $trip['dropoff_location'] : $pickup_location;
+$inter_airport_fee = class_exists( 'Rentacar_Core_Rental_Policy' ) && count( $location_values ) > 1 ? Rentacar_Core_Rental_Policy::inter_airport_surcharge_cents( $location_values[0], $location_values[1] ) / 100 : 0;
 ?>
 <section class="reservation-modal reservation-modal--inline" data-reservation-modal data-reservation-initial-open="<?php echo $success ? '1' : '0'; ?>" aria-labelledby="reservation-modal-title" tabindex="-1">
   <div class="reservation-modal__backdrop" data-reservation-close></div>
@@ -28,24 +34,16 @@ $insurance_packages = class_exists( 'Rentacar_Core_Rental_Policy' ) ? Rentacar_C
           <fieldset><legend><?php esc_html_e( 'Rental details', 'rentacar-venezia-v2' ); ?></legend><div class="reservation-form__two">
             <label><?php esc_html_e( 'Pickup date', 'rentacar-venezia-v2' ); ?><input name="pickup_date" type="date" required value="<?php echo esc_attr( $trip['pickup_date'] ?? '' ); ?>"></label><label><?php esc_html_e( 'Pickup time', 'rentacar-venezia-v2' ); ?><input name="pickup_time" type="time" required value="<?php echo esc_attr( $trip['pickup_time'] ?? '' ); ?>"></label>
             <label><?php esc_html_e( 'Return date', 'rentacar-venezia-v2' ); ?><input name="return_date" type="date" required value="<?php echo esc_attr( $trip['return_date'] ?? '' ); ?>"></label><label><?php esc_html_e( 'Return time', 'rentacar-venezia-v2' ); ?><input name="return_time" type="time" required value="<?php echo esc_attr( $trip['return_time'] ?? '' ); ?>"></label>
-            <label><?php esc_html_e( 'Pickup location', 'rentacar-venezia-v2' ); ?><input name="pickup_location" required value="<?php echo esc_attr( $trip['pickup_location'] ?? '' ); ?>"></label><label><?php esc_html_e( 'Return location', 'rentacar-venezia-v2' ); ?><input name="return_location" required value="<?php echo esc_attr( $trip['dropoff_location'] ?? '' ); ?>"></label>
+            <label><?php esc_html_e( 'Pickup location', 'rentacar-venezia-v2' ); ?><select name="pickup_location" required><?php foreach ( $locations as $location ) : ?><option value="<?php echo esc_attr( $location['value'] ); ?>"<?php selected( $pickup_location, $location['value'] ); ?>><?php echo esc_html( $location['label'] ); ?></option><?php endforeach; ?></select></label><label><?php esc_html_e( 'Return location', 'rentacar-venezia-v2' ); ?><select name="return_location" required><?php foreach ( $locations as $location ) : ?><option value="<?php echo esc_attr( $location['value'] ); ?>"<?php selected( $return_location, $location['value'] ); ?>><?php echo esc_html( $location['label'] ); ?></option><?php endforeach; ?></select></label>
           </div></fieldset>
-          <fieldset class="reservation-flight"><legend><?php esc_html_e( 'Flight details', 'rentacar-venezia-v2' ); ?></legend><p class="form-help"><?php esc_html_e( 'We monitor the flight when a valid flight number is provided. Please also contact us if your flight or arrival plans change.', 'rentacar-venezia-v2' ); ?></p><label><?php esc_html_e( 'Airline (optional)', 'rentacar-venezia-v2' ); ?><input name="airline" autocomplete="off"></label><label><?php esc_html_e( 'Flight number', 'rentacar-venezia-v2' ); ?><input name="flight_number" maxlength="24" autocomplete="off"></label></fieldset>
-          <fieldset class="reservation-insurance"><legend><?php esc_html_e( 'Insurance', 'rentacar-venezia-v2' ); ?></legend><p class="form-help"><?php esc_html_e( 'Coverage, exclusions and any remaining customer responsibility are confirmed in the rental contract. Prices include VAT; base rental prices include RCA.', 'rentacar-venezia-v2' ); ?></p><?php foreach ( $insurance_packages as $key => $package ) : if ( empty( $package['enabled'] ) ) continue; ?><label class="check-label"><input name="insurance" type="radio" value="<?php echo esc_attr( $key ); ?>" required<?php checked( 'base', $key ); ?>><span><?php echo esc_html( $package['label'] ); ?> — <?php echo esc_html( sprintf( '€%s %s', number_format_i18n( $package['daily_cents'] / 100, 2 ), __( 'per rental day', 'rentacar-venezia-v2' ) ) ); ?></span></label><?php endforeach; ?></fieldset>
+          <?php if ( $inter_airport_fee ) : ?><p class="reservation-location-fee"><?php echo esc_html( sprintf( __( 'A €%s transfer fee applies when pickup and return airports differ.', 'rentacar-venezia-v2' ), number_format_i18n( $inter_airport_fee, 2 ) ) ); ?></p><?php endif; ?>
+          <fieldset class="reservation-insurance"><legend><?php esc_html_e( 'Insurance', 'rentacar-venezia-v2' ); ?></legend><?php foreach ( $insurance_packages as $key => $package ) : if ( empty( $package['enabled'] ) ) continue; ?><label class="check-label"><input name="insurance" type="radio" value="<?php echo esc_attr( $key ); ?>" required<?php checked( 'base', $key ); ?>><span><?php echo esc_html( $package['label'] ); ?> — <?php echo esc_html( sprintf( '€%s %s', number_format_i18n( $package['daily_cents'] / 100, 2 ), __( 'per rental day', 'rentacar-venezia-v2' ) ) ); ?></span></label><?php endforeach; ?></fieldset>
           <?php if ( $reservation_extras ) : ?>
             <fieldset class="reservation-extras"><legend><?php esc_html_e( 'Optional extras', 'rentacar-venezia-v2' ); ?></legend>
               <?php foreach ( $reservation_extras as $extra ) : ?>
                 <label class="check-label reservation-extras__item">
                   <input name="extras[]" type="checkbox" value="<?php echo esc_attr( $extra['key'] ); ?>">
-                  <span><strong><?php echo esc_html( $extra['label'] ); ?></strong><small>
-                    <?php if ( 'request_only' === $extra['pricing_type'] ) : ?>
-                      <?php esc_html_e( 'Price confirmed by our team', 'rentacar-venezia-v2' ); ?>
-                    <?php elseif ( 'per_day' === $extra['pricing_type'] ) : ?>
-                      <?php echo esc_html( sprintf( __( '€%s per day', 'rentacar-venezia-v2' ), number_format_i18n( (float) $extra['price'], 2 ) ) ); ?>
-                    <?php else : ?>
-                      <?php echo esc_html( sprintf( __( '€%s fixed', 'rentacar-venezia-v2' ), number_format_i18n( (float) $extra['price'], 2 ) ) ); ?>
-                    <?php endif; ?>
-                  </small></span>
+                  <span><strong><?php echo esc_html( $extra['label'] ); ?></strong></span>
                 </label>
               <?php endforeach; ?>
             </fieldset>
@@ -57,7 +55,6 @@ $insurance_packages = class_exists( 'Rentacar_Core_Rental_Policy' ) ? Rentacar_C
             <label class="check-label"><input name="terms" type="checkbox" value="1" required> <span><?php esc_html_e( 'I accept the Terms and Conditions.', 'rentacar-venezia-v2' ); ?></span></label>
             <label class="check-label reservation-form__privacy"><input name="privacy" type="checkbox" value="1" required> <span><?php esc_html_e( 'I agree that my details will be used only to respond to this request.', 'rentacar-venezia-v2' ); ?><?php if ( $privacy_policy_url ) : ?> <a href="<?php echo esc_url( $privacy_policy_url ); ?>"><?php esc_html_e( 'Privacy Policy', 'rentacar-venezia-v2' ); ?></a><?php endif; ?></span></label>
           </fieldset>
-          <p class="form-help"><?php esc_html_e( 'Submitting this request does not immediately confirm the reservation. We will check availability and contact you.', 'rentacar-venezia-v2' ); ?></p>
           <button class="button" type="submit"><?php esc_html_e( 'Send reservation request', 'rentacar-venezia-v2' ); ?></button>
         </form>
       </div>

@@ -9,10 +9,8 @@ $default_location = $location_options ? reset( $location_options ) : '';
 $location_descriptions = array(
     'venice_marco_polo' => __( 'Meet us close to Venice Marco Polo Airport and begin your journey with a locally confirmed pickup.', 'rentacar-venezia-v2' ),
     'treviso_airport'   => __( 'A practical pickup point for Treviso Airport arrivals and trips across Veneto.', 'rentacar-venezia-v2' ),
-    'custom_pickup'     => __( 'Tell us where you need the car and when. We will review your request personally and explain the available options.', 'rentacar-venezia-v2' ),
 );
 $pickup_location = in_array( $trip['pickup_location'] ?? '', $location_options, true ) ? $trip['pickup_location'] : $default_location;
-$dropoff_location = in_array( $trip['dropoff_location'] ?? '', $location_options, true ) ? $trip['dropoff_location'] : $default_location;
 $whatsapp_url = rentacar_venezia_v2_whatsapp_url();
 $homepage_id = (int) get_option( 'page_on_front' );
 $homepage_content = $homepage_id && 'publish' === get_post_status( $homepage_id )
@@ -43,16 +41,12 @@ get_header();
             <form class="trip-form" method="get" action="<?php echo esc_url( rentacar_venezia_v2_fleet_url() ); ?>" data-trip-form>
                 <fieldset>
                     <legend id="trip-filter-title"><?php esc_html_e( 'Plan your trip', 'rentacar-venezia-v2' ); ?></legend>
-                    <div class="trip-form__quick-locations" aria-label="<?php esc_attr_e( 'Quick pickup selection', 'rentacar-venezia-v2' ); ?>">
-                        <?php foreach ( $locations as $key => $location ) : ?><button type="button" data-trip-location="<?php echo esc_attr( $location['value'] ); ?>" aria-pressed="<?php echo $pickup_location === $location['value'] ? 'true' : 'false'; ?>"><?php echo esc_html( $location['label'] ); ?></button><?php endforeach; ?>
-                    </div>
                     <div class="trip-form__grid">
                         <label><?php esc_html_e( 'Pickup location', 'rentacar-venezia-v2' ); ?><select name="pickup_location"><?php foreach ( $location_options as $location ) : ?><option value="<?php echo esc_attr( $location ); ?>"<?php selected( $pickup_location, $location ); ?>><?php echo esc_html( $location ); ?></option><?php endforeach; ?></select></label>
                         <label><?php esc_html_e( 'Pickup date', 'rentacar-venezia-v2' ); ?><input name="pickup_date" type="date" value="<?php echo esc_attr( $trip['pickup_date'] ?? '' ); ?>"></label>
                         <label><?php esc_html_e( 'Return date', 'rentacar-venezia-v2' ); ?><input name="return_date" type="date" value="<?php echo esc_attr( $trip['return_date'] ?? '' ); ?>"></label>
                     </div>
                 </fieldset>
-                <details class="trip-form__advanced"><summary><?php esc_html_e( 'More trip details', 'rentacar-venezia-v2' ); ?></summary><div class="trip-form__advanced-fields"><label><?php esc_html_e( 'Pickup time', 'rentacar-venezia-v2' ); ?><input name="pickup_time" type="time" value="<?php echo esc_attr( $trip['pickup_time'] ?? '' ); ?>"></label><label><?php esc_html_e( 'Return time', 'rentacar-venezia-v2' ); ?><input name="return_time" type="time" value="<?php echo esc_attr( $trip['return_time'] ?? '' ); ?>"></label><label class="check-label trip-form__return-toggle"><input type="checkbox" data-return-different<?php checked( $pickup_location !== $dropoff_location ); ?>> <?php esc_html_e( 'Return to a different location', 'rentacar-venezia-v2' ); ?></label><label data-return-location><?php esc_html_e( 'Return location', 'rentacar-venezia-v2' ); ?><select name="dropoff_location"><?php foreach ( $location_options as $location ) : ?><option value="<?php echo esc_attr( $location ); ?>"<?php selected( $dropoff_location, $location ); ?>><?php echo esc_html( $location ); ?></option><?php endforeach; ?></select></label></div></details>
                 <button class="button" type="submit"><?php esc_html_e( 'See suitable cars', 'rentacar-venezia-v2' ); ?></button>
             </form>
             <p class="trip-filter-section__help"><?php esc_html_e( 'The dates help us prepare your request. Availability is confirmed personally.', 'rentacar-venezia-v2' ); ?></p>

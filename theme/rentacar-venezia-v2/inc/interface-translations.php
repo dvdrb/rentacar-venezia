@@ -491,6 +491,37 @@ function rentacar_venezia_v2_interface_translation_map() {
         $translations[ $language ] = array_merge( $translations[ $language ], $strings );
     }
 
+    $compact_request_translations = array(
+        'it' => array(
+            'A €%s transfer fee applies when pickup and return airports differ.' => 'Si applica un supplemento di trasferimento di €%s quando ritiro e riconsegna avvengono in aeroporti diversi.',
+            'Local support' => 'Supporto locale',
+            'Tell us your preferred vehicle, travel dates and airport. We will reply personally with availability, the final price and rental conditions.' => 'Indicaci il veicolo preferito, le date del viaggio e l’aeroporto. Ti risponderemo personalmente con disponibilità, prezzo finale e condizioni di noleggio.',
+            'Browse the fleet and select the car that suits your trip.' => 'Esplora la flotta e seleziona l’auto più adatta al tuo viaggio.',
+            'Share your dates and airport details in one short request.' => 'Inserisci date e dettagli dell’aeroporto in un’unica breve richiesta.',
+            'We confirm availability, the final price and rental conditions personally.' => 'Confermiamo personalmente disponibilità, prezzo finale e condizioni di noleggio.',
+        ),
+        'ro' => array(
+            'A €%s transfer fee applies when pickup and return airports differ.' => 'Se aplică o taxă de transfer de €%s atunci când preluarea și returnarea au loc la aeroporturi diferite.',
+            'Local support' => 'Asistență locală',
+            'Tell us your preferred vehicle, travel dates and airport. We will reply personally with availability, the final price and rental conditions.' => 'Spuneți-ne vehiculul preferat, datele călătoriei și aeroportul. Vă vom răspunde personal cu disponibilitatea, prețul final și condițiile de închiriere.',
+            'Browse the fleet and select the car that suits your trip.' => 'Explorați flota și selectați mașina potrivită călătoriei dumneavoastră.',
+            'Share your dates and airport details in one short request.' => 'Introduceți datele și detaliile aeroportului într-o singură solicitare scurtă.',
+            'We confirm availability, the final price and rental conditions personally.' => 'Confirmăm personal disponibilitatea, prețul final și condițiile de închiriere.',
+        ),
+        'ru' => array(
+            'A €%s transfer fee applies when pickup and return airports differ.' => 'Если получение и возврат происходят в разных аэропортах, взимается сбор за трансфер €%s.',
+            'Local support' => 'Местная поддержка',
+            'Tell us your preferred vehicle, travel dates and airport. We will reply personally with availability, the final price and rental conditions.' => 'Укажите предпочтительный автомобиль, даты поездки и аэропорт. Мы лично сообщим о доступности, окончательной цене и условиях аренды.',
+            'Browse the fleet and select the car that suits your trip.' => 'Ознакомьтесь с автопарком и выберите автомобиль для вашей поездки.',
+            'Share your dates and airport details in one short request.' => 'Укажите даты и данные аэропорта в одном коротком запросе.',
+            'We confirm availability, the final price and rental conditions personally.' => 'Мы лично подтверждаем доступность, окончательную цену и условия аренды.',
+        ),
+    );
+
+    foreach ( $compact_request_translations as $language => $strings ) {
+        $translations[ $language ] = array_merge( $translations[ $language ], $strings );
+    }
+
     return $translations;
 }
 

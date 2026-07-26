@@ -4,6 +4,7 @@ defined( 'ABSPATH' ) || exit;
 /** Authoritative, filterable reservation policy. Prices are stored in cents. */
 final class Rentacar_Core_Rental_Policy {
     const OPTION = 'rentacar_core_rental_policy';
+    const INTER_AIRPORT_SURCHARGE_CENTS = 2500;
 
     public static function defaults() {
         return array(
@@ -29,6 +30,14 @@ final class Rentacar_Core_Rental_Policy {
         if ( $minutes < 450 ) return (int) $fees['early_cents'];
         if ( $minutes >= 1170 ) return (int) $fees['evening_cents'];
         return 0;
+    }
+    public static function inter_airport_surcharge_cents( $pickup_location, $return_location ) {
+        $airports = apply_filters( 'rentacar_core_airport_locations', array( 'Airport Venice Marco Polo', 'Treviso Airport Arrivals' ) );
+        if ( ! is_array( $airports ) || $pickup_location === $return_location || ! in_array( $pickup_location, $airports, true ) || ! in_array( $return_location, $airports, true ) ) {
+            return 0;
+        }
+
+        return max( 0, (int) apply_filters( 'rentacar_core_inter_airport_surcharge_cents', self::INTER_AIRPORT_SURCHARGE_CENTS, $pickup_location, $return_location ) );
     }
     public static function deposit_cents( $passengers ) { $deposits = self::get()['deposits']; return (int) ( (int) $passengers >= 7 ? $deposits['seven_to_nine_cents'] : $deposits['up_to_five_cents'] ); }
 }

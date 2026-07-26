@@ -16,6 +16,8 @@ final class Rentacar_Core_Estimate_Controller {
                     'pickup_time' => array( 'required' => true, 'sanitize_callback' => 'sanitize_text_field' ),
                     'return_date' => array( 'required' => true, 'sanitize_callback' => 'sanitize_text_field' ),
                     'return_time' => array( 'required' => true, 'sanitize_callback' => 'sanitize_text_field' ),
+                    'pickup_location' => array( 'sanitize_callback' => 'sanitize_text_field' ),
+                    'return_location' => array( 'sanitize_callback' => 'sanitize_text_field' ),
                     'insurance'   => array( 'sanitize_callback' => 'sanitize_key' ),
                     'extras'      => array( 'sanitize_callback' => array( __CLASS__, 'extra_keys' ) ),
                 ),
@@ -37,7 +39,9 @@ final class Rentacar_Core_Estimate_Controller {
             $request->get_param( 'return_date' ),
             $request->get_param( 'return_time' ),
             (array) $request->get_param( 'extras' ),
-            $request->get_param( 'insurance' ) ?: 'base'
+            $request->get_param( 'insurance' ) ?: 'base',
+            $request->get_param( 'pickup_location' ),
+            $request->get_param( 'return_location' )
         );
 
         if ( ! $estimate ) {

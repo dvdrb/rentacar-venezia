@@ -95,36 +95,6 @@ document.addEventListener('pointerdown', (event) => {
   }
 });
 
-const tripForm = document.querySelector<HTMLFormElement>('[data-trip-form]');
-
-if (tripForm) {
-  const pickup = tripForm.elements.namedItem('pickup_location') as HTMLSelectElement | null;
-  const dropoff = tripForm.elements.namedItem('dropoff_location') as HTMLSelectElement | null;
-  const returnDifferent = tripForm.querySelector<HTMLInputElement>('[data-return-different]');
-  const returnLocation = tripForm.querySelector<HTMLElement>('[data-return-location]');
-  const quickLocations = Array.from(tripForm.querySelectorAll<HTMLButtonElement>('[data-trip-location]'));
-
-  const syncTripLocations = (): void => {
-    const different = Boolean(returnDifferent?.checked);
-    if (returnLocation) returnLocation.hidden = !different;
-    if (!different && pickup && dropoff) dropoff.value = pickup.value;
-
-    quickLocations.forEach((button) => {
-      button.setAttribute('aria-pressed', String(button.dataset.tripLocation === pickup?.value));
-    });
-  };
-
-  pickup?.addEventListener('change', syncTripLocations);
-  returnDifferent?.addEventListener('change', syncTripLocations);
-  quickLocations.forEach((button) => {
-    button.addEventListener('click', () => {
-      if (pickup) pickup.value = button.dataset.tripLocation || pickup.value;
-      syncTripLocations();
-    });
-  });
-  syncTripLocations();
-}
-
 const revealItems = Array.from(document.querySelectorAll<HTMLElement>('.reveal-on-scroll'));
 if (revealItems.length) {
   if (!('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -159,7 +129,9 @@ const refreshEstimate = async (): Promise<void> => {
   if (!output || !content || !vehicleId || required.some((name) => !values[name])) return;
   const extras = Array.from(form.querySelectorAll<HTMLInputElement>('input[name="extras[]"]:checked')).map((input) => input.value);
   const insurance = form.querySelector<HTMLInputElement>('input[name="insurance"]:checked')?.value || 'base';
-  const body = new URLSearchParams({ vehicle_id: vehicleId, ...values, insurance });
+  const pickupLocation = (form.elements.namedItem('pickup_location') as HTMLSelectElement | null)?.value || '';
+  const returnLocation = (form.elements.namedItem('return_location') as HTMLSelectElement | null)?.value || '';
+  const body = new URLSearchParams({ vehicle_id: vehicleId, ...values, insurance, pickup_location: pickupLocation, return_location: returnLocation });
   extras.forEach((extra) => body.append('extras[]', extra));
   try {
     const response = await fetch('/wp-json/rentacar/v1/estimate', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body, credentials: 'same-origin' });
