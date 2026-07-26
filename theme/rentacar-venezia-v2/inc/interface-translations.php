@@ -21,6 +21,7 @@ function rentacar_venezia_v2_interface_translation_map() {
 
     $translations = array(
         'it' => array(
+            'Venice & Treviso airport pickup' => 'Ritiro agli aeroporti di Venezia e Treviso', 'Your journey starts with the right car.' => 'Il tuo viaggio inizia con l’auto giusta.', 'Explore our cars' => 'Esplora le nostre auto', 'Ask on WhatsApp' => 'Chiedi su WhatsApp', 'Find your car' => 'Trova la tua auto', 'Search cars' => 'Cerca auto', 'Venice and Treviso airport pickup' => 'Ritiro agli aeroporti di Venezia e Treviso', 'Fast and simple reservation' => 'Prenotazione semplice e veloce', 'Direct local assistance' => 'Assistenza locale diretta', 'Why rent with us' => 'Perché noleggiare con noi', 'Direct support for every journey' => 'Supporto diretto per ogni viaggio', 'Easy reservation' => 'Prenotazione semplice', 'Direct communication' => 'Comunicazione diretta', 'Cars for every journey' => 'Auto per ogni viaggio', 'Talk to our local team' => 'Parla con il nostro team locale', 'Reserve this car' => 'Prenota questa auto', 'Send reservation' => 'Invia prenotazione', 'Continue' => 'Continua', 'Back' => 'Indietro',
             'Car rental in Venice and Treviso' => 'Noleggio auto a Venezia e Treviso',
             'We come where you need' => 'Veniamo dove ti serve',
             'Rental cars in Venice and Treviso' => 'Auto a noleggio a Venezia e Treviso',
@@ -155,6 +156,7 @@ function rentacar_venezia_v2_interface_translation_map() {
             'Try changing or clearing one of the filters.' => 'Prova a modificare o cancellare uno dei filtri.',
         ),
         'ro' => array(
+            'Venice & Treviso airport pickup' => 'Preluare de la aeroporturile Veneția și Treviso', 'Your journey starts with the right car.' => 'Călătoria dumneavoastră începe cu mașina potrivită.', 'Explore our cars' => 'Explorați mașinile noastre', 'Ask on WhatsApp' => 'Întrebați pe WhatsApp', 'Find your car' => 'Găsiți mașina', 'Search cars' => 'Căutați mașini', 'Venice and Treviso airport pickup' => 'Preluare de la aeroporturile Veneția și Treviso', 'Fast and simple reservation' => 'Rezervare simplă și rapidă', 'Direct local assistance' => 'Asistență locală directă', 'Why rent with us' => 'De ce să închiriați de la noi', 'Direct support for every journey' => 'Sprijin direct pentru fiecare călătorie', 'Easy reservation' => 'Rezervare ușoară', 'Direct communication' => 'Comunicare directă', 'Cars for every journey' => 'Mașini pentru fiecare călătorie', 'Talk to our local team' => 'Discutați cu echipa noastră locală', 'Reserve this car' => 'Rezervați această mașină', 'Send reservation' => 'Trimiteți rezervarea', 'Continue' => 'Continuați', 'Back' => 'Înapoi',
             'Car rental in Venice and Treviso' => 'Închiriere auto în Veneția și Treviso',
             'We come where you need' => 'Venim unde aveți nevoie',
             'Rental cars in Venice and Treviso' => 'Mașini de închiriat în Veneția și Treviso',
@@ -284,6 +286,7 @@ function rentacar_venezia_v2_interface_translation_map() {
             'Try changing or clearing one of the filters.' => 'Încercați să modificați sau să resetați unul dintre filtre.',
         ),
         'ru' => array(
+            'Venice & Treviso airport pickup' => 'Получение в аэропортах Венеции и Тревизо', 'Your journey starts with the right car.' => 'Ваше путешествие начинается с подходящего автомобиля.', 'Explore our cars' => 'Посмотреть автомобили', 'Ask on WhatsApp' => 'Спросить в WhatsApp', 'Find your car' => 'Найдите автомобиль', 'Search cars' => 'Найти автомобиль', 'Venice and Treviso airport pickup' => 'Получение в аэропортах Венеции и Тревизо', 'Fast and simple reservation' => 'Быстрый и простой запрос', 'Direct local assistance' => 'Прямая местная поддержка', 'Why rent with us' => 'Почему арендуют у нас', 'Direct support for every journey' => 'Прямая поддержка для каждой поездки', 'Easy reservation' => 'Простой запрос', 'Direct communication' => 'Прямое общение', 'Cars for every journey' => 'Автомобили для каждой поездки', 'Talk to our local team' => 'Свяжитесь с нашей местной командой', 'Reserve this car' => 'Запросить этот автомобиль', 'Send reservation' => 'Отправить запрос', 'Continue' => 'Продолжить', 'Back' => 'Назад',
             'Car rental in Venice and Treviso' => 'Аренда автомобилей в Венеции и Тревизо',
             'We come where you need' => 'Мы приедем туда, где вам нужно',
             'Rental cars in Venice and Treviso' => 'Автомобили в аренду в Венеции и Тревизо',

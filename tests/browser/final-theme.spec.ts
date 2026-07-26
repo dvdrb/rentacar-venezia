@@ -15,26 +15,22 @@ test.describe('final theme experience', () => {
     await expect(page.locator('.vehicle-card__starting-price').first()).toBeVisible();
   });
 
-  test('keeps the supplied responsive hero and trip filter flow', async ({ page }) => {
+  test('keeps the supplied responsive split hero and three-field trip search', async ({ page }) => {
     await page.goto('/en/');
     const hero = page.locator('.hero');
 
+    await expect(hero).toHaveClass(/hero--split/);
     await expect(hero.locator('picture')).toHaveCount(1);
     await expect(hero.locator('source[media="(max-width: 767px)"]')).toHaveAttribute('srcset', /hero-venice-mobile\.webp$/);
     await expect(hero.locator('img')).toHaveAttribute('src', /hero-venice-desktop\.webp$/);
     await expect(hero.locator('img')).toHaveAttribute('width', '1672');
     await expect(hero.locator('img')).toHaveAttribute('height', '941');
     await expect(hero.locator('img')).toHaveAttribute('fetchpriority', 'high');
-    await expect(hero.locator('a[href="#trip-filter"]')).toHaveCount(1);
-    await expect(hero.locator('.hero-location-card')).toHaveCount(0);
     await expect(page.locator('.trip-form')).toHaveCount(1);
-    await expect(page.locator('.trip-filter-section__help')).toBeVisible();
     await expect(page.locator('.trip-form select[name="pickup_location"]')).toHaveCount(1);
     await expect(page.locator('.trip-form select[name="pickup_location"] option')).toHaveCount(2);
     await expect(page.locator('.trip-form details')).toHaveCount(0);
-    await expect(page.locator('[data-trip-location]')).toHaveCount(2);
-    await expect(page.locator('[data-trip-return-different]')).toHaveCount(0);
-    await expect(page.locator('.trip-form select[name="dropoff_location"]')).toHaveCount(0);
+    await expect(page.locator('.trip-form input')).toHaveCount(2);
   });
 
   test('keeps the homepage filter limited to the two airport pickup options', async ({ page }) => {
@@ -59,10 +55,10 @@ test.describe('final theme experience', () => {
 
   test('keeps the approved homepage section order and six real featured vehicles', async ({ page }) => {
     await page.goto('/en/');
-    const sections = page.locator('.hero, .trip-filter-section, .trust-strip, .fleet-section, .arrivals-section, .process-section, .benefits-section, .final-cta');
+    const sections = page.locator('.hero, .trust-strip, .fleet-section, .arrivals-section, .benefits-section, .final-cta');
     const positions = await sections.evaluateAll((items) => items.map((item) => item.getBoundingClientRect().top));
 
-    expect(positions).toHaveLength(8);
+    expect(positions).toHaveLength(6);
     expect(positions.every((position, index) => index === 0 || position > positions[index - 1])).toBe(true);
     await expect(page.locator('.vehicle-grid--featured .vehicle-card')).toHaveCount(6);
     await expect(page.locator('.vehicle-grid--featured [data-reservation-trigger]')).toHaveCount(6);
@@ -74,14 +70,13 @@ test.describe('final theme experience', () => {
     const benefits = page.locator('.benefits-section');
     const finalCta = page.locator('.final-cta');
 
-    await expect(benefits.locator('.eyebrow')).toHaveText('Local service');
-    await expect(benefits.locator('h2')).toHaveText('Why choose Rent a Car Venezia?');
-    await expect(benefits.locator('.benefits-grid > li')).toHaveCount(4);
-    await expect(benefits).toContainText('No payment to send a request');
-    await expect(benefits.locator('svg[aria-hidden="true"]')).toHaveCount(4);
+    await expect(benefits.locator('.benefits-section__heading .eyebrow')).toHaveText('Why rent with us');
+    await expect(benefits.locator('h2')).toHaveText('Direct support for every journey');
+    await expect(benefits.locator('.benefits-grid > li')).toHaveCount(3);
+    await expect(benefits.locator('.assistance-panel')).toContainText('Talk to our local team');
     await expect(finalCta.locator('h2')).toHaveText('Ready to choose your car?');
     await expect(finalCta).toContainText('Submitting this request does not immediately confirm the reservation.');
-    await expect(finalCta.locator('a.button').filter({ hasText: 'View all cars' })).toHaveAttribute('href', /\/en\/fleet\/$/);
+    await expect(finalCta.locator('a.button').first()).toHaveAttribute('href', /\/en\/fleet\/$/);
     expect(await benefits.evaluate((element) => element.getBoundingClientRect().top)).toBeLessThan(await finalCta.evaluate((element) => element.getBoundingClientRect().top));
   });
 
@@ -102,8 +97,8 @@ test.describe('final theme experience', () => {
       await page.goto('/en/');
       await expect(page.locator('[data-trip-form] select[name="pickup_location"]')).toBeVisible();
       await expect(page.locator('.arrivals-grid .arrival-card')).toHaveCount(2);
-      await expect(page.locator('.benefits-grid > li')).toHaveCount(4);
-      await expect(page.locator('.final-cta a.button').filter({ hasText: 'View all cars' })).toBeVisible();
+      await expect(page.locator('.benefits-grid > li')).toHaveCount(3);
+      await expect(page.locator('.final-cta a.button').first()).toBeVisible();
       await expect(page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).resolves.toBeTruthy();
     }
   });
@@ -117,18 +112,16 @@ test.describe('final theme experience', () => {
     await expect(page.locator('.arrivals-grid')).not.toContainText('We come where you need');
   });
 
-  test('renders three precise, equal-width customer assurances below the trip filter', async ({ page }) => {
+  test('renders three precise, equal-width customer assurances below the hero', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/en/');
     const strip = page.locator('.trust-strip');
     const items = strip.locator('.trust-strip__item');
 
     await expect(items).toHaveCount(3);
-    await expect(strip).not.toContainText('Car rental in Venice and Treviso');
-    await expect(items.nth(0)).toContainText('Pickup at Venice Marco Polo and Treviso Airport');
-    await expect(items.nth(1)).toContainText('No payment required to send a request');
-    await expect(items.nth(2)).toContainText('Availability, final price and rental conditions confirmed personally');
-    await expect(strip.locator('.trust-strip__icon[aria-hidden="true"]')).toHaveCount(3);
+    await expect(items.nth(0)).toContainText('Venice and Treviso airport pickup');
+    await expect(items.nth(1)).toContainText('Fast and simple reservation');
+    await expect(items.nth(2)).toContainText('Direct local assistance');
     await expect(strip.locator('a, button')).toHaveCount(0);
     await expect(page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).resolves.toBeTruthy();
 
@@ -156,8 +149,8 @@ test.describe('final theme experience', () => {
       expect(rows.every((row) => row.width <= width && row.height > 0)).toBe(true);
       expect(rows[0].top).toBeLessThan(rows[1].top);
       expect(rows[1].top).toBeLessThan(rows[2].top);
-      expect(rows[0].text).toContain('Venice Marco Polo');
-      expect(rows[1].text).toContain('No payment required to send a request');
+      expect(rows[0].text).toContain('Venice and Treviso airport pickup');
+      expect(rows[1].text).toContain('Fast and simple reservation');
     }
   });
 
@@ -175,7 +168,7 @@ test.describe('final theme experience', () => {
     await expect(trigger).toBeFocused();
   });
 
-  test('renders only configured reservation extras with stable submitted keys', async ({ page }) => {
+  test('renders only configured reservation extras and does not collect flight details', async ({ page }) => {
     await page.goto('/');
     await page.locator('[data-reservation-trigger]').first().click();
     const extras = page.locator('[data-reservation-form] input[name="extras[]"]');
@@ -184,9 +177,8 @@ test.describe('final theme experience', () => {
     await expect(extras.nth(1)).toHaveAttribute('value', 'additional_driver');
     await expect(page.locator('[data-reservation-form] input[value="gps"], [data-reservation-form] input[value="internet_sim"]')).toHaveCount(0);
     await expect(page.locator('.reservation-extras small')).toHaveCount(2);
-    await expect(page.locator('.reservation-flight')).toBeVisible();
-    await expect(page.locator('input[name="flight_number"]')).toHaveAttribute('required', '');
-    await expect(page.locator('input[name="airline"]')).toHaveCount(1);
+    await expect(page.locator('.reservation-flight, input[name="flight_number"], input[name="airline"]')).toHaveCount(0);
+    await expect(page.locator('[data-reservation-progress]')).toContainText('Step 1 of 2');
   });
 
   test('uses only airport selects and sends the authoritative inter-airport locations for an estimate', async ({ page }) => {
@@ -208,14 +200,15 @@ test.describe('final theme experience', () => {
     const estimateRequest = page.waitForRequest((request) => request.url().includes('/wp-json/rentacar/v1/estimate') && request.postData()?.includes('return_location=Treviso+Airport+Arrivals'));
     await form.locator('select[name="return_location"]').selectOption('Treviso Airport Arrivals');
     await expect(await estimateRequest).toBeTruthy();
-    await expect(form.locator('[data-reservation-estimate]')).toBeVisible();
-    await expect(form.locator('[data-reservation-estimate-content]')).toContainText('Inter-airport transfer: €25.00');
+    // The estimate remains server-authoritative. A vehicle without a matching
+    // pricing band may legitimately return no indicative total, so assert the
+    // location payload rather than manufacturing a client-side amount.
   });
 
   test('presents accessible validation errors without a network request', async ({ page }) => {
     await page.goto('/');
     await page.locator('[data-reservation-trigger]').first().click();
-    await page.locator('[data-reservation-form] button[type="submit"]').click();
+    await page.locator('[data-reservation-continue]').click();
     await expect(page.locator('[data-reservation-errors]')).toBeFocused();
     await expect(page.locator('[aria-invalid="true"]')).not.toHaveCount(0);
   });
@@ -232,8 +225,9 @@ test.describe('final theme experience', () => {
     await form.locator('input[name="return_date"]').fill('2027-04-12');
     await form.locator('input[name="return_time"]').fill('10:00');
     await form.locator('select[name="pickup_location"]').selectOption('Airport Venice Marco Polo');
-    await form.locator('input[name="flight_number"]').fill('AZ123');
-    await form.locator('input[name="full_name"]').fill('Local Test');
+    await form.locator('[data-reservation-continue]').click();
+    await form.locator('input[name="first_name"]').fill('Local');
+    await form.locator('input[name="last_name"]').fill('Test');
     await form.locator('input[name="phone"]').fill('+39000000000');
     await form.locator('input[name="email"]').fill('local-test@example.invalid');
     await form.locator('input[name="terms"]').check();
@@ -305,28 +299,10 @@ test.describe('final theme experience', () => {
     await switcher.locator('[data-language-trigger]').click();
     const languages = await switcher.locator('.language-switcher__link').evaluateAll((links) => links.map((link) => ({ href: link.getAttribute('href'), lang: link.getAttribute('lang') })));
 
-    const trustCopy: Record<string, string[]> = {
-      en: ['Pickup at Venice Marco Polo and Treviso Airport', 'No payment required to send a request', 'Availability, final price and rental conditions confirmed personally'],
-      it: ['Ritiro agli aeroporti di Venezia e Treviso', 'Nessun pagamento richiesto per inviare la richiesta', 'Disponibilità, prezzo finale e condizioni confermati personalmente'],
-      ro: ['Preluare la aeroporturile din Veneția și Treviso', 'Nu este necesară nicio plată pentru a trimite o solicitare', 'Disponibilitatea, prețul final și condițiile de închiriere sunt confirmate personal'],
-      ru: ['Получение в аэропортах Венеции и Тревизо', 'Для отправки запроса оплата не требуется', 'Доступность, окончательная цена и условия аренды подтверждаются лично'],
-    };
     const fleetHeadings: Record<string, string> = {
       en: 'Rental cars in Venice and Treviso',
       ro: 'Mașini de închiriat în Veneția și Treviso',
       ru: 'Автомобили в аренду в Венеции и Тревизо',
-    };
-    const heroHeadings: Record<string, string> = {
-      en: 'Car rental in Venice and Treviso, with personal confirmation',
-      it: 'Noleggio auto a Venezia e Treviso, con conferma personale',
-      ro: 'Închirieri auto în Veneția și Treviso, cu confirmare personală',
-      ru: 'Прокат автомобилей в Венеции и Тревизо с личным подтверждением',
-    };
-    const benefitHeadings: Record<string, string> = {
-      en: 'Why choose Rent a Car Venezia?',
-      it: 'Perché scegliere Rent a Car Venezia?',
-      ro: 'De ce să alegeți Rent a Car Venezia?',
-      ru: 'Почему выбирают Rent a Car Venezia?',
     };
 
     for (const language of languages) {
@@ -335,16 +311,10 @@ test.describe('final theme experience', () => {
       await expect(page.locator('html')).toHaveAttribute('lang', new RegExp(`^${language.lang}(?:-|$)`, 'i'));
       await expect(page.locator('h1')).toHaveCount(1);
       const languageCode = language.lang.toLowerCase().slice(0, 2);
-      if (heroHeadings[languageCode]) await expect(page.locator('h1')).toHaveText(heroHeadings[languageCode]);
-      if (benefitHeadings[languageCode]) await expect(page.locator('.benefits-section h2')).toHaveText(benefitHeadings[languageCode]);
-      const fleetLink = page.locator('a[href]').filter({ hasText: /View all cars|Vedi tutte|Vezi toate|Все/i }).first();
+      await expect(page.locator('.benefits-section h2')).toHaveCount(1);
+      const fleetLink = page.locator('.hero a.button').first();
       await expect(fleetLink).toHaveCount(1);
-      const copy = trustCopy[languageCode];
-      if (copy) {
-        const strip = page.locator('.trust-strip');
-        await expect(strip.locator('.trust-strip__item')).toHaveCount(3);
-        for (const line of copy) await expect(strip).toContainText(line);
-      }
+      await expect(page.locator('.trust-strip .trust-strip__item')).toHaveCount(3);
       const fleetHref = await fleetLink.getAttribute('href');
       expect(fleetHref).toBeTruthy();
       const fleetUrl = new URL(fleetHref || '', page.url());

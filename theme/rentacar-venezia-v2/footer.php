@@ -6,11 +6,18 @@
             </div>
             <p><?php esc_html_e( 'Choose your preferred vehicle. Our team checks availability and confirms the final price personally.', 'rentacar-venezia-v2' ); ?></p>
         </section>
-        <nav aria-label="<?php esc_attr_e( 'Footer navigation', 'rentacar-venezia-v2' ); ?>">
+        <nav aria-label="<?php esc_attr_e( 'Explore and rental information', 'rentacar-venezia-v2' ); ?>">
             <?php wp_nav_menu( array( 'theme_location' => has_nav_menu( 'footer' ) ? 'footer' : 'primary', 'container' => false, 'menu_class' => 'footer-navigation', 'fallback_cb' => false ) ); ?>
         </nav>
+        <section class="site-footer__contact" aria-labelledby="footer-contact-title">
+            <h2 id="footer-contact-title"><?php esc_html_e( 'Contact', 'rentacar-venezia-v2' ); ?></h2>
+            <a href="tel:+393445068823">+39 344 506 8823</a>
+            <a href="mailto:info@rentacarvenezia.it">info@rentacarvenezia.it</a>
+            <p><?php esc_html_e( 'Monday–Friday, 08:00–17:00', 'rentacar-venezia-v2' ); ?></p>
+            <?php if ( rentacar_venezia_v2_whatsapp_url() ) : ?><a class="text-link" href="<?php echo esc_url( rentacar_venezia_v2_whatsapp_url() ); ?>"><?php esc_html_e( 'Contact on WhatsApp', 'rentacar-venezia-v2' ); ?></a><?php endif; ?>
+        </section>
     </div>
-    <div class="site-footer__bottom rc-container"><small>&copy; <?php echo esc_html( wp_date( 'Y' ) ); ?> <?php bloginfo( 'name' ); ?></small></div>
+    <div class="site-footer__bottom rc-container"><small>&copy; <?php echo esc_html( wp_date( 'Y' ) ); ?> <?php bloginfo( 'name' ); ?></small><?php if ( get_privacy_policy_url() ) : ?><a href="<?php echo esc_url( get_privacy_policy_url() ); ?>"><?php esc_html_e( 'Privacy Policy', 'rentacar-venezia-v2' ); ?></a><?php endif; ?></div>
 </footer>
 <?php wp_footer(); ?>
 </body>

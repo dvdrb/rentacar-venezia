@@ -38,7 +38,9 @@ $inter_airport_fee  = class_exists( 'Rentacar_Core_Rental_Policy' ) && count( $l
           <p id="reservation-errors" class="reservation-form__error" data-reservation-errors tabindex="-1" aria-live="assertive"></p>
           <div class="honeypot" aria-hidden="true"><label><?php esc_html_e( 'Website', 'rentacar-venezia-v2' ); ?><input name="website" tabindex="-1" autocomplete="off"></label></div>
           <p class="reservation-form__intro"><?php esc_html_e( 'A few details are all we need. We confirm availability and the final price personally.', 'rentacar-venezia-v2' ); ?></p>
+          <p class="reservation-form__progress" data-reservation-progress aria-live="polite"><?php esc_html_e( 'Step 1 of 2: your trip', 'rentacar-venezia-v2' ); ?></p>
 
+          <div class="reservation-step is-active" data-reservation-step="1">
           <fieldset class="reservation-form__section">
             <legend><?php esc_html_e( 'Your trip', 'rentacar-venezia-v2' ); ?></legend>
             <div class="reservation-form__two">
@@ -52,19 +54,13 @@ $inter_airport_fee  = class_exists( 'Rentacar_Core_Rental_Policy' ) && count( $l
             </div>
           </fieldset>
           <?php if ( $inter_airport_fee ) : ?><p class="reservation-location-fee"><?php echo esc_html( sprintf( __( 'A €%s transfer fee applies when pickup and return airports differ.', 'rentacar-venezia-v2' ), number_format_i18n( $inter_airport_fee, 2 ) ) ); ?></p><?php endif; ?>
+          <div class="reservation-form__step-actions"><span></span><button class="button" type="button" data-reservation-continue><?php esc_html_e( 'Continue', 'rentacar-venezia-v2' ); ?></button></div>
+          </div>
 
-          <fieldset class="reservation-flight" data-reservation-flight>
-            <legend><?php esc_html_e( 'Your flight', 'rentacar-venezia-v2' ); ?></legend>
-            <p><?php esc_html_e( 'We monitor the flight when a valid flight number is provided. Please also contact us if your flight or arrival plans change.', 'rentacar-venezia-v2' ); ?></p>
-            <div class="reservation-form__two">
-              <label><?php esc_html_e( 'Airline (optional)', 'rentacar-venezia-v2' ); ?><input name="airline" autocomplete="organization" data-reservation-airline></label>
-              <label><?php esc_html_e( 'Flight number', 'rentacar-venezia-v2' ); ?><input name="flight_number" maxlength="24" data-reservation-flight-number></label>
-            </div>
-          </fieldset>
-
+          <div class="reservation-step" data-reservation-step="2">
           <fieldset class="reservation-form__section">
             <legend><?php esc_html_e( 'How can we reach you?', 'rentacar-venezia-v2' ); ?></legend>
-            <label><?php esc_html_e( 'Full name', 'rentacar-venezia-v2' ); ?><input name="full_name" autocomplete="name" required></label>
+            <div class="reservation-form__two"><label><?php esc_html_e( 'First name', 'rentacar-venezia-v2' ); ?><input name="first_name" autocomplete="given-name" required></label><label><?php esc_html_e( 'Last name', 'rentacar-venezia-v2' ); ?><input name="last_name" autocomplete="family-name" required></label></div>
             <label><?php esc_html_e( 'Phone or WhatsApp', 'rentacar-venezia-v2' ); ?><input name="phone" autocomplete="tel" required></label>
             <label><?php esc_html_e( 'Email', 'rentacar-venezia-v2' ); ?><input name="email" type="email" autocomplete="email" required></label>
           </fieldset>
@@ -95,7 +91,8 @@ $inter_airport_fee  = class_exists( 'Rentacar_Core_Rental_Policy' ) && count( $l
             <label class="check-label reservation-form__privacy"><input name="privacy" type="checkbox" value="1" required><span><?php esc_html_e( 'I agree that my details will be used only to respond to this request.', 'rentacar-venezia-v2' ); ?><?php if ( $privacy_policy_url ) : ?> <a href="<?php echo esc_url( $privacy_policy_url ); ?>"><?php esc_html_e( 'Privacy Policy', 'rentacar-venezia-v2' ); ?></a><?php endif; ?></span></label>
           </fieldset>
           <p class="reservation-form__disclaimer"><?php esc_html_e( 'Submitting this request does not immediately confirm the reservation. We will check availability and contact you.', 'rentacar-venezia-v2' ); ?></p>
-          <button class="button" type="submit"><?php esc_html_e( 'Send reservation request', 'rentacar-venezia-v2' ); ?></button>
+          <div class="reservation-form__step-actions"><button class="button button--secondary" type="button" data-reservation-back><?php esc_html_e( 'Back', 'rentacar-venezia-v2' ); ?></button><button class="button" type="submit"><?php esc_html_e( 'Send reservation', 'rentacar-venezia-v2' ); ?></button></div>
+          </div>
         </form>
       </div>
     </div>

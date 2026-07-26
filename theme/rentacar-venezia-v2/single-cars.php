@@ -111,7 +111,7 @@ get_header();
                     <div class="section-heading"><div><p class="eyebrow"><?php esc_html_e( 'More options', 'rentacar-venezia-v2' ); ?></p><h2 id="related-vehicles-title"><?php esc_html_e( 'Other vehicles in our fleet', 'rentacar-venezia-v2' ); ?></h2></div></div>
                     <div class="vehicle-grid">
                         <?php foreach ( $related as $related_vehicle ) : ?>
-                            <?php get_template_part( 'template-parts/vehicle/card', null, array( 'vehicle' => $related_vehicle ) ); ?>
+                            <?php get_template_part( 'template-parts/vehicle/card', null, array( 'vehicle' => $related_vehicle, 'variant' => 'related' ) ); ?>
                         <?php endforeach; ?>
                     </div>
                 </section>

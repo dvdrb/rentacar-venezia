@@ -29,7 +29,7 @@ const strings: ReservationStrings = configuration?.strings || {
   menuOpen: 'Open navigation',
   menuClose: 'Close navigation',
   sending: 'Sending…',
-  sendRequest: 'Send reservation request',
+  sendRequest: 'Send reservation',
   reviewForm: 'Please review the form and try again.',
   deliveryFailed: 'We could not send the request. Please try again.',
   reference: 'Reference: %s',
@@ -162,37 +162,14 @@ let trigger: HTMLElement | null = null;
 const setupReservationDetails = (): void => {
   if (!form) return;
   const pickup = form.querySelector<HTMLSelectElement>('[data-reservation-pickup-location]');
-  const returnLocation = form.querySelector<HTMLSelectElement>('[data-reservation-return-location]');
+  const returnLocation = form.querySelector<HTMLSelectElement>('select[data-reservation-return-location]');
   const returnDifferent = form.querySelector<HTMLInputElement>('[data-reservation-return-different]');
-  const returnWrapper = form.querySelector<HTMLElement>('[data-reservation-return-location]')?.closest('label');
-  const flight = form.querySelector<HTMLElement>('[data-reservation-flight]');
-  const airline = form.querySelector<HTMLInputElement>('[data-reservation-airline]');
-  const flightNumber = form.querySelector<HTMLInputElement>('[data-reservation-flight-number]');
-  let airports: string[] = [];
-
-  try {
-    const configuredAirports = JSON.parse(form.dataset.airportLocations || '[]');
-    airports = Array.isArray(configuredAirports) ? configuredAirports.filter((item): item is string => typeof item === 'string') : [];
-  } catch {
-    airports = [];
-  }
+  const returnWrapper = returnLocation?.closest('label');
 
   const sync = (): void => {
     const different = Boolean(returnDifferent?.checked);
     if (returnWrapper) returnWrapper.hidden = !different;
     if (!different && pickup && returnLocation) returnLocation.value = pickup.value;
-
-    const airportPickup = Boolean(pickup && airports.includes(pickup.value));
-    if (flight) flight.hidden = !airportPickup;
-    if (airline) {
-      airline.disabled = !airportPickup;
-      if (!airportPickup) airline.value = '';
-    }
-    if (flightNumber) {
-      flightNumber.required = airportPickup;
-      flightNumber.disabled = !airportPickup;
-      if (!airportPickup) flightNumber.value = '';
-    }
   };
 
   pickup?.addEventListener('change', () => { sync(); void refreshEstimate(); });
@@ -218,10 +195,15 @@ const refreshEstimate = async (): Promise<void> => {
   try {
     const response = await fetch('/wp-json/rentacar/v1/estimate', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body, credentials: 'same-origin' });
     if (!response.ok) return;
-    const estimate = await response.json() as { days: number; line_items: { label: string; amount: number }[]; estimate_total: number; included_km: number; excess_km_rate: number; deposit: number };
+    const estimate = await response.json() as { days: number; line_items?: { label: string; amount: number }[]; estimate_total?: number; included_km?: number; excess_km_rate?: number; deposit?: number };
+    if (!Array.isArray(estimate.line_items) || typeof estimate.estimate_total !== 'number') {
+      content.textContent = 'An indicative total is not available for these dates. You can still send your request.';
+      output.hidden = false;
+      return;
+    }
     content.replaceChildren(...estimate.line_items.map((item) => { const row = document.createElement('p'); row.textContent = `${item.label}: €${item.amount.toFixed(2)}`; return row; }));
     const total = document.createElement('p'); total.innerHTML = `<strong>Indicative rental total: €${estimate.estimate_total.toFixed(2)}</strong>`;
-    const details = document.createElement('p'); details.textContent = `${estimate.days} rental days · ${estimate.included_km} km included · €${estimate.excess_km_rate.toFixed(2)}/km excess · Deposit €${estimate.deposit.toFixed(2)}`;
+    const details = document.createElement('p'); details.textContent = `${estimate.days} rental days · ${estimate.included_km || 0} km included · €${(estimate.excess_km_rate || 0).toFixed(2)}/km excess · Deposit €${(estimate.deposit || 0).toFixed(2)}`;
     content.append(total, details); output.hidden = false;
   } catch { /* The form remains usable when estimates cannot be loaded. */ }
 };
@@ -239,7 +221,7 @@ const setBackgroundInert = (inert: boolean): void => {
 };
 
 const focusable = (): HTMLElement[] => modal
-  ? Array.from(modal.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])')).filter((item) => !item.closest('[hidden]'))
+  ? Array.from(modal.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])')).filter((item) => !item.closest('[hidden], .reservation-step:not(.is-active)'))
   : [];
 
 const closeModal = (): void => {
@@ -254,6 +236,7 @@ const resetVisibleState = (): void => {
   formWrap?.removeAttribute('hidden');
   success?.setAttribute('hidden', '');
   if (errorBox) errorBox.textContent = '';
+  setReservationStep(1);
 };
 
 if (modal) {
@@ -369,16 +352,41 @@ const displayErrors = (errors: Record<string, string[]>): void => {
   errorBox.focus();
 };
 
-const nativeErrors = (): Record<string, string[]> => {
+const nativeErrors = (scope: ParentNode = form || document): Record<string, string[]> => {
   const errors: Record<string, string[]> = {};
   if (!form) return errors;
-  Array.from(form.elements).forEach((element) => {
+  Array.from(scope.querySelectorAll<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>('input, textarea, select')).forEach((element) => {
     if (!(element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement || element instanceof HTMLSelectElement)) return;
     if (!element.name || element.type === 'hidden' || element.validity.valid) return;
     errors[element.name] = [element.validationMessage || strings.reviewForm];
   });
   return errors;
 };
+
+let reservationStep = 1;
+const setReservationStep = (step: number): void => {
+  if (!form) return;
+  reservationStep = step;
+  form.querySelectorAll<HTMLElement>('[data-reservation-step]').forEach((element) => {
+    element.classList.toggle('is-active', Number(element.dataset.reservationStep) === step);
+  });
+  const progress = form.querySelector<HTMLElement>('[data-reservation-progress]');
+  if (progress) progress.textContent = step === 1 ? 'Step 1 of 2: your trip' : 'Step 2 of 2: your details';
+  if (errorBox) errorBox.textContent = '';
+};
+
+form?.querySelector<HTMLButtonElement>('[data-reservation-continue]')?.addEventListener('click', () => {
+  const currentStep = form?.querySelector<HTMLElement>('[data-reservation-step="1"]');
+  const errors = nativeErrors(currentStep || form || document);
+  if (Object.keys(errors).length) {
+    displayErrors(errors);
+    return;
+  }
+  setReservationStep(2);
+  form?.querySelector<HTMLElement>('[data-reservation-step="2"] input, [data-reservation-step="2"] textarea, [data-reservation-step="2"] select')?.focus();
+});
+
+form?.querySelector<HTMLButtonElement>('[data-reservation-back]')?.addEventListener('click', () => setReservationStep(1));
 
 form?.addEventListener('input', (event) => {
   const field = event.target;
@@ -394,7 +402,12 @@ if (form) {
     event.preventDefault();
     track('reservation_request_submit');
 
-    const clientErrors = nativeErrors();
+    if (reservationStep !== 2) {
+      setReservationStep(1);
+      return;
+    }
+
+    const clientErrors = nativeErrors(form.querySelector<HTMLElement>('[data-reservation-step="2"]') || form);
     if (Object.keys(clientErrors).length) {
       displayErrors(clientErrors);
       return;

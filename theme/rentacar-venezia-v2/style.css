@@ -1351,3 +1351,68 @@ textarea { font: inherit; }
     animation-iteration-count:1 !important;
   }
 }
+
+/* Approved full-design integration: retain the shared primitives above while
+   presenting the homepage and enquiry flow as a calmer, conversion-first UI. */
+.hero--split {
+  min-height: 0;
+  padding: clamp(42px, 6vw, 82px) 0;
+  background: var(--rc-cream);
+  color: var(--rc-ink);
+}
+
+.hero--split .hero__inner { display:grid; grid-template-columns:minmax(0, .93fr) minmax(0, 1.07fr); align-items:center; gap:clamp(28px,5vw,72px); }
+.hero--split .hero__copy { max-width:none; }
+.hero--split .hero__media { position:relative; inset:auto; z-index:auto; overflow:hidden; border-radius:var(--rc-radius); box-shadow:var(--rc-shadow); }
+.hero--split .hero__media img { width:100%; height:auto; max-width:100%; object-fit:cover; }
+.hero--split .hero__overlay { display:none; }
+.hero--split .eyebrow { color:var(--rc-navy-800); }
+.hero--split h1 { max-width:12ch; color:var(--rc-navy-950); font-size:clamp(2.45rem,4.5vw,4.25rem); }
+.hero--split .hero__copy > p:last-of-type { max-width:46ch; color:var(--rc-muted); }
+.hero--split .trip-form { grid-template-columns:minmax(0,1fr) auto; margin-top:var(--rc-space-5); padding:16px; box-shadow:0 8px 20px rgb(7 27 58 / 8%); }
+.hero--split .trip-form__grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
+.hero--split .trip-form .button { min-width:130px; width:auto; }
+
+.vehicle-card--featured .vehicle-card__prices,
+.vehicle-card--related .vehicle-card__prices { display:none; }
+.vehicle-card--related .vehicle-card__body { padding:16px; }
+.vehicle-card--related .vehicle-card__image { height:185px; }
+.benefits-section__layout { display:grid; gap:clamp(28px,5vw,72px); align-items:center; }
+.benefits-section .benefits-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
+.benefits-section .benefits-grid li { padding:0; border:0; background:transparent; box-shadow:none; }
+.assistance-panel { padding:clamp(24px,4vw,36px); border-radius:var(--rc-radius); background:var(--rc-navy-950); color:#fff; }
+.assistance-panel .eyebrow { color:var(--rc-yellow-500); }
+.assistance-panel h3 { margin:0; color:#fff; font-size:1.55rem; line-height:1.15; }
+.assistance-panel p:not(.eyebrow) { color:#d7e2ee; }
+.reservation-form__progress { margin:0 0 var(--rc-space-4); color:var(--rc-navy-800); font-size:.88rem; font-weight:750; }
+.reservation-form__step-actions { display:flex; justify-content:space-between; gap:var(--rc-space-3); padding-top:var(--rc-space-4); border-top:1px solid var(--rc-line); }
+.reservation-form__step-actions .button { width:auto; min-width:130px; }
+.js .reservation-step:not(.is-active) { display:none; }
+.site-footer__contact { display:grid; align-content:start; gap:8px; }
+.site-footer__contact h2 { margin:0 0 var(--rc-space-2); color:#fff; font-size:1rem; }
+.site-footer__contact a { color:#e5edf7; font-size:.9rem; font-weight:600; text-decoration:none; }
+
+.site-footer__contact a:hover,
+.site-footer__contact a:focus-visible { color:var(--rc-yellow-500); text-decoration:underline; }
+.site-footer__contact p { margin:2px 0; }
+.site-footer__bottom { display:flex; flex-wrap:wrap; gap:var(--rc-space-3); justify-content:space-between; }
+.site-footer__bottom a { color:#e5edf7; font-size:.82rem; }
+
+@media (min-width:960px) {
+  .benefits-section__layout { grid-template-columns:minmax(0,1.5fr) minmax(280px,.7fr); }
+  .site-footer__grid { grid-template-columns:1.25fr 1fr .8fr; }
+}
+
+@media (max-width:767px) {
+  .hero--split { padding-block:32px 0; }
+  .hero--split .hero__inner { display:flex; flex-direction:column; align-items:stretch; gap:28px; }
+  .hero--split .hero__media { order:2; margin-inline:calc(-1 * var(--rc-space-4)); border-radius:0; box-shadow:none; }
+  .hero--split .hero__copy { display:contents; }
+  .hero--split .hero__copy > :not(.trip-form) { order:1; }
+  .hero--split .trip-form { order:3; grid-template-columns:1fr; margin:0; border-radius:0; box-shadow:none; }
+  .hero--split .trip-form__grid { grid-template-columns:1fr; }
+  .hero--split .trip-form .button { width:100%; }
+  .benefits-section .benefits-grid { grid-template-columns:1fr; gap:var(--rc-space-4); }
+  .reservation-form__step-actions .button { flex:1; min-width:0; }
+  .site-header__reserve { display:none; }
+}

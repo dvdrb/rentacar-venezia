@@ -102,7 +102,7 @@ function rentacar_venezia_v2_assets() {
                     'menuOpen'       => __( 'Open navigation', 'rentacar-venezia-v2' ),
                     'menuClose'      => __( 'Close navigation', 'rentacar-venezia-v2' ),
                     'sending'        => __( 'Sending…', 'rentacar-venezia-v2' ),
-                    'sendRequest'    => __( 'Send reservation request', 'rentacar-venezia-v2' ),
+                    'sendRequest'    => __( 'Send reservation', 'rentacar-venezia-v2' ),
                     'reviewForm'     => __( 'Please review the form and try again.', 'rentacar-venezia-v2' ),
                     'deliveryFailed' => __( 'We could not send the request. Please try again.', 'rentacar-venezia-v2' ),
                     'reference'      => __( 'Reference: %s', 'rentacar-venezia-v2' ),

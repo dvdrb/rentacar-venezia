@@ -31,6 +31,7 @@
             <?php if ( $whatsapp_url ) : ?>
                 <a class="button button--whatsapp" href="<?php echo esc_url( $whatsapp_url ); ?>"><?php esc_html_e( 'WhatsApp', 'rentacar-venezia-v2' ); ?></a>
             <?php endif; ?>
+            <a class="button site-header__reserve" href="<?php echo esc_url( rentacar_venezia_v2_fleet_url() ); ?>"><?php esc_html_e( 'Reserve a car', 'rentacar-venezia-v2' ); ?></a>
             <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" data-menu-toggle>
                 <span class="screen-reader-text"><?php esc_html_e( 'Toggle navigation', 'rentacar-venezia-v2' ); ?></span>
                 <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
