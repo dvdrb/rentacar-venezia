@@ -1,10 +1,10 @@
 <?php
 /**
- * WPML-powered header language selector.
+ * Multilingual-provider-powered header language selector.
  *
- * Country flags and page-equivalent links are supplied directly by WPML. The
- * component is intentionally absent if WPML is unavailable or only one
- * language is enabled.
+ * Country flags and page-equivalent links are supplied by the active
+ * multilingual provider. The component is intentionally absent when fewer
+ * than two languages are enabled.
  */
 
 defined( 'ABSPATH' ) || exit;

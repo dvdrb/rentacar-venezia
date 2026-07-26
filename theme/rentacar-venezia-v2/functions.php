@@ -2,8 +2,8 @@
 defined( 'ABSPATH' ) || exit;
 
 require_once get_template_directory() . '/inc/presentation.php';
-require_once get_template_directory() . '/inc/interface-translations.php';
 require_once get_template_directory() . '/inc/multilingual.php';
+require_once get_template_directory() . '/inc/interface-translations.php';
 require_once get_template_directory() . '/inc/seo.php';
 require_once get_template_directory() . '/inc/breadcrumbs.php';
 require_once get_template_directory() . '/inc/locations.php';
@@ -286,7 +286,8 @@ add_filter( 'query_vars', 'rentacar_venezia_v2_query_vars' );
 /**
  * A legacy custom fleet rewrite can remain in the stored rewrite rules after
  * a fleet page is added. Prefer the real page without flushing rules during a
- * visitor request, so WordPress and WPML own it as a normal page.
+ * visitor request, so WordPress and the active multilingual provider own it
+ * as a normal page.
  */
 function rentacar_venezia_v2_prefer_fleet_page( $wp ) {
     $fleet_page_id = rentacar_venezia_v2_fleet_page_id();
@@ -357,33 +358,27 @@ function rentacar_venezia_v2_flush_routes() {
 add_action( 'after_switch_theme', 'rentacar_venezia_v2_flush_routes' );
 
 function rentacar_venezia_v2_language_links() {
-    if ( 'polylang' === rentacar_venezia_v2_multilingual_provider() ) {
-        $languages = rentacar_venezia_v2_languages();
-        $items = array();
-        foreach ( $languages as $language ) {
-            if ( empty( $language['slug'] ) || empty( $language['url'] ) ) continue;
-            $items[ $language['slug'] ] = array(
-                'language_code' => $language['slug'], 'native_name' => $language['name'] ?? strtoupper( $language['slug'] ),
-                'translated_name' => $language['name'] ?? strtoupper( $language['slug'] ), 'country_flag_url' => $language['flag_url'] ?? '',
-                'url' => $language['url'], 'active' => ! empty( $language['current_lang'] ),
-            );
+    $languages = rentacar_venezia_v2_languages();
+    $items = array();
+
+    foreach ( $languages as $key => $language ) {
+        $code = ! empty( $language['slug'] ) ? $language['slug'] : ( $language['language_code'] ?? $key );
+        if ( ! is_string( $code ) || empty( $language['url'] ) ) {
+            continue;
         }
-        return count( $items ) > 1 ? $items : array();
-    }
-    $languages = apply_filters(
-        'wpml_active_languages',
-        null,
-        array(
-            'skip_missing' => 0,
-            'orderby'      => 'code',
-        )
-    );
 
-    if ( ! is_array( $languages ) || count( $languages ) < 2 ) {
-        return array();
+        $name = $language['name'] ?? ( $language['native_name'] ?? strtoupper( $code ) );
+        $items[ $code ] = array(
+            'language_code'   => $code,
+            'native_name'     => $name,
+            'translated_name' => $language['translated_name'] ?? $name,
+            'country_flag_url'=> $language['flag'] ?? ( $language['flag_url'] ?? ( $language['country_flag_url'] ?? '' ) ),
+            'url'             => $language['url'],
+            'active'          => ! empty( $language['current_lang'] ) || ! empty( $language['active'] ),
+        );
     }
 
-    return $languages;
+    return count( $items ) > 1 ? $items : array();
 }
 
 function rentacar_venezia_v2_whatsapp_url() {

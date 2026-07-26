@@ -3,11 +3,11 @@ defined( 'ABSPATH' ) || exit;
 
 /**
  * Theme-interface translations are kept with the owned theme so the local
- * clone remains coherent before a formal WPML String Translation export is
- * approved. WordPress content, vehicles, menus and URLs remain WPML-owned.
+ * clone remains coherent while WordPress content, vehicles, menus and URLs
+ * remain owned by WordPress and the active multilingual provider.
  */
 function rentacar_venezia_v2_interface_language() {
-    $language = function_exists( 'rentacar_venezia_v2_current_language' ) ? rentacar_venezia_v2_current_language() : apply_filters( 'wpml_current_language', '' );
+    $language = rentacar_venezia_v2_current_language();
 
     return in_array( $language, array( 'it', 'ro', 'ru' ), true ) ? $language : '';
 }

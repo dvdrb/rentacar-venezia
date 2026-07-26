@@ -2,10 +2,10 @@
 defined( 'ABSPATH' ) || exit;
 
 final class Rentacar_Core_Vehicle_Mapper {
-    private $wpml;
+    private $language_resolver;
 
-    public function __construct( Rentacar_Core_Wpml_Vehicle_Resolver $wpml = null ) {
-        $this->wpml = $wpml ? $wpml : new Rentacar_Core_Wpml_Vehicle_Resolver();
+    public function __construct( Rentacar_Core_Language_Resolver_Interface $language_resolver = null ) {
+        $this->language_resolver = $language_resolver ? $language_resolver : Rentacar_Core_Language_Resolver_Factory::create();
     }
 
     public function map( WP_Post $post ) {
@@ -25,8 +25,8 @@ final class Rentacar_Core_Vehicle_Mapper {
             'title'             => get_the_title( $post ),
             'slug'              => $post->post_name,
             'permalink'         => get_permalink( $post ),
-            'language'          => $this->wpml->language( $post->ID ),
-            'translations'      => $this->wpml->translations( $post->ID ),
+            'language'          => $this->language_resolver->post_language( $post->ID ),
+            'translations'      => $this->language_resolver->translations( $post->ID ),
             'featured_image_id' => (int) get_post_thumbnail_id( $post ),
             'gallery'           => $images,
             'vehicle_gallery'   => new Rentacar_Core_Vehicle_Gallery( get_post_thumbnail_id( $post ), $images ),

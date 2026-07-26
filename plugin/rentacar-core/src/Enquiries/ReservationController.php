@@ -71,7 +71,7 @@ final class Rentacar_Core_Reservation_Controller {
             'website' => sanitize_text_field( $raw['website'] ?? '' ), 'started_at' => absint( $raw['started_at'] ?? 0 ),
             'extras' => self::extra_keys( $raw['extras'] ?? array() ),
             'rentacar_ajax' => ! empty( $raw['rentacar_ajax'] ), 'rentacar_reservation_nonce' => sanitize_text_field( $raw['rentacar_reservation_nonce'] ?? '' ),
-            'language' => sanitize_key( function_exists( 'rentacar_venezia_v2_current_language' ) ? rentacar_venezia_v2_current_language() : get_locale() ),
+            'language' => sanitize_key( Rentacar_Core_Language_Resolver_Factory::create()->current_language() ),
         );
     }
 

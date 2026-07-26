@@ -16,8 +16,8 @@ function rentacar_venezia_v2_external_seo_plugin_active() {
 /**
  * Finds the published WordPress page that owns the fleet template.
  *
- * No title, slug or language prefix is assumed. WPML resolves the discovered
- * source page into the active language when it is available.
+ * No title, slug or language prefix is assumed. The active multilingual
+ * provider resolves the discovered source page into the current language.
  */
 function rentacar_venezia_v2_fleet_page_id() {
     static $fleet_page_id = null;
@@ -48,9 +48,7 @@ function rentacar_venezia_v2_fleet_page_id() {
         $page_id = absint( $page_id );
         $translated_id = $page_id;
 
-        if ( has_filter( 'wpml_object_id' ) ) {
-            $translated_id = (int) apply_filters( 'wpml_object_id', $page_id, 'page', false );
-        }
+        $translated_id = rentacar_venezia_v2_translated_post_id( $page_id );
 
         if ( $translated_id && 'publish' === get_post_status( $translated_id ) ) {
             $fleet_page_id = $translated_id;
@@ -65,7 +63,7 @@ function rentacar_venezia_v2_fleet_page_id() {
 
 /**
  * Returns the current-language fleet URL without assuming a page ID, route or
- * WPML directory structure.
+ * multilingual directory structure.
  */
 function rentacar_venezia_v2_fleet_url() {
     static $fleet_url = null;
@@ -80,10 +78,7 @@ function rentacar_venezia_v2_fleet_url() {
     } else {
         $fleet_url = home_url( '/fleet/' );
 
-        if ( has_filter( 'wpml_permalink' ) ) {
-            $language_code = apply_filters( 'wpml_current_language', null );
-            $fleet_url = apply_filters( 'wpml_permalink', $fleet_url, $language_code );
-        }
+        $fleet_url = rentacar_venezia_v2_localized_fallback_url( $fleet_url );
     }
 
     $fleet_url = (string) apply_filters( 'rentacar_venezia_v2_fleet_url', $fleet_url, $fleet_page_id );
