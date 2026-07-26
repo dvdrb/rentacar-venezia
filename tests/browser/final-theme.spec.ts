@@ -26,8 +26,7 @@ test.describe('final theme experience', () => {
     await expect(hero.locator('img')).toHaveAttribute('height', '941');
     await expect(hero.locator('img')).toHaveAttribute('fetchpriority', 'high');
     await expect(hero.locator('a[href="#trip-filter"]')).toHaveCount(1);
-    await expect(hero.locator('.hero-location-card li')).toHaveCount(3);
-    await expect(hero.locator('.hero-location-card')).toContainText('We come where you need');
+    await expect(hero.locator('.hero-location-card')).toHaveCount(0);
     await expect(page.locator('.trip-form')).toHaveCount(1);
     await expect(page.locator('.trip-filter-section__help')).toBeVisible();
     await expect(page.locator('.trip-form select[name="pickup_location"]')).toHaveCount(1);
@@ -112,17 +111,13 @@ test.describe('final theme experience', () => {
     }
   });
 
-  test('keeps the mobile pickup card below readable hero copy and preserves the fallback request URL', async ({ page }) => {
+  test('keeps the mobile hero free of pickup cards and preserves the fallback request URL', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/en/');
-    const heroCopy = page.locator('.hero__copy');
-    const pickupCard = page.locator('.hero-location-card');
     const customArrival = page.locator('.arrivals-grid .arrival-card').nth(2);
     const customArrivalUrl = new URL((await customArrival.getAttribute('href')) || '', page.url());
-    const pickupCardTop = await pickupCard.evaluate((element) => element.getBoundingClientRect().top);
-    const heroCopyTop = await heroCopy.evaluate((element) => element.getBoundingClientRect().top);
 
-    expect(pickupCardTop).toBeGreaterThan(heroCopyTop);
+    await expect(page.locator('.hero-location-card')).toHaveCount(0);
     expect(customArrivalUrl.pathname).toBe('/en/fleet/');
     expect(customArrivalUrl.searchParams.get('pickup_location')).toBe('Pickup where you need');
   });

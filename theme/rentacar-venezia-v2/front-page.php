@@ -4,7 +4,6 @@ defined( 'ABSPATH' ) || exit;
 $vehicles = class_exists( 'Rentacar_Core_Vehicle_Repository' ) ? ( new Rentacar_Core_Vehicle_Repository() )->query( array( 'posts_per_page' => 6, 'orderby' => 'date', 'order' => 'DESC' ) ) : array();
 $trip = rentacar_venezia_v2_trip_query();
 $locations = rentacar_venezia_v2_pickup_locations();
-$public_locations = $locations;
 $location_options = wp_list_pluck( $locations, 'value' );
 $default_location = $location_options ? reset( $location_options ) : '';
 $location_descriptions = array(
@@ -37,10 +36,6 @@ get_header();
                 <p><?php esc_html_e( 'Choose your preferred vehicle and send your dates without making a payment. Our local team will confirm availability, final price and rental conditions.', 'rentacar-venezia-v2' ); ?></p>
                 <div class="hero__actions"><a class="button" href="#trip-filter"><?php esc_html_e( 'Choose your car', 'rentacar-venezia-v2' ); ?></a><?php if ( $whatsapp_url ) : ?><a class="button button--whatsapp" href="<?php echo esc_url( $whatsapp_url ); ?>"><?php esc_html_e( 'WhatsApp', 'rentacar-venezia-v2' ); ?></a><?php endif; ?></div>
             </div>
-            <aside class="hero-location-card" aria-label="<?php esc_attr_e( 'Pickup locations', 'rentacar-venezia-v2' ); ?>">
-                <p><?php esc_html_e( 'Pickup locations', 'rentacar-venezia-v2' ); ?></p>
-                <ul><?php foreach ( $public_locations as $location ) : ?><li><?php echo esc_html( $location['label'] ); ?></li><?php endforeach; ?></ul>
-            </aside>
         </div>
     </section>
     <section id="trip-filter" class="trip-filter-section" aria-labelledby="trip-filter-title">
@@ -91,7 +86,7 @@ get_header();
                 <p><?php esc_html_e( 'Choose the pickup point that suits your trip. We confirm the practical details personally before your reservation is final.', 'rentacar-venezia-v2' ); ?></p>
             </header>
             <div class="arrivals-grid">
-                <?php foreach ( $public_locations as $key => $location ) : $location_image_id = rentacar_venezia_v2_location_page_image_id( $key ); ?>
+                <?php foreach ( $locations as $key => $location ) : $location_image_id = rentacar_venezia_v2_location_page_image_id( $key ); ?>
                     <a class="arrival-card reveal-on-scroll" href="<?php echo esc_url( rentacar_venezia_v2_location_page_url( $key ) ); ?>" aria-label="<?php echo esc_attr( sprintf( __( 'Choose %s pickup', 'rentacar-venezia-v2' ), $location['label'] ) ); ?>">
                         <span class="arrival-card__media">
                             <?php if ( $location_image_id ) : ?>

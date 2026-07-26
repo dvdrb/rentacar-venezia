@@ -508,24 +508,6 @@ textarea { font: inherit; }
 
 .hero__actions { display:flex; flex-wrap:wrap; gap:var(--rc-space-3); margin-top:var(--rc-space-5); }
 
-.hero-location-card {
-  width:min(100%,272px);
-  padding:18px 20px;
-  border:1px solid rgb(255 255 255 / 24%);
-  border-radius:var(--rc-radius-sm);
-  background:rgb(255 255 255 / 94%);
-  box-shadow:0 14px 34px rgb(2 15 34 / 18%);
-  color:var(--rc-navy-950);
-}
-
-.hero-location-card > p { margin:0 0 9px; color:var(--rc-navy-950); font-size:.76rem; font-weight:800; letter-spacing:.075em; text-transform:uppercase; }
-
-.hero-location-card ul { display:grid; gap:7px; padding:0; margin:0; list-style:none; }
-
-.hero-location-card li { position:relative; padding-left:14px; font-size:.9rem; font-weight:650; line-height:1.35; }
-
-.hero-location-card li::before { position:absolute; top:.57em; left:0; width:5px; height:5px; border-radius:50%; background:var(--rc-yellow-500); content:""; }
-
 .trip-filter-section {
   position: relative;
   z-index: 4;
@@ -1234,10 +1216,6 @@ textarea { font: inherit; }
   .hero__copy { max-width:100%; }
 
   .hero__actions .button { width:100%; }
-
-  .hero-location-card { width:100%; max-width:none; margin-top:var(--rc-space-5); padding:15px 17px; box-shadow:none; }
-
-  .hero-location-card ul { grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
 
   .trip-filter-section { margin-top:0; padding-block:22px; background:var(--rc-surface-muted); }
 

@@ -23,6 +23,9 @@ URLs are unchanged.
 ## Approved content and interaction
 
 - The hero retains one H1 and the personal-confirmation message.
+- Pickup locations are intentionally kept out of the hero image; customers can
+  select a location in the guided filter or use the three arrival options below
+  the featured fleet.
 - The filter retains its original GET field names and native date/time/select
   controls. Its three quick controls update the real pickup select.
 - The third configured pickup option is **“We come where you need”**. It is a
