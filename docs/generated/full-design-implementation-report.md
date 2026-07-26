@@ -10,28 +10,36 @@
 
 ## Delivered
 
-- Reworked the dynamic homepage into a split hero, integrated three-field trip search, compact trust strip, six real featured vehicles, airport cards, assistance panel, editorial content, and final CTA.
-- Added reusable vehicle presentation variants for featured, fleet, and related contexts without duplicating vehicle data or pricing logic.
-- Added conversion navigation, expanded dynamic footer contact details, and preserved menu- and Polylang-owned URLs.
-- Converted the reservation UI to an accessible two-step flow, retained the existing estimate/submission endpoints and server-side pricing, and removed forbidden flight/airline collection and its matching server validation.
-- Added translated interface text for the new core English UI in Italian, Romanian, and Russian.
+- Implemented the dynamic conversion-focused homepage, vehicle cards, fleet and vehicle detail presentation, airport pages, information pages, footer and mobile action bars using existing WordPress data and URLs.
+- Retained the server-priced reservation flow and made its two-step trip/details progression clearer: insurance, configured extras and similar-vehicle preference are now progressively disclosed in step one; no flight or airline fields are collected, validated or emailed.
+- Added native mobile Fleet filter dialog behavior while reusing the existing server-rendered GET form; the no-JavaScript disclosure remains available.
+- Added a protected general-contact form: nonce, honeypot, rate limiting, no retained customer data, business-recipient hook, safe LocalWP mail interception and accessible server-rendered success/error feedback.
+- Expanded the Italian, Romanian and Russian interface translations for the new information, airport, rental-customisation and mobile-action strings.
+- Captured the expanded LocalWP visual review set listed in `full-design-screenshot-manifest.json`.
+
+## Preservation results
+
+- Vehicles, translations, fields, prices, galleries, IDs, public URLs, menus, Polylang relationships and Yoast metadata were retained.
+- Reservation estimates remain authoritative from `rentacar-core`; deposits remain separate and airport/after-hours surcharges continue to originate in the backend.
+- The production site was not contacted or changed.
 
 ## Validation
 
 - `npm run typecheck` — passed
 - `npm run lint:js` — passed
 - `npm run lint:css` — passed
-- `./scripts/php-lint.sh` (Local PHP 8.3) — passed
-- PHP domain tests — passed
+- `PHP_BIN=<Local PHP 8.3> ./scripts/php-lint.sh` — passed
 - `npm run build` — passed
-- `PLAYWRIGHT_BASE_URL=http://rentacar-venezia-local.local npm run test:browser` — 27 passed
-- LocalWP translation and head validation — passed
+- `PLAYWRIGHT_BASE_URL=http://rentacar-venezia-local.local npm run test:browser` — passed (31 tests)
 - `git diff --check` — passed
+- LocalWP provisioning was applied twice during the integration; no duplicate managed pages, translations or menu items were found, and the tracked page modification timestamp remained unchanged on the repeat run.
 
-## Review notes
+## Owner / legal review
 
-Generated screenshots are listed in `full-design-screenshot-manifest.json`. The LocalWP content, IDs, slugs, menus, vehicle records, pricing rules, Polylang links, and Yoast data were not overwritten. Legal/editorial content remains owner-managed and should receive owner/legal review before production deployment.
+- Review the supplied Terms, Privacy and Cookie copy before production deployment; the redesign preserves editorial/legal ownership and does not invent legal provisions.
+- No verified review source was configured, so the design uses the assistance/WhatsApp panel instead of a testimonial.
+- LocalWP mail is intentionally intercepted. Confirm production mail transport and the business recipient override as part of deployment operations.
 
 ## Rollback
 
-Switch back to `backup/pre-full-design-integration` for source rollback. The LocalWP pre-change database and inventories are stored at the backup path above.
+Switch source to `backup/pre-full-design-integration`. Restore the LocalWP database from the backup path above if the local content provisioning must be reverted.
