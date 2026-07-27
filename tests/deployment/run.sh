@@ -28,4 +28,5 @@ grep -q '__RCV_REMOTE_HOME__' "$ROOT/scripts/deployment/lib/remote.sh" && pass=$
 grep -q -- '--files-from=/dev/null' "$ROOT/scripts/deployment/lib/backup.sh" && pass=$((pass+1)) || fail=$((fail+1))
 grep -q 'sha256sum' "$ROOT/scripts/deployment/lib/backup.sh" && pass=$((pass+1)) || fail=$((fail+1))
 grep -q 'already active' "$ROOT/scripts/deployment/lib/maintenance.sh" && pass=$((pass+1)) || fail=$((fail+1))
+grep -q 'theme rsync failed' "$ROOT/scripts/deployment/lib/code.sh" && pass=$((pass+1)) || fail=$((fail+1))
 printf '%s deployment checks passed; %s failed\n' "$pass" "$fail"; [ "$fail" -eq 0 ]
