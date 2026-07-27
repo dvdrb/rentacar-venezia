@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+# Safe LocalWP -> Hostinger deployment entry point.  Bash 3.2 compatible.
+set -Eeuo pipefail
+
+DEPLOY_SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+DEPLOY_LIB_DIR="$DEPLOY_SCRIPT_DIR/deployment/lib"
+. "$DEPLOY_LIB_DIR/common.sh"
+. "$DEPLOY_LIB_DIR/config.sh"
+. "$DEPLOY_LIB_DIR/safety.sh"
+. "$DEPLOY_LIB_DIR/local.sh"
+. "$DEPLOY_LIB_DIR/remote.sh"
+. "$DEPLOY_LIB_DIR/backup.sh"
+. "$DEPLOY_LIB_DIR/code.sh"
+. "$DEPLOY_LIB_DIR/plugins.sh"
+. "$DEPLOY_LIB_DIR/media.sh"
+. "$DEPLOY_LIB_DIR/maintenance.sh"
+. "$DEPLOY_LIB_DIR/database.sh"
+. "$DEPLOY_LIB_DIR/verify.sh"
+. "$DEPLOY_LIB_DIR/rollback.sh"
+. "$DEPLOY_LIB_DIR/report.sh"
+
+COMMAND=""; CONFIG_PATH=""; DRY_RUN=0; VERBOSE=0; SKIP_LOCAL_TESTS=0; SKIP_BROWSER_TESTS=0; NO_AUTO_ROLLBACK=0
+usage() { cat <<'EOF'
+Usage: ./scripts/deploy-production [global-options] COMMAND [DEPLOYMENT_ID]
+
+Commands: setup, cutover, code, media, verify, status, backups, rollback, help
+Global options: --config PATH --dry-run --verbose --skip-local-tests
+                --skip-browser-tests --no-auto-rollback
+Exit codes: 0 success; 2 usage/config; 3 local preflight; 4 remote safety;
+            5 backup; 6 deploy; 7 verify; 8 rollback.
+EOF
+}
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --config) [ "$#" -gt 1 ] || die 2 "--config requires a path"; CONFIG_PATH=$2; shift 2 ;;
+    --dry-run) DRY_RUN=1; shift ;;
+    --verbose) VERBOSE=1; shift ;;
+    --skip-local-tests) SKIP_LOCAL_TESTS=1; shift ;;
+    --skip-browser-tests) SKIP_BROWSER_TESTS=1; shift ;;
+    --no-auto-rollback) NO_AUTO_ROLLBACK=1; shift ;;
+    help|-h|--help) COMMAND=help; shift ;;
+    setup|cutover|code|media|verify|status|backups|rollback)
+      [ -z "$COMMAND" ] || die 2 "only one command may be supplied"; COMMAND=$1; shift ;;
+    *) if [ "$COMMAND" = rollback ] && [ -z "${ROLLBACK_ID:-}" ]; then ROLLBACK_ID=$1; shift; else die 2 "unknown command or option: $1"; fi ;;
+  esac
+done
+[ -n "$COMMAND" ] || { usage; exit 2; }
+[ "$COMMAND" = help ] && { usage; exit 0; }
+load_config "$CONFIG_PATH"
+trap 'on_error "$?" "$BASH_COMMAND"' ERR
+
+case "$COMMAND" in
+  setup) setup_config ;;
+  cutover) begin_deployment cutover; local_cutover_preflight; verify_remote_target; require_cutover_confirmation; acquire_locks; create_full_backup; enable_maintenance; deploy_owned_code; sync_active_plugins; sync_media; export_and_import_database; restore_production_settings; flush_caches; verify_production; disable_maintenance; finish_deployment success; apply_retention ;;
+  code) begin_deployment code; local_code_preflight; verify_remote_target; acquire_locks; create_code_backup; deploy_owned_code; flush_caches; if ! verify_production; then code_failure_rollback; fi; finish_deployment success; apply_retention ;;
+  media) begin_deployment media; local_media_preflight; verify_remote_target; acquire_locks; create_media_backup; sync_media; verify_media; finish_deployment success; apply_retention ;;
+  verify) verify_remote_target; verify_production ;;
+  status) verify_remote_target; show_status ;;
+  backups) verify_remote_target; list_backups ;;
+  rollback) rollback_deployment "${ROLLBACK_ID:-}" ;;
+esac

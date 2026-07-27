@@ -9,7 +9,10 @@
     "lint:js": "eslint theme/rentacar-venezia-v2/assets/src --max-warnings=0",
     "lint:css": "stylelint 'theme/rentacar-venezia-v2/style.css'",
     "test:browser": "playwright test",
-    "check": "npm run typecheck && npm run lint:js && npm run lint:css"
+    "check": "npm run typecheck && npm run lint:js && npm run lint:css",
+    "test:deployment": "bash tests/deployment/run.sh",
+    "deploy:production": "./scripts/deploy-production",
+    "deploy:production:verify": "./scripts/deploy-production verify"
   },
   "devDependencies": {
     "@playwright/test": "^1.52.0",
