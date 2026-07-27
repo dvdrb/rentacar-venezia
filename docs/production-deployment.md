@@ -19,7 +19,7 @@ cd "/Users/dvdrb/Projects/rentacar-venezia"
 
 Paste only `ssh [-p PORT] USER@HOST`; arbitrary SSH options are rejected. Supply the absolute Hostinger WordPress root and expected database name. Setup verifies that the remote `home`, `siteurl`, root, and database exactly match `https://rentacarvenezia.it`, then writes `.env.production` mode 600. Use `scripts/deployment/production.example.env` as the key reference; it contains placeholders only.
 
-LocalWP WP-CLI must satisfy `wp --path=LOCAL_WP_ROOT core is-installed`. If not, launch the Local Site Shell or set `LOCAL_WP_COMMAND` to a working wrapper. Do not copy `wp-config.php`, database credentials, WordPress core, Local caches, or Local mail guards.
+LocalWP WP-CLI must satisfy `wp --path=LOCAL_WP_ROOT core is-installed`. In Local, use the site’s **Open Site Shell** command to discover the full executable paths with `command -v wp` and `command -v php`; enter those paths as `LOCAL_WP_COMMAND` and `LOCAL_PHP_BIN` in setup. A wrapper executable is also supported. Do not copy `wp-config.php`, database credentials, WordPress core, Local caches, or Local mail guards.
 
 ## Cutover
 
