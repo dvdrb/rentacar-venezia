@@ -13,4 +13,5 @@ for file in "$ROOT/scripts/deployment/lib/"*.sh; do bash -n "$file" || exit 1; d
 grep -q 'REPLACE-PRODUCTION' "$ROOT/scripts/deployment/lib/safety.sh" && pass=$((pass+1)) || fail=$((fail+1))
 grep -q -- '--delete' "$ROOT/scripts/deployment/lib/code.sh" && ! grep -q -- 'args+=(--delete)' "$ROOT/scripts/deployment/lib/media.sh" && pass=$((pass+1)) || fail=$((fail+1))
 grep -q 'sitepress-multilingual-cms' "$ROOT/scripts/deployment/lib/plugins.sh" && pass=$((pass+1)) || fail=$((fail+1))
+grep -q 'discover_remote_roots' "$ROOT/scripts/deployment/lib/config.sh" && pass=$((pass+1)) || fail=$((fail+1))
 printf '%s deployment checks passed; %s failed\n' "$pass" "$fail"; [ "$fail" -eq 0 ]
