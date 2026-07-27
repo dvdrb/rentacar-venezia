@@ -1,0 +1,756 @@
+{
+  "generatedAt": "2026-07-27T07:54:14.916Z",
+  "baseUrl": "http://rentacar-venezia-local.local",
+  "method": "Clean anonymous Playwright contexts; no reused cookies, localStorage, sessionStorage or IndexedDB.",
+  "summary": {
+    "optionalTrackingDetected": true,
+    "consentLayerRequired": true,
+    "publicVisitorTechnologies": 7,
+    "administratorLoginTechnologies": 1,
+    "stagingOnlyTechnologies": [
+      "localhost:10003 Polylang flag-image host in LocalWP preview"
+    ]
+  },
+  "inventory": {
+    "publicVisitorTechnologies": [
+      {
+        "exactName": "pll_language",
+        "provider": "Polylang",
+        "purpose": "Remember the selected site language",
+        "category": "Necessary",
+        "duration": "Approximately 1 year",
+        "party": "First-party",
+        "createdBy": [
+          "Homepage",
+          "Fleet",
+          "Vehicle page",
+          "Venice Marco Polo Airport",
+          "Treviso Airport",
+          "Contact",
+          "Reservation modal and estimate",
+          "Language switching",
+          "Privacy Policy",
+          "Cookie Policy",
+          "Optional analytics after consent"
+        ],
+        "technicallyNecessary": "Yes",
+        "consentAppearsRequired": "No",
+        "evidence": "Observed in clean browser context: Homepage, Fleet, Vehicle page, Venice Marco Polo Airport, Treviso Airport, Contact, Reservation modal and estimate, Language switching, Privacy Policy, Cookie Policy, Optional analytics after consent",
+        "reviewStatus": "Verified in audit"
+      },
+      {
+        "exactName": "rentacar_cookie_consent",
+        "provider": "Rent a Car Venezia",
+        "purpose": "Store the visitor’s optional-cookie choice",
+        "category": "Necessary",
+        "duration": "Approximately 180 days",
+        "party": "First-party",
+        "createdBy": [
+          "Optional analytics after consent"
+        ],
+        "technicallyNecessary": "Yes",
+        "consentAppearsRequired": "No",
+        "evidence": "Observed in clean browser context: Optional analytics after consent",
+        "reviewStatus": "Verified in audit"
+      },
+      {
+        "exactName": "_ga",
+        "provider": "Google Analytics",
+        "purpose": "Measure visits after optional consent",
+        "category": "Analytics",
+        "duration": "Approximately 1 year",
+        "party": "First-party",
+        "createdBy": [
+          "Optional analytics after consent"
+        ],
+        "technicallyNecessary": "No",
+        "consentAppearsRequired": "Yes",
+        "evidence": "Observed in clean browser context: Optional analytics after consent",
+        "reviewStatus": "Verified in audit"
+      },
+      {
+        "exactName": "_gid",
+        "provider": "Google Analytics",
+        "purpose": "Measure visits after optional consent",
+        "category": "Analytics",
+        "duration": "Approximately 1 day",
+        "party": "First-party",
+        "createdBy": [
+          "Optional analytics after consent"
+        ],
+        "technicallyNecessary": "No",
+        "consentAppearsRequired": "Yes",
+        "evidence": "Observed in clean browser context: Optional analytics after consent",
+        "reviewStatus": "Verified in audit"
+      },
+      {
+        "exactName": "_gat_UA-117885941-1",
+        "provider": "Google Analytics",
+        "purpose": "Throttle analytics requests after optional consent",
+        "category": "Analytics",
+        "duration": "Less than one day",
+        "party": "First-party",
+        "createdBy": [
+          "Optional analytics after consent"
+        ],
+        "technicallyNecessary": "No",
+        "consentAppearsRequired": "Yes",
+        "evidence": "Observed in clean browser context: Optional analytics after consent",
+        "reviewStatus": "Verified in audit"
+      },
+      {
+        "exactName": "_ga_ZHEY6F2CG0",
+        "provider": "Google Analytics",
+        "purpose": "Measure visits after optional consent",
+        "category": "Analytics",
+        "duration": "Approximately 1 year",
+        "party": "First-party",
+        "createdBy": [
+          "Optional analytics after consent"
+        ],
+        "technicallyNecessary": "No",
+        "consentAppearsRequired": "Yes",
+        "evidence": "Observed in clean browser context: Optional analytics after consent",
+        "reviewStatus": "Verified in audit"
+      },
+      {
+        "exactName": "wpEmojiSettingsSupports",
+        "technologyType": "sessionStorage",
+        "provider": "WordPress core",
+        "purpose": "Store the browser emoji-support test result for the current session",
+        "category": "Necessary",
+        "duration": "Session",
+        "party": "First-party",
+        "createdBy": [
+          "Homepage",
+          "Fleet",
+          "Vehicle page",
+          "Venice Marco Polo Airport",
+          "Treviso Airport",
+          "Contact",
+          "Reservation modal and estimate",
+          "Language switching",
+          "Privacy Policy",
+          "Cookie Policy",
+          "Optional analytics after consent"
+        ],
+        "technicallyNecessary": "Requires confirmation",
+        "consentAppearsRequired": "Requires confirmation",
+        "evidence": "Observed sessionStorage key in clean browser context: Homepage, Fleet, Vehicle page, Venice Marco Polo Airport, Treviso Airport, Contact, Reservation modal and estimate, Language switching, Privacy Policy, Cookie Policy, Optional analytics after consent",
+        "reviewStatus": "Requires confirmation"
+      }
+    ],
+    "thirdPartyNetworkTechnologies": [
+      {
+        "exactName": "s.w.org",
+        "provider": "WordPress.org",
+        "purpose": "External WordPress resource; exact purpose requires confirmation",
+        "category": "Requires confirmation",
+        "duration": "Not determinable from the network request",
+        "party": "Third-party",
+        "createdBy": [
+          "Contact"
+        ],
+        "technicallyNecessary": "No",
+        "consentAppearsRequired": "Requires confirmation",
+        "evidence": "Observed network domain in clean browser audit: s.w.org",
+        "reviewStatus": "Requires confirmation"
+      },
+      {
+        "exactName": "www.googletagmanager.com",
+        "provider": "Google Tag Manager",
+        "purpose": "Load the configured optional Google tag container",
+        "category": "Analytics",
+        "duration": "Not determinable from the network request",
+        "party": "Third-party",
+        "createdBy": [
+          "Optional analytics after consent"
+        ],
+        "technicallyNecessary": "No",
+        "consentAppearsRequired": "Yes",
+        "evidence": "Observed network domain in clean browser audit: www.googletagmanager.com",
+        "reviewStatus": "Verified in audit"
+      },
+      {
+        "exactName": "www.google-analytics.com",
+        "provider": "Google Analytics",
+        "purpose": "Analytics measurement after optional consent",
+        "category": "Analytics",
+        "duration": "Not determinable from the network request",
+        "party": "Third-party",
+        "createdBy": [
+          "Optional analytics after consent"
+        ],
+        "technicallyNecessary": "No",
+        "consentAppearsRequired": "Yes",
+        "evidence": "Observed network domain in clean browser audit: www.google-analytics.com",
+        "reviewStatus": "Verified in audit"
+      },
+      {
+        "exactName": "region1.analytics.google.com",
+        "provider": "Google Analytics",
+        "purpose": "Analytics measurement after optional consent",
+        "category": "Analytics",
+        "duration": "Not determinable from the network request",
+        "party": "Third-party",
+        "createdBy": [
+          "Optional analytics after consent"
+        ],
+        "technicallyNecessary": "No",
+        "consentAppearsRequired": "Yes",
+        "evidence": "Observed network domain in clean browser audit: region1.analytics.google.com",
+        "reviewStatus": "Verified in audit"
+      },
+      {
+        "exactName": "stats.g.doubleclick.net",
+        "provider": "Google Analytics",
+        "purpose": "Advertising-audience request from the configured Google tag",
+        "category": "Marketing or profiling",
+        "duration": "Not determinable from the network request",
+        "party": "Third-party",
+        "createdBy": [
+          "Optional analytics after consent"
+        ],
+        "technicallyNecessary": "No",
+        "consentAppearsRequired": "Yes",
+        "evidence": "Observed network domain in clean browser audit: stats.g.doubleclick.net",
+        "reviewStatus": "Verified in audit"
+      },
+      {
+        "exactName": "www.google.it",
+        "provider": "Google advertising",
+        "purpose": "Advertising-audience request from the configured Google tag",
+        "category": "Marketing or profiling",
+        "duration": "Not determinable from the network request",
+        "party": "Third-party",
+        "createdBy": [
+          "Optional analytics after consent"
+        ],
+        "technicallyNecessary": "No",
+        "consentAppearsRequired": "Yes",
+        "evidence": "Observed network domain in clean browser audit: www.google.it",
+        "reviewStatus": "Verified in audit"
+      }
+    ],
+    "administratorLoginTechnologies": [
+      {
+        "exactName": "wordpress_test_cookie",
+        "provider": "WordPress",
+        "purpose": "Test whether the browser accepts cookies on the login screen",
+        "category": "Necessary",
+        "duration": "Session",
+        "party": "First-party",
+        "createdBy": [
+          "Administrator login surface"
+        ],
+        "technicallyNecessary": "Yes",
+        "consentAppearsRequired": "No",
+        "evidence": "Observed in clean browser context: Administrator login surface",
+        "reviewStatus": "Verified in audit"
+      }
+    ],
+    "stagingOnlyTechnologies": [
+      {
+        "exactName": "localhost:10003",
+        "provider": "LocalWP preview",
+        "purpose": "Serves Polylang flag images only in the local port-forward preview",
+        "category": "Staging-only",
+        "duration": "Not applicable",
+        "party": "First-party local preview",
+        "createdBy": [
+          "Homepage"
+        ],
+        "technicallyNecessary": "No",
+        "consentAppearsRequired": "Not applicable",
+        "evidence": "Observed only on the LocalWP localhost preview host",
+        "reviewStatus": "Requires confirmation before production"
+      }
+    ]
+  },
+  "thirdPartyDomains": [
+    "s.w.org",
+    "www.googletagmanager.com",
+    "www.google-analytics.com",
+    "region1.analytics.google.com",
+    "stats.g.doubleclick.net",
+    "www.google.it"
+  ],
+  "scenarios": [
+    {
+      "name": "Homepage",
+      "url": "http://rentacar-venezia-local.local/",
+      "responseSetCookieHeaders": [],
+      "cookies": [
+        {
+          "name": "pll_language",
+          "domain": "rentacar-venezia-local.local",
+          "path": "/",
+          "duration": "Approximately 1 year",
+          "httpOnly": false,
+          "secure": false,
+          "sameSite": "Lax"
+        }
+      ],
+      "storage": {
+        "documentCookieValue": "pll_language=it",
+        "documentCookieNames": [
+          "pll_language"
+        ],
+        "localStorage": [],
+        "sessionStorage": [
+          "wpEmojiSettingsSupports"
+        ],
+        "indexedDb": []
+      },
+      "thirdPartyDomains": [],
+      "networkRequests": []
+    },
+    {
+      "name": "Fleet",
+      "url": "http://rentacar-venezia-local.local/fleet/",
+      "responseSetCookieHeaders": [],
+      "cookies": [
+        {
+          "name": "pll_language",
+          "domain": "rentacar-venezia-local.local",
+          "path": "/",
+          "duration": "Approximately 1 year",
+          "httpOnly": false,
+          "secure": false,
+          "sameSite": "Lax"
+        }
+      ],
+      "storage": {
+        "documentCookieValue": "pll_language=it",
+        "documentCookieNames": [
+          "pll_language"
+        ],
+        "localStorage": [],
+        "sessionStorage": [
+          "wpEmojiSettingsSupports"
+        ],
+        "indexedDb": []
+      },
+      "thirdPartyDomains": [],
+      "networkRequests": []
+    },
+    {
+      "name": "Vehicle page",
+      "url": "http://rentacar-venezia-local.local/cars/alfa-romeo-tonale-1-6-benzina/",
+      "responseSetCookieHeaders": [],
+      "cookies": [
+        {
+          "name": "pll_language",
+          "domain": "rentacar-venezia-local.local",
+          "path": "/",
+          "duration": "Approximately 1 year",
+          "httpOnly": false,
+          "secure": false,
+          "sameSite": "Lax"
+        }
+      ],
+      "storage": {
+        "documentCookieValue": "pll_language=it",
+        "documentCookieNames": [
+          "pll_language"
+        ],
+        "localStorage": [],
+        "sessionStorage": [
+          "wpEmojiSettingsSupports"
+        ],
+        "indexedDb": []
+      },
+      "thirdPartyDomains": [],
+      "networkRequests": []
+    },
+    {
+      "name": "Venice Marco Polo Airport",
+      "url": "http://rentacar-venezia-local.local/venice-marco-polo-airport-car-rental/",
+      "responseSetCookieHeaders": [],
+      "cookies": [
+        {
+          "name": "pll_language",
+          "domain": "rentacar-venezia-local.local",
+          "path": "/",
+          "duration": "Approximately 1 year",
+          "httpOnly": false,
+          "secure": false,
+          "sameSite": "Lax"
+        }
+      ],
+      "storage": {
+        "documentCookieValue": "pll_language=it",
+        "documentCookieNames": [
+          "pll_language"
+        ],
+        "localStorage": [],
+        "sessionStorage": [
+          "wpEmojiSettingsSupports"
+        ],
+        "indexedDb": []
+      },
+      "thirdPartyDomains": [],
+      "networkRequests": []
+    },
+    {
+      "name": "Treviso Airport",
+      "url": "http://rentacar-venezia-local.local/treviso-airport-car-rental/",
+      "responseSetCookieHeaders": [],
+      "cookies": [
+        {
+          "name": "pll_language",
+          "domain": "rentacar-venezia-local.local",
+          "path": "/",
+          "duration": "Approximately 1 year",
+          "httpOnly": false,
+          "secure": false,
+          "sameSite": "Lax"
+        }
+      ],
+      "storage": {
+        "documentCookieValue": "pll_language=it",
+        "documentCookieNames": [
+          "pll_language"
+        ],
+        "localStorage": [],
+        "sessionStorage": [
+          "wpEmojiSettingsSupports"
+        ],
+        "indexedDb": []
+      },
+      "thirdPartyDomains": [],
+      "networkRequests": []
+    },
+    {
+      "name": "Contact",
+      "url": "http://rentacar-venezia-local.local/contatti/",
+      "responseSetCookieHeaders": [],
+      "cookies": [
+        {
+          "name": "pll_language",
+          "domain": "rentacar-venezia-local.local",
+          "path": "/",
+          "duration": "Approximately 1 year",
+          "httpOnly": false,
+          "secure": false,
+          "sameSite": "Lax"
+        }
+      ],
+      "storage": {
+        "documentCookieValue": "pll_language=it",
+        "documentCookieNames": [
+          "pll_language"
+        ],
+        "localStorage": [],
+        "sessionStorage": [
+          "wpEmojiSettingsSupports"
+        ],
+        "indexedDb": []
+      },
+      "thirdPartyDomains": [
+        "s.w.org"
+      ],
+      "networkRequests": [
+        {
+          "url": "https://s.w.org/images/core/emoji/17.0.2/svg/1f4de.svg",
+          "type": "image"
+        },
+        {
+          "url": "https://s.w.org/images/core/emoji/17.0.2/svg/1f91d.svg",
+          "type": "image"
+        },
+        {
+          "url": "https://s.w.org/images/core/emoji/17.0.2/svg/1f4c6.svg",
+          "type": "image"
+        },
+        {
+          "url": "https://s.w.org/images/core/emoji/17.0.2/svg/1f527.svg",
+          "type": "image"
+        },
+        {
+          "url": "https://s.w.org/images/core/emoji/17.0.2/svg/1f31f.svg",
+          "type": "image"
+        },
+        {
+          "url": "https://s.w.org/images/core/emoji/17.0.2/svg/1f697.svg",
+          "type": "image"
+        },
+        {
+          "url": "https://s.w.org/images/core/emoji/17.0.2/svg/1f4bc.svg",
+          "type": "image"
+        },
+        {
+          "url": "https://s.w.org/images/core/emoji/17.0.2/svg/2728.svg",
+          "type": "image"
+        }
+      ]
+    },
+    {
+      "name": "Reservation modal and estimate",
+      "url": "http://rentacar-venezia-local.local/fleet/",
+      "responseSetCookieHeaders": [],
+      "cookies": [
+        {
+          "name": "pll_language",
+          "domain": "rentacar-venezia-local.local",
+          "path": "/",
+          "duration": "Approximately 1 year",
+          "httpOnly": false,
+          "secure": false,
+          "sameSite": "Lax"
+        }
+      ],
+      "storage": {
+        "documentCookieValue": "pll_language=it",
+        "documentCookieNames": [
+          "pll_language"
+        ],
+        "localStorage": [],
+        "sessionStorage": [
+          "wpEmojiSettingsSupports"
+        ],
+        "indexedDb": []
+      },
+      "thirdPartyDomains": [],
+      "networkRequests": []
+    },
+    {
+      "name": "Language switching",
+      "url": "http://rentacar-venezia-local.local/",
+      "responseSetCookieHeaders": [],
+      "cookies": [
+        {
+          "name": "pll_language",
+          "domain": "rentacar-venezia-local.local",
+          "path": "/",
+          "duration": "Approximately 1 year",
+          "httpOnly": false,
+          "secure": false,
+          "sameSite": "Lax"
+        }
+      ],
+      "storage": {
+        "documentCookieValue": "pll_language=it",
+        "documentCookieNames": [
+          "pll_language"
+        ],
+        "localStorage": [],
+        "sessionStorage": [
+          "wpEmojiSettingsSupports"
+        ],
+        "indexedDb": []
+      },
+      "thirdPartyDomains": [],
+      "networkRequests": []
+    },
+    {
+      "name": "Privacy Policy",
+      "url": "http://rentacar-venezia-local.local/privacy-policy/",
+      "responseSetCookieHeaders": [],
+      "cookies": [
+        {
+          "name": "pll_language",
+          "domain": "rentacar-venezia-local.local",
+          "path": "/",
+          "duration": "Approximately 1 year",
+          "httpOnly": false,
+          "secure": false,
+          "sameSite": "Lax"
+        }
+      ],
+      "storage": {
+        "documentCookieValue": "pll_language=it",
+        "documentCookieNames": [
+          "pll_language"
+        ],
+        "localStorage": [],
+        "sessionStorage": [
+          "wpEmojiSettingsSupports"
+        ],
+        "indexedDb": []
+      },
+      "thirdPartyDomains": [],
+      "networkRequests": []
+    },
+    {
+      "name": "Cookie Policy",
+      "url": "http://rentacar-venezia-local.local/cookie-policy/",
+      "responseSetCookieHeaders": [],
+      "cookies": [
+        {
+          "name": "pll_language",
+          "domain": "rentacar-venezia-local.local",
+          "path": "/",
+          "duration": "Approximately 1 year",
+          "httpOnly": false,
+          "secure": false,
+          "sameSite": "Lax"
+        }
+      ],
+      "storage": {
+        "documentCookieValue": "pll_language=it",
+        "documentCookieNames": [
+          "pll_language"
+        ],
+        "localStorage": [],
+        "sessionStorage": [
+          "wpEmojiSettingsSupports"
+        ],
+        "indexedDb": []
+      },
+      "thirdPartyDomains": [],
+      "networkRequests": []
+    },
+    {
+      "name": "Optional analytics after consent",
+      "url": "http://rentacar-venezia-local.local/",
+      "responseSetCookieHeaders": [],
+      "cookies": [
+        {
+          "name": "pll_language",
+          "domain": "rentacar-venezia-local.local",
+          "path": "/",
+          "duration": "Approximately 1 year",
+          "httpOnly": false,
+          "secure": false,
+          "sameSite": "Lax"
+        },
+        {
+          "name": "rentacar_cookie_consent",
+          "domain": "rentacar-venezia-local.local",
+          "path": "/",
+          "duration": "Approximately 180 days",
+          "httpOnly": false,
+          "secure": false,
+          "sameSite": "Lax"
+        },
+        {
+          "name": "_ga",
+          "domain": ".rentacar-venezia-local.local",
+          "path": "/",
+          "duration": "Approximately 1 year",
+          "httpOnly": false,
+          "secure": false,
+          "sameSite": "Lax"
+        },
+        {
+          "name": "_gid",
+          "domain": ".rentacar-venezia-local.local",
+          "path": "/",
+          "duration": "Approximately 1 day",
+          "httpOnly": false,
+          "secure": false,
+          "sameSite": "Lax"
+        },
+        {
+          "name": "_gat_UA-117885941-1",
+          "domain": ".rentacar-venezia-local.local",
+          "path": "/",
+          "duration": "Less than one day",
+          "httpOnly": false,
+          "secure": false,
+          "sameSite": "Lax"
+        },
+        {
+          "name": "_ga_ZHEY6F2CG0",
+          "domain": ".rentacar-venezia-local.local",
+          "path": "/",
+          "duration": "Approximately 1 year",
+          "httpOnly": false,
+          "secure": false,
+          "sameSite": "Lax"
+        }
+      ],
+      "storage": {
+        "documentCookieValue": "pll_language=it; rentacar_cookie_consent=analytics; _ga=GA1.2.860477893.1785138852; _gid=GA1.2.1782178936.1785138852; _gat_UA-117885941-1=1; _ga_ZHEY6F2CG0=GS2.2.s1785138852$o1$g0$t1785138852$j60$l0$h0",
+        "documentCookieNames": [
+          "pll_language",
+          "rentacar_cookie_consent",
+          "_ga",
+          "_gid",
+          "_gat_UA-117885941-1",
+          "_ga_ZHEY6F2CG0"
+        ],
+        "localStorage": [],
+        "sessionStorage": [
+          "wpEmojiSettingsSupports"
+        ],
+        "indexedDb": []
+      },
+      "thirdPartyDomains": [
+        "www.googletagmanager.com",
+        "www.google-analytics.com",
+        "region1.analytics.google.com",
+        "stats.g.doubleclick.net",
+        "www.google.it"
+      ],
+      "networkRequests": [
+        {
+          "url": "http://www.googletagmanager.com/gtm.js?id=GTM-K7M7PGJ",
+          "type": "script"
+        },
+        {
+          "url": "https://www.googletagmanager.com/gtm.js?id=GTM-K7M7PGJ",
+          "type": "script"
+        },
+        {
+          "url": "http://www.google-analytics.com/analytics.js",
+          "type": "script"
+        },
+        {
+          "url": "https://www.google-analytics.com/analytics.js",
+          "type": "script"
+        },
+        {
+          "url": "https://www.google-analytics.com/j/collect?v=1&_v=j102&a=356281540&t=pageview&_s=1&dl=http%3A%2F%2Frentacar-venezia-local.local%2F&ul=en-us&dt=HOME%20PAGE%20in%20Italia&sr=1280x720&vp=1280x720&_u=YEBAAEABAAAAACAAI~&jid=1992030811&gjid=848260961&cid=860477893.1785138852&tid=UA-117885941-1&_gid=1782178936.1785138852&_r=1&_slc=1&gtm=45He67m0n81K7M7PGJv79241771za200zd79241771&gcd=13l3l3l2l1l1&dma_cps=a&dma=1&tag_exp=115938465~115938468~118395334~118897920~118897930~119527020~119724321~119896803&npa=1&z=728046693",
+          "type": "xhr"
+        },
+        {
+          "url": "https://www.googletagmanager.com/gtag/js?id=G-ZHEY6F2CG0&cx=c&_slc=1",
+          "type": "script"
+        },
+        {
+          "url": "https://region1.analytics.google.com/g/collect?v=2&tid=G-ZHEY6F2CG0&gtm=45je67m0v9136882334za20g&_p=1785138851507&_gaz=1&gcd=13l3l3l2l3l1&npa=1&dma_cps=a&dma=1&_eu=ABAIAGAC&are=1&cid=860477893.1785138852&frm=0&pscdl=noapi&rcb=17&sr=1280x720&ul=en-us&gaf=2&_s=1&tag_exp=115938465~115938469~118897920~118897930~119724321~119896802&dl=http%3A%2F%2Frentacar-venezia-local.local%2F&dt=HOME%20PAGE%20in%20Italia&sid=1785138852&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&gap.uat=115938465~115938468~118395334~118897920~118897930~119527020~119724321~119896803&tfd=702",
+          "type": "fetch"
+        },
+        {
+          "url": "https://stats.g.doubleclick.net/g/collect?v=2&tid=G-ZHEY6F2CG0&cid=860477893.1785138852&gtm=45je67m0v9136882334za20g&rcb=17&aip=1&dma=1&dma_cps=a&gcd=13l3l3l2l3l1&npa=1&frm=0&tag_exp=115938465~115938469~118897920~118897930~119724321~119896802",
+          "type": "ping"
+        },
+        {
+          "url": "https://www.googletagmanager.com/td?id=G-ZHEY6F2CG0&v=3&t=t&pid=1005279532&gtm=45je67m0v9136882334za20g&seq=1&exp=115938465~115938469~118897920~118897930~119724321~119896802&dl=rentacar-venezia-local.local%2F&tdp=G-ZHEY6F2CG0;136882334;1;5;0&frm=0&pcid=_UA-117885941-1&bt=0&ct=3&z=0",
+          "type": "image"
+        },
+        {
+          "url": "https://www.google.it/ads/ga-audiences?v=1&t=sr&slf_rd=1&_r=4&tid=G-ZHEY6F2CG0&cid=860477893.1785138852&gtm=45je67m0v9136882334za20g&rcb=17&aip=1&dma=1&dma_cps=a&gcd=13l3l3l2l3l1&npa=1&frm=0&tag_exp=115938465~115938469~118897920~118897930~119724321~119896802&z=1917180330",
+          "type": "image"
+        }
+      ]
+    },
+    {
+      "name": "Administrator login surface",
+      "url": "http://rentacar-venezia-local.local/wp-login.php",
+      "responseSetCookieHeaders": [],
+      "cookies": [
+        {
+          "name": "wordpress_test_cookie",
+          "domain": "rentacar-venezia-local.local",
+          "path": "/",
+          "duration": "Session",
+          "httpOnly": true,
+          "secure": false,
+          "sameSite": "Lax"
+        }
+      ],
+      "storage": {
+        "documentCookieValue": "",
+        "documentCookieNames": [],
+        "localStorage": [],
+        "sessionStorage": [],
+        "indexedDb": []
+      },
+      "thirdPartyDomains": [],
+      "networkRequests": []
+    }
+  ]
+}

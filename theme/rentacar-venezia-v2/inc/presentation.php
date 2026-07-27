@@ -68,6 +68,49 @@ function rentacar_venezia_v2_vehicle_image_id( Rentacar_Core_Vehicle $vehicle ) 
     return $ids ? (int) $ids[0] : 0;
 }
 
+/** Resolve WordPress-managed legal pages through the active language provider. */
+function rentacar_venezia_v2_managed_page_id( $key ) {
+    static $pages = array();
+    $key = sanitize_key( $key );
+
+    if ( isset( $pages[ $key ] ) ) {
+        return $pages[ $key ];
+    }
+
+    $ids = get_posts(
+        array(
+            'post_type'              => 'page',
+            'post_status'            => 'publish',
+            'posts_per_page'         => 1,
+            'fields'                 => 'ids',
+            'meta_key'               => '_rc_provisioning_key',
+            'meta_value'             => $key,
+            'no_found_rows'          => true,
+            'update_post_meta_cache' => false,
+            'update_post_term_cache' => false,
+        )
+    );
+
+    return $pages[ $key ] = $ids ? (int) $ids[0] : 0;
+}
+
+function rentacar_venezia_v2_managed_page_url( $key ) {
+    $page_id = rentacar_venezia_v2_managed_page_id( $key );
+    $page_id = $page_id ? rentacar_venezia_v2_translated_post_id( $page_id ) : 0;
+
+    return $page_id ? get_permalink( $page_id ) : '';
+}
+
+function rentacar_venezia_v2_localized_privacy_policy_url() {
+    $page_id = (int) get_option( 'wp_page_for_privacy_policy' );
+    if ( ! $page_id ) {
+        $page_id = rentacar_venezia_v2_managed_page_id( 'privacy_policy' );
+    }
+    $page_id = $page_id ? rentacar_venezia_v2_translated_post_id( $page_id ) : 0;
+
+    return $page_id ? get_permalink( $page_id ) : '';
+}
+
 /**
  * Build fleet controls from values used by published vehicles in the current
  * WordPress language context. Only the established vehicle meta keys are

@@ -4,7 +4,7 @@ defined( 'ABSPATH' ) || exit;
 get_header();
 ?>
 <main id="main-content" class="site-main site-main--content">
-    <article class="rc-container content-page">
+    <article class="rc-container content-page<?php echo 'cookie_policy' === get_post_meta( get_queried_object_id(), '_rc_provisioning_key', true ) ? ' legal-page' : ''; ?>">
         <?php while ( have_posts() ) : the_post(); ?>
             <?php get_template_part( 'template-parts/global/breadcrumbs' ); ?>
             <header class="page-intro content-page__header">

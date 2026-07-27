@@ -27,22 +27,18 @@ get_header();
                 <h1><?php esc_html_e( 'Your journey starts with the right car.', 'rentacar-venezia-v2' ); ?></h1>
                 <p><?php esc_html_e( 'Choose from our fleet and reserve your car in a few simple steps. Direct assistance from a local team.', 'rentacar-venezia-v2' ); ?></p>
                 <div class="hero__actions"><a class="button" href="<?php echo esc_url( rentacar_venezia_v2_fleet_url() ); ?>"><?php esc_html_e( 'Explore our cars', 'rentacar-venezia-v2' ); ?></a><?php if ( $whatsapp_url ) : ?><a class="button button--whatsapp" href="<?php echo esc_url( $whatsapp_url ); ?>"><?php esc_html_e( 'Ask on WhatsApp', 'rentacar-venezia-v2' ); ?></a><?php endif; ?></div>
-                <form id="trip-filter" class="trip-form" method="get" action="<?php echo esc_url( rentacar_venezia_v2_fleet_url() ); ?>" data-trip-form>
-                    <fieldset>
-                        <legend><?php esc_html_e( 'Find your car', 'rentacar-venezia-v2' ); ?></legend>
-                        <div class="trip-form__grid">
-                            <label><?php esc_html_e( 'Pickup location', 'rentacar-venezia-v2' ); ?><select name="pickup_location"><?php foreach ( $locations as $location ) : ?><option value="<?php echo esc_attr( $location['value'] ); ?>"<?php selected( $pickup_location, $location['value'] ); ?>><?php echo esc_html( $location['label'] ); ?></option><?php endforeach; ?></select></label>
-                            <label><?php esc_html_e( 'Pickup date', 'rentacar-venezia-v2' ); ?><input name="pickup_date" type="date" min="<?php echo esc_attr( wp_date( 'Y-m-d' ) ); ?>" value="<?php echo esc_attr( $trip['pickup_date'] ?? '' ); ?>"></label>
-                            <label><?php esc_html_e( 'Return date', 'rentacar-venezia-v2' ); ?><input name="return_date" type="date" min="<?php echo esc_attr( wp_date( 'Y-m-d' ) ); ?>" value="<?php echo esc_attr( $trip['return_date'] ?? '' ); ?>"></label>
-                        </div>
-                    </fieldset>
-                    <button class="button" type="submit"><?php esc_html_e( 'Search cars', 'rentacar-venezia-v2' ); ?></button>
-                </form>
             </div>
-            <picture class="hero__media">
-                <source media="(max-width: 767px)" srcset="<?php echo esc_url( get_theme_file_uri( '/assets/images/hero/hero-venice-mobile.webp' ) ); ?>">
-                <img src="<?php echo esc_url( get_theme_file_uri( '/assets/images/hero/hero-venice-desktop.webp' ) ); ?>" alt="" width="1672" height="941" fetchpriority="high" decoding="async">
-            </picture>
+            <form id="trip-filter" class="trip-form hero__trip-form" method="get" action="<?php echo esc_url( rentacar_venezia_v2_fleet_url() ); ?>" data-trip-form>
+                <fieldset>
+                    <legend><?php esc_html_e( 'Find your car', 'rentacar-venezia-v2' ); ?></legend>
+                    <div class="trip-form__grid">
+                        <label><?php esc_html_e( 'Pickup location', 'rentacar-venezia-v2' ); ?><select name="pickup_location"><?php foreach ( $locations as $location ) : ?><option value="<?php echo esc_attr( $location['value'] ); ?>"<?php selected( $pickup_location, $location['value'] ); ?>><?php echo esc_html( $location['label'] ); ?></option><?php endforeach; ?></select></label>
+                        <label><?php esc_html_e( 'Pickup date', 'rentacar-venezia-v2' ); ?><input name="pickup_date" type="date" min="<?php echo esc_attr( wp_date( 'Y-m-d' ) ); ?>" value="<?php echo esc_attr( $trip['pickup_date'] ?? '' ); ?>"></label>
+                        <label><?php esc_html_e( 'Return date', 'rentacar-venezia-v2' ); ?><input name="return_date" type="date" min="<?php echo esc_attr( wp_date( 'Y-m-d' ) ); ?>" value="<?php echo esc_attr( $trip['return_date'] ?? '' ); ?>"></label>
+                    </div>
+                </fieldset>
+                <button class="button" type="submit"><?php esc_html_e( 'Search cars', 'rentacar-venezia-v2' ); ?></button>
+            </form>
         </div>
     </section>
     <section class="trust-strip" aria-label="<?php esc_attr_e( 'Service highlights', 'rentacar-venezia-v2' ); ?>">

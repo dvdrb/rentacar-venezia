@@ -10,3 +10,4 @@ Review LocalWP at `http://rentacar-venezia-local.local`.
 - Languages: Italian, English, Romanian and Russian layouts and the new critical interface strings.
 - Content: Venice/Treviso, How It Works, Rental Requirements, FAQ, Guides, Terms and 404 states.
 - Legal content needs owner/legal confirmation before production. No fake review or unverified testimonial was introduced.
+- Cookie Policy: confirm the translated policy wording, website-operator details and the Google Tag Manager / Google Analytics / advertising-audience configuration before production. The generated cookie audit records the observed technologies and consent gate.

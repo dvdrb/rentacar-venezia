@@ -1,5 +1,5 @@
 <?php
-/** Read-only Polylang validation for managed pages. */
+/** Read-only Polylang validation for every public translated content group. */
 defined( 'ABSPATH' ) || exit( 1 );
 
 if ( ! function_exists( 'pll_languages_list' ) ) {
@@ -7,14 +7,28 @@ if ( ! function_exists( 'pll_languages_list' ) ) {
 }
 
 $languages = pll_languages_list( array( 'fields' => 'slug' ) );
-$pages = get_posts( array( 'post_type' => 'page', 'post_status' => 'publish', 'posts_per_page' => -1, 'meta_key' => '_rc_provisioning_key' ) );
+$post_types = array_filter(
+    array( 'page', 'cars', 'post' ),
+    'post_type_exists'
+);
 $missing = array();
-foreach ( $pages as $page ) {
-    $key = (string) get_post_meta( $page->ID, '_rc_provisioning_key', true );
-    $translations = pll_get_post_translations( $page->ID );
-    foreach ( $languages as $language ) {
-        if ( empty( $translations[ $language ] ) ) {
-            $missing[] = $key . ' (' . $page->ID . '): missing ' . $language;
+foreach ( $post_types as $post_type ) {
+    $posts = get_posts( array( 'post_type' => $post_type, 'post_status' => 'publish', 'posts_per_page' => -1 ) );
+    $checked_groups = array();
+
+    foreach ( $posts as $post ) {
+        $translations = (array) pll_get_post_translations( $post->ID );
+        $group_key = implode( ',', array_map( 'intval', $translations ) );
+        if ( isset( $checked_groups[ $group_key ] ) ) {
+            continue;
+        }
+        $checked_groups[ $group_key ] = true;
+
+        foreach ( $languages as $language ) {
+            if ( empty( $translations[ $language ] ) ) {
+                $label = (string) get_post_meta( $post->ID, '_rc_provisioning_key', true );
+                $missing[] = ( $label ? $label . ' ' : '' ) . $post_type . ' "' . $post->post_title . '" (' . $post->ID . '): missing ' . $language;
+            }
         }
     }
 }
@@ -22,4 +36,4 @@ if ( $missing ) {
     WP_CLI::warning( implode( "\n", array_unique( $missing ) ) );
     exit( 1 );
 }
-WP_CLI::success( 'All managed pages have translations for: ' . implode( ', ', $languages ) );
+WP_CLI::success( 'All published pages, vehicles and posts have translations for: ' . implode( ', ', $languages ) );

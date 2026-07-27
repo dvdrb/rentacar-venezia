@@ -15,22 +15,55 @@ test.describe('final theme experience', () => {
     await expect(page.locator('.vehicle-card__starting-price').first()).toBeVisible();
   });
 
-  test('keeps the supplied responsive split hero and three-field trip search', async ({ page }) => {
+  test('renders the covered airport hero background and three-field trip search', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/en/');
     const hero = page.locator('.hero');
 
     await expect(hero).toHaveClass(/hero--split/);
-    await expect(hero.locator('picture')).toHaveCount(1);
-    await expect(hero.locator('source[media="(max-width: 767px)"]')).toHaveAttribute('srcset', /hero-venice-mobile\.webp$/);
-    await expect(hero.locator('img')).toHaveAttribute('src', /hero-venice-desktop\.webp$/);
-    await expect(hero.locator('img')).toHaveAttribute('width', '1672');
-    await expect(hero.locator('img')).toHaveAttribute('height', '941');
-    await expect(hero.locator('img')).toHaveAttribute('fetchpriority', 'high');
+    await expect(hero.locator('.hero__media')).toHaveCount(0);
+    expect(await hero.evaluate((element) => getComputedStyle(element).backgroundImage)).toContain('hero-airport-background.webp');
+    expect(await hero.evaluate((element) => getComputedStyle(element).backgroundSize)).toBe('cover');
     await expect(page.locator('.trip-form')).toHaveCount(1);
     await expect(page.locator('.trip-form select[name="pickup_location"]')).toHaveCount(1);
     await expect(page.locator('.trip-form select[name="pickup_location"] option')).toHaveCount(2);
     await expect(page.locator('.trip-form details')).toHaveCount(0);
     await expect(page.locator('.trip-form input')).toHaveCount(2);
+
+    const layout = await page.evaluate(() => {
+      const rect = (selector: string) => document.querySelector(selector)?.getBoundingClientRect();
+      const heroRect = rect('.hero');
+      const headerRect = rect('.site-header');
+      const headerInnerRect = rect('.site-header__inner');
+      const formRect = rect('.hero__trip-form');
+      const trustRect = rect('.trust-strip');
+      return {
+        heroHeight: heroRect?.height ?? 0,
+        headerBottom: headerRect?.bottom ?? 0,
+        headerInnerTop: headerInnerRect?.top ?? 0,
+        heroTop: heroRect?.top ?? 0,
+        formBottom: formRect?.bottom ?? 0,
+        heroBottom: heroRect?.bottom ?? 0,
+        trustTop: trustRect?.top ?? 0,
+      };
+    });
+
+    expect(layout.heroHeight).toBeGreaterThanOrEqual(760);
+    expect(layout.headerBottom).toBeGreaterThan(layout.heroTop);
+    expect(layout.headerInnerTop).toBeGreaterThanOrEqual(8);
+    expect(layout.formBottom).toBeLessThanOrEqual(layout.heroBottom);
+    expect(layout.trustTop).toBeGreaterThanOrEqual(layout.heroBottom);
+  });
+
+  test('keeps the mobile hero copy above the trip form with the requested background crop', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/');
+    const copyBottom = await page.locator('.hero__copy').evaluate((element) => element.getBoundingClientRect().bottom);
+    const finderTop = await page.locator('.hero__trip-form').evaluate((element) => element.getBoundingClientRect().top);
+
+    expect(copyBottom).toBeLessThanOrEqual(finderTop);
+    expect(await page.locator('.hero').evaluate((element) => getComputedStyle(element).backgroundPosition)).toContain('70%');
+    expect(await page.locator('.site-header__inner').evaluate((element) => element.getBoundingClientRect().top)).toBeGreaterThanOrEqual(8);
   });
 
   test('keeps the homepage filter limited to the two airport pickup options', async ({ page }) => {
@@ -41,6 +74,14 @@ test.describe('final theme experience', () => {
     await expect(pickup.locator('option')).toHaveCount(2);
     await expect(pickup).not.toContainText('We come where you need');
     await expect(form.locator('input[name="pickup_time"], input[name="return_time"], select[name="dropoff_location"]')).toHaveCount(0);
+  });
+
+  test('keeps the fleet catalogue focused without filtering controls', async ({ page }) => {
+    await page.goto('/fleet/');
+    await expect(page.locator('#fleet-filters, [data-fleet-filters], [data-fleet-filter-drawer], .fleet-active-filters')).toHaveCount(0);
+    await expect(page.locator('select[name="transmission"], select[name="passengers"], select[name="doors"], select[name="sort"], input[name="air_conditioning"]')).toHaveCount(0);
+    await expect(page.locator('.fleet-page .page-intro > .eyebrow')).toHaveCount(0);
+    await expect(page.locator('body')).not.toContainText(/Filter and sort cars|Filtra e ordina le auto|Apply filters|Clear filters/i);
   });
 
   test('renders two crawlable airport arrival options without an empty image stage', async ({ page }) => {
@@ -85,7 +126,8 @@ test.describe('final theme experience', () => {
 
     await expect(page.locator('head title')).toHaveCount(1);
     await expect(page.locator('link[rel="canonical"]')).toHaveCount(1);
-    expect(await page.locator('meta[name="description"]').count()).toBeLessThanOrEqual(1);
+    await expect(page.locator('meta[name="description"]')).toHaveCount(1);
+    await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /.{70,}/);
     await expect(page.locator('meta[name="keywords"]')).toHaveCount(0);
     const openGraphProperties = await page.locator('meta[property^="og:"]').evaluateAll((items) => items.map((item) => item.getAttribute('property')).filter(Boolean));
     expect(new Set(openGraphProperties).size).toBe(openGraphProperties.length);
@@ -176,11 +218,12 @@ test.describe('final theme experience', () => {
     await expect(extras.nth(0)).toHaveAttribute('value', 'child_seat');
     await expect(extras.nth(1)).toHaveAttribute('value', 'additional_driver');
     await expect(page.locator('[data-reservation-form] input[value="gps"], [data-reservation-form] input[value="internet_sim"]')).toHaveCount(0);
-    await expect(page.locator('.reservation-extras small')).toHaveCount(2);
-    await expect(page.locator('[data-reservation-step="1"] .reservation-form__options summary')).toContainText(/customize|personalizza|personalizați|настройте/i);
+    await expect(page.locator('[data-reservation-form] input[name="similar_vehicle"]')).toHaveCount(0);
+    await expect(page.locator('.reservation-extras small, .reservation-form__hint')).toHaveCount(0);
+    await expect(page.locator('[data-reservation-step="1"] .reservation-form__options summary')).toContainText(/extras|extra|дополн/i);
     await expect(page.locator('[data-reservation-step="2"] .reservation-form__options')).toHaveCount(0);
     await expect(page.locator('.reservation-flight, input[name="flight_number"], input[name="airline"]')).toHaveCount(0);
-    await expect(page.locator('[data-reservation-progress]')).toContainText('Step 1 of 2');
+    await expect(page.locator('[data-reservation-progress]')).toContainText(/1 of 2|1 di 2|1 din 2|1 из 2/);
   });
 
   test('uses only airport selects and sends the authoritative inter-airport locations for an estimate', async ({ page }) => {
@@ -228,15 +271,15 @@ test.describe('final theme experience', () => {
     await form.locator('input[name="return_time"]').fill('10:00');
     await form.locator('select[name="pickup_location"]').selectOption('Airport Venice Marco Polo');
     await form.locator('[data-reservation-continue]').click();
-    await form.locator('input[name="first_name"]').fill('Local');
-    await form.locator('input[name="last_name"]').fill('Test');
+    await form.locator('input[name="full_name"]').fill('Local Test');
     await form.locator('input[name="phone"]').fill('+39000000000');
     await form.locator('input[name="email"]').fill('local-test@example.invalid');
     await form.locator('input[name="terms"]').check();
-    await form.locator('input[name="privacy"]').check();
     await form.locator('button[type="submit"]').click();
-    await expect(page.locator('[data-reservation-success]')).toContainText(/Request received|Richiesta ricevuta/);
+    await expect(page.locator('[data-reservation-modal-title]')).toContainText(/Request received|Richiesta ricevuta/);
     await expect(page.locator('[data-reservation-success]')).not.toContainText(/confirmed reservation/i);
+    await expect(page.locator('[data-reservation-modal]')).toHaveClass(/reservation-modal--success/);
+    await expect(page.locator('[data-reservation-success] h2')).toHaveCount(0);
   });
 
   test('keeps the fleet grid responsive at a 320 pixel viewport', async ({ page }) => {
@@ -261,6 +304,37 @@ test.describe('final theme experience', () => {
     await expect(page.locator('.contact-form select[name="topic"]')).toBeVisible();
     await expect(page.locator('.contact-form input[name="privacy"]')).toBeVisible();
     await expect(page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).resolves.toBeTruthy();
+  });
+
+  test('keeps the selected vehicle compact and optional details progressive on mobile', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/fleet/');
+    await page.locator('[data-reservation-trigger]').first().click();
+
+    const summary = page.locator('.reservation-summary');
+    const summaryBox = await summary.boundingBox();
+    expect(summaryBox?.height).toBeLessThan(120);
+    await expect(page.locator('.reservation-form__options')).not.toHaveAttribute('open', '');
+    await expect(page.locator('.reservation-form__optional-note')).not.toHaveAttribute('open', '');
+    await expect(page.locator('.reservation-location-fee')).toBeHidden();
+    await page.locator('[data-reservation-return-different]').check();
+    await expect(page.locator('.reservation-location-fee')).toBeVisible();
+    await expect(page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).resolves.toBeTruthy();
+  });
+
+  test('keeps reservation contact details short and focused', async ({ page }) => {
+    await page.goto('/fleet/');
+    await page.locator('[data-reservation-trigger]').first().click();
+    const form = page.locator('[data-reservation-form]');
+
+    await expect(form.locator('input[name="first_name"], input[name="last_name"]')).toHaveCount(0);
+    await expect(form.locator('input[name="full_name"]')).toHaveCount(1);
+    await expect(form.locator('input[name="privacy"]')).toHaveCount(0);
+    await expect(form.locator('.reservation-form__disclaimer')).toHaveCount(0);
+    await expect(page.locator('.reservation-summary__image')).toHaveCount(0);
+    await expect(form.locator('.reservation-form__intro')).toHaveCount(0);
+    await expect(form.locator('.reservation-form__options')).not.toHaveAttribute('open', '');
+    await expect(form.locator('.reservation-form__optional-note')).not.toHaveAttribute('open', '');
   });
 
   test('sends the separate general contact form through the protected contact endpoint', async ({ page }) => {
@@ -296,6 +370,22 @@ test.describe('final theme experience', () => {
     await expect(page.locator('h1')).toHaveCount(1);
     await expect(page.locator('link[rel="canonical"]')).toHaveCount(1);
     await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', /\/page\/2\/?$/);
+  });
+
+  test('keeps transactional legacy pages and user archives out of search discovery', async ({ page }) => {
+    for (const path of ['/total/', '/la-tua-richiesta-e-stata-inviata/', '/posti/']) {
+      await page.goto(path);
+      await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/i);
+    }
+
+    const sitemap = await page.request.get('/wp-sitemap.xml');
+    expect(sitemap.ok()).toBeTruthy();
+    await expect(sitemap.text()).resolves.not.toContain('wp-sitemap-users');
+
+    const pageSitemap = await page.request.get('/wp-sitemap-posts-page-1.xml');
+    expect(pageSitemap.ok()).toBeTruthy();
+    await expect(pageSitemap.text()).resolves.not.toContain('/total/');
+    await expect(pageSitemap.text()).resolves.not.toContain('/posti/');
   });
 
   test('provides crawlable vehicle breadcrumbs, meaningful primary image alt text and factual schema', async ({ page }) => {
@@ -373,6 +463,26 @@ test.describe('final theme experience', () => {
     }
   });
 
+  test('keeps shared footer, contact and reservation controls translated', async ({ page }) => {
+    const languages = [
+      ['/', ['Termini e condizioni', 'Informativa sulla privacy', 'Impostazioni cookie'], '/contatti/', 'Invia messaggio'],
+      ['/en/', ['Terms and Conditions', 'Privacy Policy', 'Cookie Settings'], '/en/contact/', 'Send message'],
+      ['/ro/', ['Termeni și condiții', 'Politica de confidențialitate', 'Setări cookie'], '/ro/contacte-si-asistenta/', 'Trimiteți mesajul'],
+      ['/ru/', ['Условия и положения', 'Политика конфиденциальности', 'Настройки cookie'], '/ru/kontakty-i-pomoshch/', 'Отправить сообщение'],
+    ] as const;
+
+    for (const [homePath, legalLabels, contactPath, contactSubmitLabel] of languages) {
+      await page.goto(homePath);
+      await expect(page.locator('.site-footer__legal')).toContainText(legalLabels[0]);
+      await expect(page.locator('.site-footer__legal')).toContainText(legalLabels[1]);
+      await expect(page.locator('.site-footer__legal')).toContainText(legalLabels[2]);
+
+      await page.goto(contactPath);
+      await expect(page.locator('.contact-form button[type="submit"]')).toHaveText(contactSubmitLabel);
+      await expect(page.locator('.contact-form label').filter({ hasText: 'Full name' })).toHaveCount(homePath === '/en/' ? 1 : 0);
+    }
+  });
+
   test('does not log browser console errors while loading the homepage', async ({ page }) => {
     const errors: string[] = [];
     page.on('console', (message) => {
@@ -440,6 +550,125 @@ test.describe('final theme experience', () => {
     await expect(page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).resolves.toBeTruthy();
   });
 
+  test('keeps the desktop header focused on the established logo and essential navigation', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto('/');
+
+    await expect(page.locator('.site-header .custom-logo')).toHaveCount(1);
+    await expect(page.locator('.site-header .custom-logo')).toBeVisible();
+    await expect(page.locator('.primary-navigation__list > li:visible')).toHaveCount(3);
+    await expect(page.locator('.site-header__actions .button--whatsapp')).toBeHidden();
+    await expect(page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).resolves.toBeTruthy();
+  });
+
+  test('exposes the configured social destinations in the footer', async ({ page }) => {
+    await page.goto('/');
+    const links = page.locator('.site-footer__social-link');
+
+    await expect(links).toHaveCount(4);
+    await expect(links.nth(0)).toHaveAttribute('href', 'https://www.instagram.com/rentacar_veniceairport/');
+    await expect(links.nth(1)).toHaveAttribute('href', 'https://www.facebook.com/people/Rent-A-Car-Venezia-no-credit-card/61585973730435/#');
+    await expect(links.nth(2)).toHaveAttribute('href', 'https://wa.me/393445068823');
+    await expect(links.nth(3)).toHaveAttribute('href', 'https://t.me/+393445068823');
+    expect(await links.evaluateAll((items) => items.every((item) => item.getAttribute('target') === '_blank' && item.getAttribute('rel') === 'noopener noreferrer'))).toBe(true);
+  });
+
+  test('renders translated, WordPress-managed Cookie Policy pages with their own footer targets', async ({ page }) => {
+    const policies = [
+      ['/', 'Cookie Policy', 'cookie-policy'],
+      ['/en/', 'Cookie Policy', 'cookies'],
+      ['/ro/', 'Politica privind cookie-urile', 'politica-privind-cookie-urile'],
+      ['/ru/', 'Политика использования файлов cookie', 'politika-ispolzovaniya-faylov-cookie'],
+    ] as const;
+
+    for (const [prefix, title, slug] of policies) {
+      await page.goto(`${prefix}${slug}/`);
+      await expect(page.locator('h1')).toHaveCount(1);
+      await expect(page.locator('h1')).toHaveText(title);
+      await expect(page.locator('link[rel="canonical"]')).toHaveCount(1);
+      await expect(page.locator('.site-footer__legal a')).toHaveCount(3);
+      const policyLink = page.locator('.site-footer__legal a').filter({ hasText: title });
+      await expect(policyLink).toHaveCount(1);
+      await expect(policyLink).toHaveAttribute('href', new RegExp(`${prefix.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}${slug}/?$`));
+    }
+  });
+
+  test('keeps the Cookie Policy and inventory usable without document overflow', async ({ page }) => {
+    for (const width of [320, 390, 430, 768, 1024, 1440]) {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto('/en/cookie-policy/');
+      await expect(page.locator('.legal-page__toc')).toBeVisible();
+      await expect(page.locator('.legal-page__inventory-wrap')).toBeVisible();
+      await expect(page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).resolves.toBeTruthy();
+    }
+  });
+
+  test('blocks optional tracking before a choice and exposes functional Cookie Settings', async ({ page }) => {
+    const optionalRequests: string[] = [];
+    page.on('request', (request) => {
+      if (/googletagmanager|google-analytics|doubleclick|google\.it\/ads/i.test(request.url())) optionalRequests.push(request.url());
+    });
+    await page.goto('/');
+    await expect(page.locator('[data-cookie-consent]')).toBeVisible();
+    await expect(page.locator('[data-cookie-settings]')).toBeVisible();
+    expect(optionalRequests).toEqual([]);
+    await page.locator('[data-cookie-settings]').click();
+    await expect(page.locator('[data-cookie-preferences-dialog]')).toBeVisible();
+    await page.locator('[data-cookie-close]').click();
+    await expect(page.locator('[data-cookie-preferences-dialog]')).toBeHidden();
+  });
+
+  test('keeps the cookie consent notice compact and structurally balanced', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto('/');
+
+    const notice = page.locator('[data-cookie-consent]');
+    const desktopBox = await notice.boundingBox();
+    const desktopActions = await notice.locator('button').evaluateAll((items) => items.map((item) => {
+      const rect = item.getBoundingClientRect();
+      return { top: rect.top, width: rect.width };
+    }));
+
+    expect(desktopBox?.width).toBeLessThanOrEqual(660);
+    expect(new Set(desktopActions.map((item) => item.top)).size).toBe(1);
+    expect(Math.max(...desktopActions.map((item) => item.width)) - Math.min(...desktopActions.map((item) => item.width))).toBeLessThanOrEqual(1);
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/');
+    const mobileBox = await notice.boundingBox();
+    const mobileActions = await notice.locator('button').evaluateAll((items) => items.map((item) => {
+      const rect = item.getBoundingClientRect();
+      return { top: rect.top, width: rect.width };
+    }));
+
+    expect(mobileBox?.height).toBeLessThan(330);
+    expect(mobileActions[0].top).toBe(mobileActions[1].top);
+    expect(mobileActions[2].top).toBeGreaterThan(mobileActions[0].top);
+    expect(mobileActions[2].width).toBeGreaterThan(mobileActions[0].width);
+    await expect(page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).resolves.toBeTruthy();
+  });
+
+  test('keeps the generated anonymous inventory aligned with the gated default state', async ({ page, context }) => {
+    const audit = JSON.parse(await readFile(resolve('docs/generated/cookie-audit.json'), 'utf8')) as { inventory: { publicVisitorTechnologies: Array<{ exactName: string }> } };
+    await page.goto('/');
+    const names = (await context.cookies()).map((cookie) => cookie.name).sort();
+    const auditedNames = audit.inventory.publicVisitorTechnologies.map((item) => item.exactName);
+    expect(names.every((name) => auditedNames.includes(name))).toBe(true);
+    expect(names).toEqual(['pll_language']);
+  });
+
+  test('keeps Cookie Policy provisioning owner-managed instead of template-hardcoded', async () => {
+    const provisioner = await readFile(resolve('tools/local-wp/provision-site.php'), 'utf8');
+    const template = await readFile(resolve('theme/rentacar-venezia-v2/page.php'), 'utf8');
+
+    expect(provisioner).toContain("'cookie_policy'");
+    expect(provisioner).toContain("'owner_managed' => true");
+    expect(provisioner).toContain('if ( $owner_managed )');
+    expect(provisioner).toContain("'' === trim( (string) get_post_field( 'post_content'");
+    expect(template).toContain('the_content()');
+    expect(template).not.toContain('Cookie Policy');
+  });
+
   test('uses an inert, escapable mobile navigation drawer', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/');
@@ -460,10 +689,7 @@ test.describe('final theme experience', () => {
     await expect(page.locator('.mobile-action-bar__whatsapp')).toBeVisible();
 
     await page.goto('/fleet/');
-    await page.locator('[data-mobile-filter-trigger]').click();
-    await expect(page.locator('.fleet-filter-drawer[open]')).toBeVisible();
-    await page.keyboard.press('Escape');
-    await expect(page.locator('.fleet-filter-drawer')).toHaveCount(0);
+    await expect(page.locator('.mobile-action-bar, [data-mobile-filter-trigger], .fleet-filter-drawer')).toHaveCount(0);
 
     const vehicleUrl = await page.locator('.vehicle-card h3 a').first().getAttribute('href');
     test.skip(!vehicleUrl, 'A published vehicle is required for mobile vehicle actions.');

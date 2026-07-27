@@ -34,9 +34,6 @@ final class Rentacar_Core_Reservation_Validator {
             $errors->add( 'phone', __( 'Please enter a valid phone number.', 'rentacar-core' ) );
         }
 
-        if ( empty( $input['privacy'] ) ) {
-            $errors->add( 'privacy', __( 'Please confirm the privacy notice.', 'rentacar-core' ) );
-        }
         if ( empty( $input['terms'] ) ) $errors->add( 'terms', __( 'Please accept the terms and conditions.', 'rentacar-core' ) );
         if ( ! Rentacar_Core_Rental_Policy::insurance( $input['insurance'] ?? '' ) ) $errors->add( 'insurance', __( 'Please select a configured insurance package.', 'rentacar-core' ) );
         foreach ( Rentacar_Core_Reservation_Extras::validate_selection( (array) ( $input['extras'] ?? array() ) ) as $message ) {

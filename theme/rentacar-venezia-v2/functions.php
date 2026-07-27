@@ -4,6 +4,7 @@ defined( 'ABSPATH' ) || exit;
 require_once get_template_directory() . '/inc/presentation.php';
 require_once get_template_directory() . '/inc/multilingual.php';
 require_once get_template_directory() . '/inc/interface-translations.php';
+require_once get_template_directory() . '/inc/consent.php';
 require_once get_template_directory() . '/inc/seo.php';
 require_once get_template_directory() . '/inc/breadcrumbs.php';
 require_once get_template_directory() . '/inc/locations.php';
@@ -74,10 +75,10 @@ add_action( 'init', 'rentacar_venezia_v2_register_home_patterns' );
  * environment-aware. The text mark is intentionally a resilient fallback
  * for installations where no custom logo is configured.
  */
-function rentacar_venezia_v2_brand_mark( $inverse = false ) {
+function rentacar_venezia_v2_brand_mark( $inverse = false, $use_custom_logo = true ) {
     $classes = 'site-brand' . ( $inverse ? ' site-brand--inverse' : '' );
 
-    if ( has_custom_logo() && apply_filters( 'rentacar_venezia_v2_use_custom_logo', true ) ) {
+    if ( $use_custom_logo && has_custom_logo() && apply_filters( 'rentacar_venezia_v2_use_custom_logo', true ) ) {
         the_custom_logo();
         return;
     }
@@ -108,10 +109,13 @@ function rentacar_venezia_v2_assets() {
                     'menuOpen'       => __( 'Open navigation', 'rentacar-venezia-v2' ),
                     'menuClose'      => __( 'Close navigation', 'rentacar-venezia-v2' ),
                     'sending'        => __( 'Sending…', 'rentacar-venezia-v2' ),
-                    'sendRequest'    => __( 'Send reservation', 'rentacar-venezia-v2' ),
+                    'sendRequest'    => __( 'Send request', 'rentacar-venezia-v2' ),
                     'reviewForm'     => __( 'Please review the form and try again.', 'rentacar-venezia-v2' ),
                     'deliveryFailed' => __( 'We could not send the request. Please try again.', 'rentacar-venezia-v2' ),
                     'reference'      => __( 'Reference: %s', 'rentacar-venezia-v2' ),
+                    'stepTrip'       => __( '1 of 2 · Trip', 'rentacar-venezia-v2' ),
+                    'stepDetails'    => __( '2 of 2 · Contact', 'rentacar-venezia-v2' ),
+                    'consentSaved'   => __( 'Your cookie preferences have been saved.', 'rentacar-venezia-v2' ),
                 ),
             )
         );
@@ -403,6 +407,10 @@ function rentacar_venezia_v2_language_links() {
 
 function rentacar_venezia_v2_whatsapp_url() {
     return (string) apply_filters( 'rentacar_venezia_v2_whatsapp_url', 'https://wa.me/393445068823' );
+}
+
+function rentacar_venezia_v2_telegram_url() {
+    return (string) apply_filters( 'rentacar_venezia_v2_telegram_url', 'https://t.me/+393445068823' );
 }
 
 function rentacar_venezia_v2_trip_query() {

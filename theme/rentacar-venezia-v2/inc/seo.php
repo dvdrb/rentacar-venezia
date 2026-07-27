@@ -165,6 +165,99 @@ function rentacar_venezia_v2_fleet_robots( $robots ) {
 }
 add_filter( 'wp_robots', 'rentacar_venezia_v2_fleet_robots' );
 
+/**
+ * Legacy results and success screens are transactional utilities, not landing
+ * pages. They remain reachable for existing visitors but are excluded from
+ * search results and sitemap discovery.
+ */
+function rentacar_venezia_v2_is_utility_page() {
+    if ( ! is_page() ) {
+        return false;
+    }
+
+    return in_array(
+        get_page_template_slug( get_queried_object_id() ),
+        array( 'template-results.php', 'template-success.php' ),
+        true
+    );
+}
+
+/**
+ * Only the approved public architecture is indexable. Historic WordPress
+ * pages remain available at their old URLs, but cannot compete with the
+ * current multilingual pages or leak obsolete business copy into search.
+ */
+function rentacar_venezia_v2_is_indexable_page() {
+    if ( ! is_page() ) {
+        return false;
+    }
+
+    $page_id = get_queried_object_id();
+    if ( '1' === (string) get_post_meta( $page_id, '_rc_seo_indexable', true ) ) {
+        return true;
+    }
+
+    $front_page_id = (int) get_option( 'page_on_front' );
+    if ( $front_page_id && function_exists( 'pll_get_post_translations' ) ) {
+        return in_array( $page_id, array_map( 'absint', (array) pll_get_post_translations( $front_page_id ) ), true );
+    }
+
+    return $front_page_id === $page_id;
+}
+
+function rentacar_venezia_v2_legacy_page_robots( $robots ) {
+    if ( is_page() && ! rentacar_venezia_v2_is_indexable_page() ) {
+        $robots['noindex'] = true;
+        $robots['follow']  = true;
+    }
+
+    return $robots;
+}
+add_filter( 'wp_robots', 'rentacar_venezia_v2_legacy_page_robots' );
+
+function rentacar_venezia_v2_yoast_legacy_page_robots( $robots ) {
+    return is_page() && ! rentacar_venezia_v2_is_indexable_page() ? 'noindex, follow' : $robots;
+}
+add_filter( 'wpseo_robots', 'rentacar_venezia_v2_yoast_legacy_page_robots' );
+
+function rentacar_venezia_v2_indexable_page_sitemap_query( $args, $post_type ) {
+    if ( 'page' !== $post_type ) {
+        return $args;
+    }
+
+    if ( empty( $args['meta_query'] ) ) {
+        $args['meta_query'] = array();
+    }
+    $args['meta_query'][] = array(
+        'key'   => '_rc_seo_indexable',
+        'value' => '1',
+    );
+
+    return $args;
+}
+add_filter( 'wp_sitemaps_posts_query_args', 'rentacar_venezia_v2_indexable_page_sitemap_query', 10, 2 );
+
+function rentacar_venezia_v2_utility_page_robots( $robots ) {
+    if ( rentacar_venezia_v2_is_utility_page() ) {
+        $robots['noindex'] = true;
+        $robots['follow']  = true;
+    }
+
+    return $robots;
+}
+add_filter( 'wp_robots', 'rentacar_venezia_v2_utility_page_robots' );
+
+function rentacar_venezia_v2_yoast_utility_page_robots( $robots ) {
+    return rentacar_venezia_v2_is_utility_page() ? 'noindex, follow' : $robots;
+}
+add_filter( 'wpseo_robots', 'rentacar_venezia_v2_yoast_utility_page_robots' );
+
+/** Keep author archives out of the XML sitemap on this single-business site. */
+function rentacar_venezia_v2_disable_user_sitemap( $provider, $name ) {
+    return 'users' === $name ? false : $provider;
+}
+add_filter( 'wp_sitemaps_add_provider', 'rentacar_venezia_v2_disable_user_sitemap', 10, 2 );
+
 function rentacar_venezia_v2_fleet_canonical() {
     if ( ! get_query_var( 'rc_fleet' ) || rentacar_venezia_v2_external_seo_plugin_active() || ! apply_filters( 'rentacar_venezia_v2_enable_fleet_canonical_fallback', true ) ) {
         return;

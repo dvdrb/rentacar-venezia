@@ -8,6 +8,9 @@ type ReservationStrings = {
   reviewForm: string;
   deliveryFailed: string;
   reference: string;
+  stepTrip: string;
+  stepDetails: string;
+  consentSaved: string;
 };
 
 type ReservationConfig = {
@@ -29,11 +32,40 @@ const strings: ReservationStrings = configuration?.strings || {
   menuOpen: 'Open navigation',
   menuClose: 'Close navigation',
   sending: 'Sending…',
-  sendRequest: 'Send reservation',
+  sendRequest: 'Send request',
   reviewForm: 'Please review the form and try again.',
   deliveryFailed: 'We could not send the request. Please try again.',
   reference: 'Reference: %s',
+  stepTrip: '1 of 2 · Trip',
+  stepDetails: '2 of 2 · Contact',
+  consentSaved: 'Your cookie preferences have been saved.',
 };
+
+const consentBanner = document.querySelector<HTMLElement>('[data-cookie-consent]');
+const consentDialog = document.querySelector<HTMLDialogElement>('[data-cookie-preferences-dialog]');
+const consentAnalytics = consentDialog?.querySelector<HTMLInputElement>('[data-cookie-analytics]');
+let consentReturnFocus: HTMLElement | null = null;
+
+const saveCookieConsent = (value: 'necessary' | 'analytics'): void => {
+  const expires = new Date(Date.now() + 180 * 24 * 60 * 60 * 1000).toUTCString();
+  document.cookie = `rentacar_cookie_consent=${value}; path=/; expires=${expires}; SameSite=Lax${window.location.protocol === 'https:' ? '; Secure' : ''}`;
+  window.location.reload();
+};
+
+const openCookiePreferences = (source: HTMLElement): void => {
+  if (!consentDialog) return;
+  consentReturnFocus = source;
+  consentDialog.showModal();
+  requestAnimationFrame(() => consentAnalytics?.focus());
+};
+
+consentBanner?.querySelector<HTMLButtonElement>('[data-cookie-reject]')?.addEventListener('click', () => saveCookieConsent('necessary'));
+consentBanner?.querySelector<HTMLButtonElement>('[data-cookie-accept]')?.addEventListener('click', () => saveCookieConsent('analytics'));
+consentBanner?.querySelector<HTMLButtonElement>('[data-cookie-preferences]')?.addEventListener('click', (event) => openCookiePreferences(event.currentTarget as HTMLButtonElement));
+document.querySelectorAll<HTMLButtonElement>('[data-cookie-settings]').forEach((button) => button.addEventListener('click', () => openCookiePreferences(button)));
+consentDialog?.querySelector<HTMLButtonElement>('[data-cookie-close]')?.addEventListener('click', () => consentDialog.close());
+consentDialog?.querySelector<HTMLButtonElement>('[data-cookie-save]')?.addEventListener('click', () => saveCookieConsent(consentAnalytics?.checked ? 'analytics' : 'necessary'));
+consentDialog?.addEventListener('close', () => consentReturnFocus?.focus());
 
 const toggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
 const navigation = document.querySelector<HTMLElement>('[data-primary-navigation]');
@@ -130,66 +162,6 @@ if (tripForm) {
   syncTripLocations();
 }
 
-document.querySelectorAll<HTMLFormElement>('[data-fleet-filters]').forEach((fleetFilters) => {
-  fleetFilters.addEventListener('submit', () => track('fleet_filter_apply'));
-});
-
-const fleetFilters = document.querySelector<HTMLDetailsElement>('#fleet-filters');
-const fleetFilterForm = fleetFilters?.querySelector<HTMLFormElement>('[data-fleet-filters]');
-const fleetFilterDrawerTrigger = document.querySelector<HTMLButtonElement>('[data-fleet-filter-drawer]');
-let fleetFilterFormParent: ParentNode | null = null;
-let fleetFilterFormNextSibling: ChildNode | null = null;
-let fleetFilterLastTrigger: HTMLElement | null = null;
-
-const useFleetFilterDrawer = (): boolean => window.matchMedia('(max-width: 767px)').matches && typeof HTMLDialogElement !== 'undefined';
-
-const restoreFleetFilterForm = (): void => {
-  if (!fleetFilterForm || !fleetFilterFormParent) return;
-  fleetFilterFormParent.insertBefore(fleetFilterForm, fleetFilterFormNextSibling);
-  fleetFilterFormParent = null;
-  fleetFilterFormNextSibling = null;
-  fleetFilterLastTrigger?.focus();
-};
-
-const openFleetFilterDrawer = (trigger: HTMLElement): void => {
-  if (!fleetFilters || !fleetFilterForm || !useFleetFilterDrawer()) {
-    if (fleetFilters) fleetFilters.open = true;
-    requestAnimationFrame(() => fleetFilters?.querySelector<HTMLElement>('summary')?.focus());
-    return;
-  }
-
-  fleetFilterLastTrigger = trigger;
-  fleetFilters.open = false;
-  fleetFilterFormParent = fleetFilterForm.parentNode;
-  fleetFilterFormNextSibling = fleetFilterForm.nextSibling;
-  const dialog = document.createElement('dialog');
-  dialog.className = 'fleet-filter-drawer';
-  dialog.setAttribute('aria-label', fleetFilterDrawerTrigger?.textContent?.trim() || 'Filters');
-  const header = document.createElement('header');
-  const title = document.createElement('h2');
-  title.textContent = fleetFilterDrawerTrigger?.textContent?.trim() || 'Filters';
-  const close = document.createElement('button');
-  close.type = 'button';
-  close.className = 'fleet-filter-drawer__close';
-  close.setAttribute('aria-label', 'Close filters');
-  close.textContent = '×';
-  close.addEventListener('click', () => dialog.close());
-  header.append(title, close);
-  dialog.append(header, fleetFilterForm);
-  dialog.addEventListener('close', () => {
-    restoreFleetFilterForm();
-    dialog.remove();
-  }, { once: true });
-  document.body.append(dialog);
-  dialog.showModal();
-  requestAnimationFrame(() => dialog.querySelector<HTMLElement>('select, input, button')?.focus());
-};
-
-fleetFilterDrawerTrigger?.addEventListener('click', () => openFleetFilterDrawer(fleetFilterDrawerTrigger));
-document.querySelectorAll<HTMLElement>('[data-mobile-filter-trigger]').forEach((trigger) => {
-  trigger.addEventListener('click', () => openFleetFilterDrawer(trigger));
-});
-
 document.querySelectorAll<HTMLAnchorElement>('a[href^="tel:"], a[href*="wa.me"], a[href*="whatsapp"]')
   .forEach((link) => link.addEventListener('click', () => track(link.href.startsWith('tel:') ? 'phone_click' : 'whatsapp_click')));
 
@@ -218,6 +190,8 @@ const form = document.querySelector<HTMLFormElement>('[data-reservation-form]');
 const formWrap = document.querySelector<HTMLElement>('[data-reservation-form-wrap]');
 const success = document.querySelector<HTMLElement>('[data-reservation-success]');
 const errorBox = document.querySelector<HTMLElement>('[data-reservation-errors]');
+const reservationPanel = modal?.querySelector<HTMLElement>('.reservation-modal__panel');
+const reservationModalTitle = modal?.querySelector<HTMLElement>('[data-reservation-modal-title]');
 const inertTargets = Array.from(document.querySelectorAll<HTMLElement>('[data-site-header], #main-content, .site-footer'));
 let trigger: HTMLElement | null = null;
 
@@ -227,10 +201,12 @@ const setupReservationDetails = (): void => {
   const returnLocation = form.querySelector<HTMLSelectElement>('select[data-reservation-return-location]');
   const returnDifferent = form.querySelector<HTMLInputElement>('[data-reservation-return-different]');
   const returnWrapper = returnLocation?.closest('label');
+  const locationFee = form.querySelector<HTMLElement>('[data-reservation-location-fee]');
 
   const sync = (): void => {
     const different = Boolean(returnDifferent?.checked);
     if (returnWrapper) returnWrapper.hidden = !different;
+    if (locationFee) locationFee.hidden = !different;
     if (!different && pickup && returnLocation) returnLocation.value = pickup.value;
   };
 
@@ -265,7 +241,7 @@ const refreshEstimate = async (): Promise<void> => {
     }
     content.replaceChildren(...estimate.line_items.map((item) => { const row = document.createElement('p'); row.textContent = `${item.label}: €${item.amount.toFixed(2)}`; return row; }));
     const total = document.createElement('p'); total.innerHTML = `<strong>Indicative rental total: €${estimate.estimate_total.toFixed(2)}</strong>`;
-    const details = document.createElement('p'); details.textContent = `${estimate.days} rental days · ${estimate.included_km || 0} km included · €${(estimate.excess_km_rate || 0).toFixed(2)}/km excess · Deposit €${(estimate.deposit || 0).toFixed(2)}`;
+    const details = document.createElement('p'); details.textContent = `${estimate.days} rental days`;
     content.append(total, details); output.hidden = false;
   } catch { /* The form remains usable when estimates cannot be loaded. */ }
 };
@@ -294,9 +270,18 @@ const closeModal = (): void => {
   trigger?.focus();
 };
 
+const setReservationSuccessState = (completed: boolean): void => {
+  modal?.classList.toggle('reservation-modal--success', completed);
+  reservationPanel?.classList.toggle('reservation-modal__panel--success', completed);
+  if (reservationModalTitle) {
+    reservationModalTitle.textContent = completed ? reservationModalTitle.dataset.successTitle || '' : reservationModalTitle.dataset.requestTitle || '';
+  }
+};
+
 const resetVisibleState = (): void => {
   formWrap?.removeAttribute('hidden');
   success?.setAttribute('hidden', '');
+  setReservationSuccessState(false);
   if (errorBox) errorBox.textContent = '';
   setReservationStep(1);
 };
@@ -307,6 +292,7 @@ if (modal) {
   modal.setAttribute('aria-modal', 'true');
   modal.hidden = !initiallyOpen;
   modal.classList.remove('reservation-modal--inline');
+  setReservationSuccessState(initiallyOpen);
   if (initiallyOpen) {
     document.body.classList.add('reservation-open');
     setBackgroundInert(true);
@@ -446,8 +432,14 @@ const setReservationStep = (step: number): void => {
     element.classList.toggle('is-active', Number(element.dataset.reservationStep) === step);
   });
   const progress = form.querySelector<HTMLElement>('[data-reservation-progress]');
-  if (progress) progress.textContent = step === 1 ? 'Step 1 of 2: your trip' : 'Step 2 of 2: your details';
+  if (progress) progress.textContent = step === 1 ? strings.stepTrip : strings.stepDetails;
   if (errorBox) errorBox.textContent = '';
+  if (modal && !modal.hidden) {
+    reservationPanel?.scrollTo({
+      top: 0,
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+    });
+  }
 };
 
 form?.querySelector<HTMLButtonElement>('[data-reservation-continue]')?.addEventListener('click', () => {
@@ -461,7 +453,10 @@ form?.querySelector<HTMLButtonElement>('[data-reservation-continue]')?.addEventL
   form?.querySelector<HTMLElement>('[data-reservation-step="2"] input, [data-reservation-step="2"] textarea, [data-reservation-step="2"] select')?.focus();
 });
 
-form?.querySelector<HTMLButtonElement>('[data-reservation-back]')?.addEventListener('click', () => setReservationStep(1));
+form?.querySelector<HTMLButtonElement>('[data-reservation-back]')?.addEventListener('click', () => {
+  setReservationStep(1);
+  requestAnimationFrame(() => form?.querySelector<HTMLElement>('[data-reservation-step="1"] input, [data-reservation-step="1"] select')?.focus());
+});
 
 form?.addEventListener('input', (event) => {
   const field = event.target;
@@ -512,12 +507,13 @@ if (form) {
 
       formWrap?.setAttribute('hidden', '');
       success?.removeAttribute('hidden');
+      setReservationSuccessState(true);
       track('reservation_request_success');
       const reference = modal?.querySelector<HTMLElement>('[data-reservation-reference]');
       if (reference && body.data.reference) {
         reference.textContent = strings.reference.replace('%s', body.data.reference);
       }
-      modal?.querySelector<HTMLElement>('[data-reservation-success] h2')?.focus();
+      reservationModalTitle?.focus();
     } catch {
       displayErrors({ request: [strings.deliveryFailed] });
     } finally {

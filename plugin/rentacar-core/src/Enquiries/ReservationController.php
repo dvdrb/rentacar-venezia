@@ -69,7 +69,7 @@ final class Rentacar_Core_Reservation_Controller {
             'return_date' => sanitize_text_field( $raw['return_date'] ?? '' ), 'return_time' => sanitize_text_field( $raw['return_time'] ?? '' ),
             'pickup_location' => sanitize_text_field( $raw['pickup_location'] ?? '' ), 'return_location' => sanitize_text_field( $raw['return_location'] ?? '' ),
             'full_name' => sanitize_text_field( trim( ( $raw['full_name'] ?? '' ) ?: trim( ( $raw['first_name'] ?? '' ) . ' ' . ( $raw['last_name'] ?? '' ) ) ) ), 'first_name' => sanitize_text_field( $raw['first_name'] ?? '' ), 'last_name' => sanitize_text_field( $raw['last_name'] ?? '' ), 'phone' => sanitize_text_field( $raw['phone'] ?? '' ), 'email' => sanitize_email( $raw['email'] ?? '' ),
-            'similar_vehicle' => ! empty( $raw['similar_vehicle'] ), 'message' => sanitize_textarea_field( $raw['message'] ?? '' ), 'privacy' => ! empty( $raw['privacy'] ), 'terms' => ! empty( $raw['terms'] ), 'insurance' => sanitize_key( $raw['insurance'] ?? '' ),
+            'similar_vehicle' => ! empty( $raw['similar_vehicle'] ), 'message' => sanitize_textarea_field( $raw['message'] ?? '' ), 'terms' => ! empty( $raw['terms'] ), 'insurance' => sanitize_key( $raw['insurance'] ?? '' ),
             'website' => sanitize_text_field( $raw['website'] ?? '' ), 'started_at' => absint( $raw['started_at'] ?? 0 ),
             'extras' => self::extra_keys( $raw['extras'] ?? array() ),
             'rentacar_ajax' => ! empty( $raw['rentacar_ajax'] ), 'rentacar_reservation_nonce' => sanitize_text_field( $raw['rentacar_reservation_nonce'] ?? '' ),
