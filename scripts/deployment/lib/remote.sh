@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
-ssh_args() { SSH_ARGS=(-p "$PRODUCTION_SSH_PORT"); [ -n "$PRODUCTION_SSH_IDENTITY_FILE" ] && SSH_ARGS=("${SSH_ARGS[@]}" -i "$PRODUCTION_SSH_IDENTITY_FILE"); SSH_ARGS=("${SSH_ARGS[@]}" -o BatchMode=no -o StrictHostKeyChecking=accept-new "$PRODUCTION_SSH_USER@$PRODUCTION_SSH_HOST"); }
+ssh_args() { SSH_CONTROL_DIR="$DEPLOY_SCRIPT_DIR/../runtime/deployment/ssh"; mkdir -p "$SSH_CONTROL_DIR"; chmod 700 "$SSH_CONTROL_DIR"; SSH_CONTROL_PATH="$SSH_CONTROL_DIR/%C"; SSH_CONNECTION_ARGS=(-p "$PRODUCTION_SSH_PORT" -o BatchMode=no -o StrictHostKeyChecking=accept-new -o ControlMaster=auto -o ControlPersist=600 -o "ControlPath=$SSH_CONTROL_PATH"); [ -n "$PRODUCTION_SSH_IDENTITY_FILE" ] && SSH_CONNECTION_ARGS=("${SSH_CONNECTION_ARGS[@]}" -i "$PRODUCTION_SSH_IDENTITY_FILE"); SSH_ARGS=("${SSH_CONNECTION_ARGS[@]}" "$PRODUCTION_SSH_USER@$PRODUCTION_SSH_HOST"); }
+rsync_ssh_command() { ssh_args; local command="ssh -p $(shell_quote "$PRODUCTION_SSH_PORT") -o BatchMode=no -o StrictHostKeyChecking=accept-new -o ControlMaster=auto -o ControlPersist=600 -o ControlPath=$(shell_quote "$SSH_CONTROL_PATH")"; [ -n "$PRODUCTION_SSH_IDENTITY_FILE" ] && command="$command -i $(shell_quote "$PRODUCTION_SSH_IDENTITY_FILE")"; printf '%s\n' "$command"; }
 remote_exec() { ssh_args; if [ "${VERBOSE:-0}" -eq 1 ]; then info "remote command: $1"; fi; ssh "${SSH_ARGS[@]}" "bash -lc $(shell_quote "$1")"; }
 wp_remote() { local command arg; command="cd $(shell_quote "$PRODUCTION_ROOT") && $(shell_quote "$REMOTE_WP_COMMAND")"; for arg in "$@"; do command="$command $(shell_quote "$arg")"; done; remote_exec "$command"; }
 remote_value() { wp_remote "$@" | tail -n 1 | tr -d '\r'; }

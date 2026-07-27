@@ -18,4 +18,5 @@ grep -q 'proc_open/proc_close' "$ROOT/scripts/deployment/lib/remote.sh" && pass=
 grep -q 'reusing saved setup values' "$ROOT/scripts/deployment/lib/config.sh" && pass=$((pass+1)) || fail=$((fail+1))
 grep -q 'get_var' "$ROOT/scripts/deployment/lib/remote.sh" && pass=$((pass+1)) || fail=$((fail+1))
 grep -q 'LocalWP WP-CLI executable' "$ROOT/scripts/deployment/lib/config.sh" && pass=$((pass+1)) || fail=$((fail+1))
+grep -q 'ControlMaster=auto' "$ROOT/scripts/deployment/lib/remote.sh" && pass=$((pass+1)) || fail=$((fail+1))
 printf '%s deployment checks passed; %s failed\n' "$pass" "$fail"; [ "$fail" -eq 0 ]
