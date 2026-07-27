@@ -26,7 +26,7 @@ verify_public_http() {
   curl -fsSIL "$PRODUCTION_URL/" | head -1 | grep -q ' 200 ' || die 7 'homepage HTTP smoke test failed'
   curl -fsSIL "$PRODUCTION_URL/fleet/" | head -1 | grep -q ' 200 ' || die 7 'fleet HTTP smoke test failed'
   if [ "$RUN_BROWSER_TESTS" -eq 1 ] && [ "$SKIP_BROWSER_TESTS" -ne 1 ]; then
-    (cd "$PROJECT_ROOT" && PLAYWRIGHT_BASE_URL="$PRODUCTION_URL" npm run test:browser) || die 7 'browser smoke tests failed'
+    (cd "$PROJECT_ROOT" && PLAYWRIGHT_BASE_URL="$PRODUCTION_URL" npm run test:browser:production) || die 7 'production browser smoke tests failed'
   fi
   ok 'production public smoke checks passed'
 }
