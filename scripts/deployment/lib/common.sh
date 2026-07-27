@@ -3,7 +3,7 @@ set -Eeuo pipefail
 log() { printf '[%s] %s\n' "$1" "$2" >&2; }
 info() { log INFO "$*"; }; warn() { log WARN "$*"; }; ok() { log OK "$*"; }
 die() { local code=$1; shift; log ERROR "$*"; exit "$code"; }
-dry() { [ "${DRY_RUN:-0}" -eq 1 ] && log DRY-RUN "$*"; }
+dry() { if [ "${DRY_RUN:-0}" -eq 1 ]; then log DRY-RUN "$*"; fi; return 0; }
 command_exists() { command -v "$1" >/dev/null 2>&1; }
 timestamp() { date '+%Y%m%d-%H%M%S'; }
 absolute_path() { (cd "$(dirname -- "$1")" && printf '%s/%s\n' "$(pwd -P)" "$(basename -- "$1")"); }
