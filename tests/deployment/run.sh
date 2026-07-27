@@ -23,4 +23,5 @@ grep -q "'/tmp/rentacar-venezia-ssh'" "$ROOT/scripts/deployment/lib/remote.sh" &
 grep -q -- '--skip-plugins --skip-themes plugin list' "$ROOT/scripts/deployment/lib/plugins.sh" && pass=$((pass+1)) || fail=$((fail+1))
 grep -q 'HTTP_HOST=' "$ROOT/scripts/deployment/lib/local.sh" && pass=$((pass+1)) || fail=$((fail+1))
 grep -q 'SELECT @@socket' "$ROOT/scripts/deployment/lib/local.sh" && pass=$((pass+1)) || fail=$((fail+1))
+grep -q 'resolve_remote_backup_root' "$ROOT/scripts/deployment/lib/remote.sh" && pass=$((pass+1)) || fail=$((fail+1))
 printf '%s deployment checks passed; %s failed\n' "$pass" "$fail"; [ "$fail" -eq 0 ]
