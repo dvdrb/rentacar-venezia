@@ -14,4 +14,5 @@ grep -q 'REPLACE-PRODUCTION' "$ROOT/scripts/deployment/lib/safety.sh" && pass=$(
 grep -q -- '--delete' "$ROOT/scripts/deployment/lib/code.sh" && ! grep -q -- 'args+=(--delete)' "$ROOT/scripts/deployment/lib/media.sh" && pass=$((pass+1)) || fail=$((fail+1))
 grep -q 'sitepress-multilingual-cms' "$ROOT/scripts/deployment/lib/plugins.sh" && pass=$((pass+1)) || fail=$((fail+1))
 grep -q 'discover_remote_roots' "$ROOT/scripts/deployment/lib/config.sh" && pass=$((pass+1)) || fail=$((fail+1))
+grep -q 'proc_open/proc_close' "$ROOT/scripts/deployment/lib/remote.sh" && pass=$((pass+1)) || fail=$((fail+1))
 printf '%s deployment checks passed; %s failed\n' "$pass" "$fail"; [ "$fail" -eq 0 ]
