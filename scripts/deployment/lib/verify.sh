@@ -15,12 +15,20 @@ verify_production() {
   wp_remote post list --post_type=cars --format=count | tail -n 1 | grep -Eq '^[1-9][0-9]*$' || die 7 'vehicle posts missing'
   polylang_count=$(wp_remote eval 'echo function_exists("pll_languages_list") ? count(pll_languages_list()) : 0;' | tail -n 1)
   case "$polylang_count" in [4-9]|[1-9][0-9]*) ;; *) die 7 'expected Polylang languages missing';; esac
+  local maintenance_state
+  maintenance_state=$(wp_remote maintenance-mode status 2>&1 || true)
+  case "$maintenance_state" in *'is active'*) warn 'maintenance mode is active; public HTTP and browser smoke checks will run after reopening';; *) verify_public_http;; esac
+  ok 'production internal verification passed'
+}
+
+verify_public_http() {
+  [ "$DRY_RUN" -eq 1 ] && { dry 'would run public HTTP and browser smoke checks'; return 0; }
   curl -fsSIL "$PRODUCTION_URL/" | head -1 | grep -q ' 200 ' || die 7 'homepage HTTP smoke test failed'
   curl -fsSIL "$PRODUCTION_URL/fleet/" | head -1 | grep -q ' 200 ' || die 7 'fleet HTTP smoke test failed'
   if [ "$RUN_BROWSER_TESTS" -eq 1 ] && [ "$SKIP_BROWSER_TESTS" -ne 1 ]; then
     (cd "$PROJECT_ROOT" && PLAYWRIGHT_BASE_URL="$PRODUCTION_URL" npm run test:browser) || die 7 'browser smoke tests failed'
   fi
-  ok 'production verification passed'
+  ok 'production public smoke checks passed'
 }
 
 show_status() {
