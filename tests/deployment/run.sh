@@ -26,4 +26,5 @@ grep -q 'SELECT @@socket' "$ROOT/scripts/deployment/lib/local.sh" && pass=$((pas
 grep -q 'resolve_remote_backup_root' "$ROOT/scripts/deployment/lib/remote.sh" && pass=$((pass+1)) || fail=$((fail+1))
 grep -q '__RCV_REMOTE_HOME__' "$ROOT/scripts/deployment/lib/remote.sh" && pass=$((pass+1)) || fail=$((fail+1))
 grep -q -- '--files-from=/dev/null' "$ROOT/scripts/deployment/lib/backup.sh" && pass=$((pass+1)) || fail=$((fail+1))
+grep -q 'sha256sum' "$ROOT/scripts/deployment/lib/backup.sh" && pass=$((pass+1)) || fail=$((fail+1))
 printf '%s deployment checks passed; %s failed\n' "$pass" "$fail"; [ "$fail" -eq 0 ]
