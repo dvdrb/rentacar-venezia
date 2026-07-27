@@ -46,7 +46,9 @@ while [ "$#" -gt 0 ]; do
 done
 [ -n "$COMMAND" ] || { usage; exit 2; }
 [ "$COMMAND" = help ] && { usage; exit 0; }
-load_config "$CONFIG_PATH"
+if [ "$COMMAND" != setup ]; then
+  load_config "$CONFIG_PATH"
+fi
 trap 'on_error "$?" "$BASH_COMMAND"' ERR
 
 case "$COMMAND" in
