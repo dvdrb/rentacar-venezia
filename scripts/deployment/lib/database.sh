@@ -43,7 +43,11 @@ export_and_import_database() {
     wp_remote search-replace "$url" "$PRODUCTION_URL" --all-tables-with-prefix --precise --skip-columns=guid --dry-run || die 6 'URL replacement dry-run failed'
     wp_remote search-replace "$url" "$PRODUCTION_URL" --all-tables-with-prefix --precise --skip-columns=guid || die 6 'URL replacement failed'
   done
-  remote_exec "cd $(shell_quote "$PRODUCTION_ROOT") && $REMOTE_WP_COMMAND db search '.local' --all-tables-with-prefix --format=count | grep -q '^0$'" || die 7 'remaining LocalWP URLs detected'
+  local remaining_urls
+  remaining_urls=$(remote_exec "cd $(shell_quote "$PRODUCTION_ROOT") && $REMOTE_WP_COMMAND db search '.local' --all-tables-with-prefix --format=table") || die 7 'cannot scan for remaining LocalWP URLs'
+  if printf '%s\n' "$remaining_urls" | grep -Fq '.local'; then
+    die 7 'remaining LocalWP URLs detected'
+  fi
 }
 
 restore_production_settings() {
