@@ -14,9 +14,11 @@ function wp_mail( $recipient, $subject, $message, $headers = array() ) { $GLOBAL
 
 require_once dirname( __DIR__, 2 ) . '/plugin/rentacar-core/src/Settings/ReservationExtras.php';
 require_once dirname( __DIR__, 2 ) . '/plugin/rentacar-core/src/Pricing/RentalDurationCalculator.php';
+require_once dirname( __DIR__, 2 ) . '/plugin/rentacar-core/src/Multilingual/ReservationTranslations.php';
 require_once dirname( __DIR__, 2 ) . '/plugin/rentacar-core/src/Enquiries/ReservationRequest.php';
 require_once dirname( __DIR__, 2 ) . '/plugin/rentacar-core/src/Enquiries/ReservationEmailTemplate.php';
 require_once dirname( __DIR__, 2 ) . '/plugin/rentacar-core/src/Enquiries/BusinessNotification.php';
+require_once dirname( __DIR__, 2 ) . '/plugin/rentacar-core/src/Enquiries/CustomerAcknowledgement.php';
 
 function reservation_extra_assert( $condition, $message ) { if ( ! $condition ) { fwrite( STDERR, "FAIL: {$message}\n" ); exit( 1 ); } }
 
@@ -37,6 +39,9 @@ reservation_extra_assert( 3 === $days && 22.5 === $per_day['items'][0]['subtotal
 $fixed = Rentacar_Core_Reservation_Extras::calculate( array( 'additional_driver' ), 9 );
 reservation_extra_assert( 25.0 === $fixed['items'][0]['subtotal'], 'Fixed extras are added once per request.' );
 
+$abroad = Rentacar_Core_Reservation_Extras::calculate( array( 'authorization_abroad' ), 3 );
+reservation_extra_assert( 80.0 === $abroad['items'][0]['subtotal'], 'Authorization for abroad is a fixed €80 extra.' );
+
 $GLOBALS['reservation_extra_options'][ Rentacar_Core_Reservation_Extras::OPTION ]['additional_driver']['pricing_type'] = 'request_only';
 $request_only = Rentacar_Core_Reservation_Extras::calculate( array( 'additional_driver' ), 9 );
 reservation_extra_assert( null === $request_only['items'][0]['subtotal'] && 0.0 === $request_only['total'], 'Request-only extras add no amount to an estimate.' );
@@ -50,13 +55,23 @@ reservation_extra_assert( 16.0 === $changed_setting['total'], 'Changing the Word
 
 $request = new Rentacar_Core_Reservation_Request( array(
     'reference' => 'RAV-TEST', 'vehicle_title' => 'Fiat 500', 'pickup_location' => 'Venice', 'pickup_date' => '2027-04-10', 'pickup_time' => '10:00',
-    'return_location' => 'Venice', 'return_date' => '2027-04-12', 'return_time' => '11:00', 'full_name' => 'Test Customer', 'phone' => '+39000000000',
+    'return_location' => 'Venice', 'return_date' => '2027-04-12', 'return_time' => '11:00', 'full_name' => 'Test Customer', 'phone' => '+393123456789', 'phone_e164' => '+393123456789', 'phone_display' => '+39 312 345 6789',
     'email' => 'test@example.test', 'similar_vehicle' => false, 'estimate_summary' => '€16.00', 'language' => 'en', 'submitted_at' => '2027-04-01T10:00:00+00:00', 'message' => '',
     'extras' => $changed_setting['items'],
 ) );
 ( new Rentacar_Core_Business_Notification() )->send( $request, 'team@example.test' );
 reservation_extra_assert( false !== strpos( $GLOBALS['reservation_extra_mail']['message'], 'Child seat — per_day; €8.00; Subtotal: €16.00' ), 'Business notifications use authoritative extra prices and subtotals.' );
 reservation_extra_assert( false !== strpos( $GLOBALS['reservation_extra_mail']['message'], '<!doctype html>' ), 'Business notifications use the HTML email template.' );
+reservation_extra_assert( false !== strpos( $GLOBALS['reservation_extra_mail']['message'], '+39 312 345 6789 (+393123456789)' ), 'Business notifications receive the normalized international phone number.' );
 reservation_extra_assert( in_array( 'Content-Type: text/html; charset=UTF-8', $GLOBALS['reservation_extra_mail']['headers'], true ), 'Business notifications declare an HTML content type.' );
+
+$request = new Rentacar_Core_Reservation_Request( array_merge( $request->to_array(), array(
+    'language' => 'it',
+    'estimate' => array( 'days' => 3, 'base_total' => 120, 'insurance' => array( 'label' => 'None', 'amount' => 0 ), 'estimate_total' => 120, 'deposit' => 350, 'included_km' => 150, 'excess_km_rate' => 0.1, 'extras' => $changed_setting['items'] ),
+) ) );
+( new Rentacar_Core_Customer_Acknowledgement() )->send( $request );
+reservation_extra_assert( false !== strpos( $GLOBALS['reservation_extra_mail']['subject'], 'Abbiamo ricevuto' ), 'Customer acknowledgement subject uses the request language.' );
+reservation_extra_assert( false !== strpos( $GLOBALS['reservation_extra_mail']['message'], 'Richiesta ricevuta' ) && false !== strpos( $GLOBALS['reservation_extra_mail']['message'], 'Riferimento:' ) && false !== strpos( $GLOBALS['reservation_extra_mail']['message'], 'Seggiolino per bambini' ), 'Customer acknowledgement localizes its heading, reference label and extras.' );
+reservation_extra_assert( false !== strpos( $GLOBALS['reservation_extra_mail']['message'], '+39 312 345 6789' ), 'Customer acknowledgement receives the readable international phone number.' );
 
 echo "Reservation extra checks passed.\n";

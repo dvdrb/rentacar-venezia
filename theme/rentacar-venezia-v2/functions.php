@@ -70,16 +70,20 @@ function rentacar_venezia_v2_register_home_patterns() {
 }
 add_action( 'init', 'rentacar_venezia_v2_register_home_patterns' );
 
-/**
- * Prefer the WordPress-managed logo so it remains language- and
- * environment-aware. The text mark is intentionally a resilient fallback
- * for installations where no custom logo is configured.
- */
-function rentacar_venezia_v2_brand_mark( $inverse = false, $use_custom_logo = true ) {
+/** Uses the approved local brand asset while retaining a resilient text fallback. */
+function rentacar_venezia_v2_brand_mark( $inverse = false ) {
     $classes = 'site-brand' . ( $inverse ? ' site-brand--inverse' : '' );
+    $asset = get_template_directory() . '/assets/images/brand/logo-reversed-cropped.png';
 
-    if ( $use_custom_logo && has_custom_logo() && apply_filters( 'rentacar_venezia_v2_use_custom_logo', true ) ) {
-        the_custom_logo();
+    if ( file_exists( $asset ) ) {
+        printf(
+            '<a class="%1$s" href="%2$s" rel="home" aria-label="%3$s"><img src="%4$s" width="450" height="130" alt="%5$s"></a>',
+            esc_attr( $classes ),
+            esc_url( rentacar_venezia_v2_home_url() ),
+            esc_attr__( 'G&D Rent A Car', 'rentacar-venezia-v2' ),
+            esc_url( get_template_directory_uri() . '/assets/images/brand/logo-reversed-cropped.png' ),
+            esc_attr__( 'G&D Rent A Car', 'rentacar-venezia-v2' )
+        );
         return;
     }
 
@@ -93,6 +97,14 @@ function rentacar_venezia_v2_brand_mark( $inverse = false, $use_custom_logo = tr
     );
 }
 
+/** The supplied favicon remains theme-owned and does not require an Admin write. */
+function rentacar_venezia_v2_favicon() {
+    $asset = get_template_directory() . '/assets/images/brand/favicon.ico';
+    if ( ! file_exists( $asset ) ) return;
+    echo '<link rel="icon" href="' . esc_url( get_template_directory_uri() . '/assets/images/brand/favicon.ico' ) . '" sizes="any" type="image/x-icon">' . "\n";
+}
+add_action( 'wp_head', 'rentacar_venezia_v2_favicon', 99 );
+
 function rentacar_venezia_v2_assets() {
     $theme = wp_get_theme();
     $manifest = rentacar_venezia_v2_asset_manifest();
@@ -105,6 +117,8 @@ function rentacar_venezia_v2_assets() {
             'rentacarVenezia',
             array(
                 'reservationUrl' => esc_url_raw( admin_url( 'admin-post.php' ) ),
+                'estimateUrl'    => esc_url_raw( rest_url( 'rentacar/v1/estimate' ) ),
+                'minimumRentalDays' => class_exists( 'Rentacar_Core_Rental_Policy' ) ? Rentacar_Core_Rental_Policy::minimum_rental_days() : 3,
                 'strings'        => array(
                     'menuOpen'       => __( 'Open navigation', 'rentacar-venezia-v2' ),
                     'menuClose'      => __( 'Close navigation', 'rentacar-venezia-v2' ),
@@ -115,7 +129,22 @@ function rentacar_venezia_v2_assets() {
                     'reference'      => __( 'Reference: %s', 'rentacar-venezia-v2' ),
                     'stepTrip'       => __( '1 of 2 · Trip', 'rentacar-venezia-v2' ),
                     'stepDetails'    => __( '2 of 2 · Contact', 'rentacar-venezia-v2' ),
-                    'consentSaved'   => __( 'Your cookie preferences have been saved.', 'rentacar-venezia-v2' ),
+                    'minimumRental'  => sprintf( __( 'The minimum rental period is %d billable days.', 'rentacar-venezia-v2' ), class_exists( 'Rentacar_Core_Rental_Policy' ) ? Rentacar_Core_Rental_Policy::minimum_rental_days() : 3 ),
+                    'invalidPeriod'  => __( 'Please enter a valid pickup and return date and time.', 'rentacar-venezia-v2' ),
+                    'loadingEstimate'=> __( 'Loading estimate…', 'rentacar-venezia-v2' ),
+                    'estimateUnavailable' => __( 'An indicative estimate is not available for these dates. You can still review your trip.', 'rentacar-venezia-v2' ),
+                    'estimateError'  => __( 'We could not load the estimate. Please try again.', 'rentacar-venezia-v2' ),
+                    'retryEstimate'  => __( 'Retry estimate', 'rentacar-venezia-v2' ),
+                    'rentalDays'     => __( 'rental days', 'rentacar-venezia-v2' ),
+                    'dailyRate'      => __( 'Daily rate', 'rentacar-venezia-v2' ),
+                    'vehicleSubtotal'=> __( 'Vehicle subtotal', 'rentacar-venezia-v2' ),
+                    'insurance'      => __( 'Insurance', 'rentacar-venezia-v2' ),
+                    'extras'         => __( 'Extras', 'rentacar-venezia-v2' ),
+                    'afterHoursFee'  => __( 'After-hours pickup', 'rentacar-venezia-v2' ),
+                    'airportTransfer'=> __( 'Different-airport transfer', 'rentacar-venezia-v2' ),
+                    'indicativeTotal'=> __( 'Indicative rental total', 'rentacar-venezia-v2' ),
+                    'includedKm'     => __( 'Included kilometres', 'rentacar-venezia-v2' ),
+                    'excessKm'       => __( 'Additional kilometres', 'rentacar-venezia-v2' ),
                 ),
             )
         );

@@ -24,8 +24,10 @@ require_once RENTACAR_CORE_PATH . 'src/Multilingual/LanguageResolverFactory.php'
 require_once RENTACAR_CORE_PATH . 'src/Multilingual/VehicleFieldPolicy.php';
 require_once RENTACAR_CORE_PATH . 'src/Multilingual/VehicleFieldSynchronizer.php';
 require_once RENTACAR_CORE_PATH . 'src/Multilingual/VehicleTranslationAudit.php';
+require_once RENTACAR_CORE_PATH . 'src/Multilingual/ReservationTranslations.php';
 require_once RENTACAR_CORE_PATH . 'src/Vehicles/VehicleMapper.php';
 require_once RENTACAR_CORE_PATH . 'src/Vehicles/VehicleRepository.php';
+require_once RENTACAR_CORE_PATH . 'src/Vehicles/VehicleMaintenance.php';
 require_once RENTACAR_CORE_PATH . 'src/Settings/MarketingClaimRegistry.php';
 require_once RENTACAR_CORE_PATH . 'src/Settings/ReservationExtras.php';
 require_once RENTACAR_CORE_PATH . 'src/Settings/ReservationExtraSettings.php';
@@ -36,15 +38,21 @@ require_once RENTACAR_CORE_PATH . 'src/Pricing/EstimateService.php';
 require_once RENTACAR_CORE_PATH . 'src/Rest/EstimateController.php';
 require_once RENTACAR_CORE_PATH . 'src/Enquiries/ReservationReference.php';
 require_once RENTACAR_CORE_PATH . 'src/Enquiries/ReservationRequest.php';
+require_once RENTACAR_CORE_PATH . 'src/Enquiries/ReservationStore.php';
 require_once RENTACAR_CORE_PATH . 'src/Enquiries/ReservationEmailTemplate.php';
+require_once RENTACAR_CORE_PATH . 'src/Enquiries/PhoneNumberService.php';
 require_once RENTACAR_CORE_PATH . 'src/Enquiries/ReservationValidator.php';
 require_once RENTACAR_CORE_PATH . 'src/Enquiries/BusinessNotification.php';
 require_once RENTACAR_CORE_PATH . 'src/Enquiries/CustomerAcknowledgement.php';
 require_once RENTACAR_CORE_PATH . 'src/Enquiries/ReservationRateLimiter.php';
 require_once RENTACAR_CORE_PATH . 'src/Enquiries/ReservationController.php';
 require_once RENTACAR_CORE_PATH . 'src/Enquiries/ContactController.php';
+require_once RENTACAR_CORE_PATH . 'src/Cli/Commands.php';
 
 add_action( 'init', array( 'Rentacar_Core_Cars_Post_Type', 'register_when_legacy_absent' ), 9 );
+add_action( 'init', array( 'Rentacar_Core_Reservation_Store', 'register_post_type' ), 9 );
+add_action( 'add_meta_boxes_rentacar_request', array( 'Rentacar_Core_Reservation_Store', 'register_admin_meta_box' ) );
+add_action( 'init', array( 'Rentacar_Core_Vehicle_Maintenance', 'register' ), 10 );
 add_filter( 'pll_get_post_types', function( $post_types, $is_settings = false ) { $post_types['cars'] = 'cars'; return $post_types; }, 10, 2 );
 add_filter( 'posts_clauses', array( 'Rentacar_Core_Cars_Post_Type', 'constrain_main_query_to_language' ), 20, 2 );
 add_action( 'admin_init', array( 'Rentacar_Core_Marketing_Claim_Registry', 'register_setting' ) );
@@ -61,3 +69,5 @@ add_filter( 'rentacar_core_reservation_recipient', function( $recipient ) {
 
     return is_email( $configured_recipient ) ? $configured_recipient : $recipient;
 } );
+add_filter( 'gettext', array( 'Rentacar_Core_Reservation_Translations', 'filter_gettext' ), 20, 3 );
+add_action( 'cli_init', array( 'Rentacar_Core_Cli_Commands', 'register' ) );

@@ -76,10 +76,23 @@ test.describe('final theme experience', () => {
     await expect(form.locator('input[name="pickup_time"], input[name="return_time"], select[name="dropoff_location"]')).toHaveCount(0);
   });
 
-  test('keeps the fleet catalogue focused without filtering controls', async ({ page }) => {
+  test('uses a numeric three-day minimum without rolling a July pickup into the next year', async ({ page }) => {
+    await page.goto('/');
+    const tripForm = page.locator('[data-trip-form]');
+    const pickupDate = tripForm.locator('input[name="pickup_date"]');
+    const returnDate = tripForm.locator('input[name="return_date"]');
+
+    await pickupDate.fill('2026-07-28');
+    await expect(pickupDate).toHaveValue('2026-07-28');
+    await expect(returnDate).toHaveAttribute('min', '2026-07-31');
+  });
+
+  test('offers native price sorting without unrelated fleet filters', async ({ page }) => {
     await page.goto('/fleet/');
-    await expect(page.locator('#fleet-filters, [data-fleet-filters], [data-fleet-filter-drawer], .fleet-active-filters')).toHaveCount(0);
-    await expect(page.locator('select[name="transmission"], select[name="passengers"], select[name="doors"], select[name="sort"], input[name="air_conditioning"]')).toHaveCount(0);
+    await expect(page.locator('#fleet-filters, [data-fleet-filters], [data-fleet-filter-drawer], .fleet-active-filters, .fleet-airport-links')).toHaveCount(0);
+    await expect(page.locator('select[name="transmission"], select[name="passengers"], select[name="doors"], input[name="air_conditioning"]')).toHaveCount(0);
+    await expect(page.locator('select[name="sort"]')).toHaveCount(1);
+    await expect(page.locator('select[name="sort"] option')).toHaveCount(3);
     await expect(page.locator('.fleet-page .page-intro > .eyebrow')).toHaveCount(0);
     await expect(page.locator('body')).not.toContainText(/Filter and sort cars|Filtra e ordina le auto|Apply filters|Clear filters/i);
   });
@@ -214,16 +227,139 @@ test.describe('final theme experience', () => {
     await page.goto('/');
     await page.locator('[data-reservation-trigger]').first().click();
     const extras = page.locator('[data-reservation-form] input[name="extras[]"]');
-    await expect(extras).toHaveCount(2);
+    await expect(extras).toHaveCount(3);
     await expect(extras.nth(0)).toHaveAttribute('value', 'child_seat');
     await expect(extras.nth(1)).toHaveAttribute('value', 'additional_driver');
+    await expect(extras.nth(2)).toHaveAttribute('value', 'authorization_abroad');
     await expect(page.locator('[data-reservation-form] input[value="gps"], [data-reservation-form] input[value="internet_sim"]')).toHaveCount(0);
     await expect(page.locator('[data-reservation-form] input[name="similar_vehicle"]')).toHaveCount(0);
-    await expect(page.locator('.reservation-extras small, .reservation-form__hint')).toHaveCount(0);
+    await expect(page.locator('.reservation-extras small')).toHaveCount(3);
+    await expect(page.locator('.reservation-extras')).toContainText(/€5[.,]00/);
+    await expect(page.locator('.reservation-extras')).toContainText(/€80[.,]00/);
+    await expect(page.locator('.reservation-form__hint')).toHaveCount(0);
     await expect(page.locator('[data-reservation-step="1"] .reservation-form__options summary')).toContainText(/extras|extra|дополн/i);
     await expect(page.locator('[data-reservation-step="2"] .reservation-form__options')).toHaveCount(0);
     await expect(page.locator('.reservation-flight, input[name="flight_number"], input[name="airline"]')).toHaveCount(0);
     await expect(page.locator('[data-reservation-progress]')).toContainText(/1 of 2|1 di 2|1 din 2|1 из 2/);
+  });
+
+  test('offers reservation times only in quarter-hour intervals', async ({ page }) => {
+    await page.goto('/');
+    await page.locator('[data-reservation-trigger]').first().click();
+    const form = page.locator('[data-reservation-form]');
+
+    const pickupTimes = form.locator('select[name="pickup_time"] option');
+    const returnTimes = form.locator('select[name="return_time"] option');
+    await expect(pickupTimes).toHaveCount(97);
+    await expect(returnTimes).toHaveCount(97);
+    await expect(pickupTimes.nth(1)).toHaveAttribute('value', '00:00');
+    await expect(pickupTimes.nth(2)).toHaveAttribute('value', '00:15');
+    await expect(pickupTimes.nth(96)).toHaveAttribute('value', '23:45');
+  });
+
+  test('uses the shared searchable international phone control in reservation and contact forms', async ({ page }) => {
+    await page.goto('/');
+    await page.locator('[data-reservation-trigger]').first().click();
+    const reservationForm = page.locator('[data-reservation-form]');
+    await reservationForm.locator('input[name="pickup_date"]').fill('2027-04-10');
+    await reservationForm.locator('select[name="pickup_time"]').selectOption('10:00');
+    await reservationForm.locator('input[name="return_date"]').fill('2027-04-13');
+    await reservationForm.locator('select[name="return_time"]').selectOption('10:00');
+    await reservationForm.locator('[data-reservation-continue]').click();
+    const reservationPhone = page.locator('[data-reservation-form] [data-phone-field]');
+    await expect(reservationPhone).toHaveCount(1);
+    await expect(reservationPhone.locator('[data-phone-native]')).toBeHidden();
+    await expect(reservationPhone.locator('[data-phone-option]')).toHaveCount(245);
+    const selectorBox = await reservationPhone.locator('[data-phone-trigger]').boundingBox();
+    const numberBox = await reservationPhone.locator('[data-phone-number]').boundingBox();
+    expect(selectorBox?.y).toBe(numberBox?.y);
+    expect(Math.round((selectorBox?.x || 0) + (selectorBox?.width || 0))).toBe(Math.round(numberBox?.x || 0));
+
+    await reservationPhone.locator('[data-phone-trigger]').click();
+    const search = reservationPhone.locator('[data-phone-search]');
+    await expect(reservationPhone.locator('[data-phone-clear]')).toHaveCount(0);
+    await search.fill('MD');
+    await expect(reservationPhone.locator('[data-phone-option]:visible')).toHaveCount(1);
+    await search.fill('+373');
+    await expect(reservationPhone.locator('[data-phone-option]:visible')).toHaveCount(1);
+    await search.fill('Moldova');
+    await expect(reservationPhone.locator('[data-phone-option]:visible')).toHaveCount(1);
+    await search.press('ArrowDown');
+    await page.keyboard.press('Enter');
+    await expect(reservationPhone.locator('[data-phone-code]')).toHaveText('+373');
+    expect(await reservationPhone.locator('[data-phone-flag]').evaluate((element) => (
+      element.textContent?.trim() || element.querySelector('img')?.getAttribute('alt') || ''
+    ))).toBe('🇲🇩');
+    await reservationPhone.locator('[data-phone-number]').fill('+373 (69) 123 456');
+    await reservationPhone.locator('[data-phone-number]').blur();
+    await expect(reservationPhone.locator('input[name="phone_calling_code"]')).toHaveValue('+373');
+
+    await page.goto('/contact/');
+    const contactPhone = page.locator('.contact-form [data-phone-field]');
+    await expect(contactPhone).toHaveCount(1);
+    await expect(contactPhone.locator('[data-phone-option]')).toHaveCount(245);
+    const contactSelectorBox = await contactPhone.locator('[data-phone-trigger]').boundingBox();
+    const contactNumberBox = await contactPhone.locator('[data-phone-number]').boundingBox();
+    expect(contactSelectorBox?.y).toBe(contactNumberBox?.y);
+    expect(Math.round((contactSelectorBox?.x || 0) + (contactSelectorBox?.width || 0))).toBe(Math.round(contactNumberBox?.x || 0));
+  });
+
+  test('keeps the phone country picker inside a narrow mobile viewport', async ({ page }) => {
+    for (const width of [320, 360, 375, 390, 430]) {
+      await page.setViewportSize({ width, height: 700 });
+      await page.goto('/contact/');
+      const phone = page.locator('.contact-form [data-phone-field]');
+      const selectorBox = await phone.locator('[data-phone-trigger]').boundingBox();
+      const numberBox = await phone.locator('[data-phone-number]').boundingBox();
+      expect(selectorBox?.y).toBe(numberBox?.y);
+      expect((numberBox?.x || 0) + (numberBox?.width || 0)).toBeLessThanOrEqual(width);
+      await phone.locator('[data-phone-trigger]').click();
+      const box = await phone.locator('[data-phone-dialog]').boundingBox();
+      expect(box).not.toBeNull();
+      expect((box?.x || 0) >= 0 && (box?.x || 0) + (box?.width || 0) <= width).toBeTruthy();
+    }
+  });
+
+  test('localizes the shared phone picker in every supported interface language', async ({ page }) => {
+    const routes = [
+      ['/contatti/', 'Cerca Paesi'],
+      ['/en/contact/', 'Search countries'],
+      ['/ro/contacte-si-asistenta/', 'Căutați țări'],
+      ['/ru/kontakty-i-pomoshch/', 'Поиск стран'],
+    ] as const;
+    for (const [route, searchLabel] of routes) {
+      await page.goto(route);
+      const phone = page.locator('.contact-form [data-phone-field]');
+      await expect(phone.locator('[data-phone-search]')).toHaveAttribute('placeholder', searchLabel);
+      await expect(phone.locator('[data-phone-option]')).toHaveCount(245);
+    }
+  });
+
+  test('keeps a native country selector and telephone input without JavaScript', async ({ browser }) => {
+    const context = await browser.newContext({ javaScriptEnabled: false });
+    const page = await context.newPage();
+    await page.goto(`${process.env.PLAYWRIGHT_BASE_URL || 'http://rentacar-venezia-local.local'}/contact/`);
+    const form = page.locator('.contact-form form');
+    await expect(form.locator('select[name="phone_country"]')).toBeVisible();
+    await expect(form.locator('input[name="phone"]')).toHaveAttribute('type', 'tel');
+    await expect(form.locator('input[name="phone_calling_code"]')).toHaveValue('+39');
+    await context.close();
+  });
+
+  test('returns a localized field-level error when the contact phone is invalid', async ({ page }) => {
+    await page.goto('/contatti/');
+    const form = page.locator('.contact-form form');
+    await form.locator('input[name="name"]').fill('Local Contact Test');
+    await form.locator('input[name="phone"]').fill('invalid-number');
+    await form.locator('input[name="email"]').fill(`contact-invalid-${Date.now()}@example.invalid`);
+    await form.locator('select[name="topic"]').selectOption('general');
+    await form.locator('textarea[name="message"]').fill('This checks the invalid phone response.');
+    await form.locator('input[name="privacy"]').check();
+    await Promise.all([
+      page.waitForURL(/contact_status=invalid_phone/),
+      form.locator('button[type="submit"]').click(),
+    ]);
+    await expect(page.locator('.international-phone__error')).toContainText('numero di telefono');
   });
 
   test('uses only airport selects and sends the authoritative inter-airport locations for an estimate', async ({ page }) => {
@@ -237,9 +373,9 @@ test.describe('final theme experience', () => {
     await expect(form.locator('.reservation-location-fee')).toContainText(/€25[.,]00/);
 
     await form.locator('input[name="pickup_date"]').fill('2027-04-10');
-    await form.locator('input[name="pickup_time"]').fill('10:00');
+    await form.locator('select[name="pickup_time"]').selectOption('10:00');
     await form.locator('input[name="return_date"]').fill('2027-04-13');
-    await form.locator('input[name="return_time"]').fill('10:00');
+    await form.locator('select[name="return_time"]').selectOption('10:00');
     await form.locator('select[name="pickup_location"]').selectOption('Airport Venice Marco Polo');
     await form.locator('[data-reservation-return-different]').check();
     const estimateRequest = page.waitForRequest((request) => request.url().includes('/wp-json/rentacar/v1/estimate') && request.postData()?.includes('return_location=Treviso+Airport+Arrivals'));
@@ -248,6 +384,35 @@ test.describe('final theme experience', () => {
     // The estimate remains server-authoritative. A vehicle without a matching
     // pricing band may legitimately return no indicative total, so assert the
     // location payload rather than manufacturing a client-side amount.
+  });
+
+  test('keeps refundable deposit and estimate disclaimer out of the customer calculation', async ({ page }) => {
+    await page.route('**/wp-json/rentacar/v1/estimate', async (route) => {
+      await route.fulfill({
+        contentType: 'application/json',
+        body: JSON.stringify({
+          days: 3,
+          line_items: [{ key: 'vehicle_base_rate', label: 'Vehicle subtotal', amount: 180 }],
+          estimate_total: 540,
+          included_km: 450,
+          excess_km_rate: 0.1,
+          deposit: 350,
+          disclaimer: 'This is an indicative estimate. Availability and final price are confirmed by our team.',
+        }),
+      });
+    });
+    await page.goto('/');
+    await page.locator('[data-reservation-trigger]').first().click();
+    const form = page.locator('[data-reservation-form]');
+    await form.locator('input[name="pickup_date"]').fill('2027-04-10');
+    await form.locator('select[name="pickup_time"]').selectOption('10:00');
+    await form.locator('input[name="return_date"]').fill('2027-04-13');
+    await form.locator('select[name="return_time"]').selectOption('10:00');
+
+    const calculation = form.locator('[data-reservation-estimate-content]');
+    await expect(calculation).toContainText('540');
+    await expect(calculation).not.toContainText(/Refundable security deposit|Deposito cauzionale rimborsabile/i);
+    await expect(calculation).not.toContainText('This is an indicative estimate. Availability and final price are confirmed by our team.');
   });
 
   test('presents accessible validation errors without a network request', async ({ page }) => {
@@ -266,9 +431,9 @@ test.describe('final theme experience', () => {
     await page.locator('[data-reservation-trigger]').first().click();
     const form = page.locator('[data-reservation-form]');
     await form.locator('input[name="pickup_date"]').fill('2027-04-10');
-    await form.locator('input[name="pickup_time"]').fill('10:00');
-    await form.locator('input[name="return_date"]').fill('2027-04-12');
-    await form.locator('input[name="return_time"]').fill('10:00');
+    await form.locator('select[name="pickup_time"]').selectOption('10:00');
+    await form.locator('input[name="return_date"]').fill('2027-04-13');
+    await form.locator('select[name="return_time"]').selectOption('10:00');
     await form.locator('select[name="pickup_location"]').selectOption('Airport Venice Marco Polo');
     await form.locator('[data-reservation-continue]').click();
     await form.locator('input[name="full_name"]').fill('Local Test');
@@ -465,17 +630,16 @@ test.describe('final theme experience', () => {
 
   test('keeps shared footer, contact and reservation controls translated', async ({ page }) => {
     const languages = [
-      ['/', ['Termini e condizioni', 'Informativa sulla privacy', 'Impostazioni cookie'], '/contatti/', 'Invia messaggio'],
-      ['/en/', ['Terms and Conditions', 'Privacy Policy', 'Cookie Settings'], '/en/contact/', 'Send message'],
-      ['/ro/', ['Termeni și condiții', 'Politica de confidențialitate', 'Setări cookie'], '/ro/contacte-si-asistenta/', 'Trimiteți mesajul'],
-      ['/ru/', ['Условия и положения', 'Политика конфиденциальности', 'Настройки cookie'], '/ru/kontakty-i-pomoshch/', 'Отправить сообщение'],
+      ['/', ['Termini e condizioni', 'Informativa sulla privacy'], '/contatti/', 'Invia messaggio'],
+      ['/en/', ['Terms and Conditions', 'Privacy Policy'], '/en/contact/', 'Send message'],
+      ['/ro/', ['Termeni și condiții', 'Politica de confidențialitate'], '/ro/contacte-si-asistenta/', 'Trimiteți mesajul'],
+      ['/ru/', ['Условия и положения', 'Политика конфиденциальности'], '/ru/kontakty-i-pomoshch/', 'Отправить сообщение'],
     ] as const;
 
     for (const [homePath, legalLabels, contactPath, contactSubmitLabel] of languages) {
       await page.goto(homePath);
       await expect(page.locator('.site-footer__legal')).toContainText(legalLabels[0]);
       await expect(page.locator('.site-footer__legal')).toContainText(legalLabels[1]);
-      await expect(page.locator('.site-footer__legal')).toContainText(legalLabels[2]);
 
       await page.goto(contactPath);
       await expect(page.locator('.contact-form button[type="submit"]')).toHaveText(contactSubmitLabel);
@@ -554,8 +718,8 @@ test.describe('final theme experience', () => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/');
 
-    await expect(page.locator('.site-header .custom-logo')).toHaveCount(1);
-    await expect(page.locator('.site-header .custom-logo')).toBeVisible();
+    await expect(page.locator('.site-header .site-brand img')).toHaveCount(1);
+    await expect(page.locator('.site-header .site-brand img')).toBeVisible();
     await expect(page.locator('.primary-navigation__list > li:visible')).toHaveCount(3);
     await expect(page.locator('.site-header__actions .button--whatsapp')).toBeHidden();
     await expect(page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).resolves.toBeTruthy();
@@ -586,10 +750,7 @@ test.describe('final theme experience', () => {
       await expect(page.locator('h1')).toHaveCount(1);
       await expect(page.locator('h1')).toHaveText(title);
       await expect(page.locator('link[rel="canonical"]')).toHaveCount(1);
-      await expect(page.locator('.site-footer__legal a')).toHaveCount(3);
-      const policyLink = page.locator('.site-footer__legal a').filter({ hasText: title });
-      await expect(policyLink).toHaveCount(1);
-      await expect(policyLink).toHaveAttribute('href', new RegExp(`${prefix.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}${slug}/?$`));
+      await expect(page.locator('.site-footer__legal a')).toHaveCount(2);
     }
   });
 
@@ -603,52 +764,17 @@ test.describe('final theme experience', () => {
     }
   });
 
-  test('blocks optional tracking before a choice and exposes functional Cookie Settings', async ({ page }) => {
+  test('keeps optional tracking disabled and removes the custom cookie interface', async ({ page }) => {
     const optionalRequests: string[] = [];
     page.on('request', (request) => {
       if (/googletagmanager|google-analytics|doubleclick|google\.it\/ads/i.test(request.url())) optionalRequests.push(request.url());
     });
     await page.goto('/');
-    await expect(page.locator('[data-cookie-consent]')).toBeVisible();
-    await expect(page.locator('[data-cookie-settings]')).toBeVisible();
+    await expect(page.locator('[data-cookie-consent], [data-cookie-settings], [data-cookie-preferences-dialog]')).toHaveCount(0);
     expect(optionalRequests).toEqual([]);
-    await page.locator('[data-cookie-settings]').click();
-    await expect(page.locator('[data-cookie-preferences-dialog]')).toBeVisible();
-    await page.locator('[data-cookie-close]').click();
-    await expect(page.locator('[data-cookie-preferences-dialog]')).toBeHidden();
   });
 
-  test('keeps the cookie consent notice compact and structurally balanced', async ({ page }) => {
-    await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/');
-
-    const notice = page.locator('[data-cookie-consent]');
-    const desktopBox = await notice.boundingBox();
-    const desktopActions = await notice.locator('button').evaluateAll((items) => items.map((item) => {
-      const rect = item.getBoundingClientRect();
-      return { top: rect.top, width: rect.width };
-    }));
-
-    expect(desktopBox?.width).toBeLessThanOrEqual(660);
-    expect(new Set(desktopActions.map((item) => item.top)).size).toBe(1);
-    expect(Math.max(...desktopActions.map((item) => item.width)) - Math.min(...desktopActions.map((item) => item.width))).toBeLessThanOrEqual(1);
-
-    await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto('/');
-    const mobileBox = await notice.boundingBox();
-    const mobileActions = await notice.locator('button').evaluateAll((items) => items.map((item) => {
-      const rect = item.getBoundingClientRect();
-      return { top: rect.top, width: rect.width };
-    }));
-
-    expect(mobileBox?.height).toBeLessThan(330);
-    expect(mobileActions[0].top).toBe(mobileActions[1].top);
-    expect(mobileActions[2].top).toBeGreaterThan(mobileActions[0].top);
-    expect(mobileActions[2].width).toBeGreaterThan(mobileActions[0].width);
-    await expect(page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).resolves.toBeTruthy();
-  });
-
-  test('keeps the generated anonymous inventory aligned with the gated default state', async ({ page, context }) => {
+  test('keeps the generated anonymous inventory aligned with analytics-disabled state', async ({ page, context }) => {
     const audit = JSON.parse(await readFile(resolve('docs/generated/cookie-audit.json'), 'utf8')) as { inventory: { publicVisitorTechnologies: Array<{ exactName: string }> } };
     await page.goto('/');
     const names = (await context.cookies()).map((cookie) => cookie.name).sort();
@@ -682,11 +808,10 @@ test.describe('final theme experience', () => {
     await expect(toggle).toBeFocused();
   });
 
-  test('shows context-aware mobile conversion actions', async ({ page }) => {
+  test('removes fixed mobile conversion actions', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/');
-    await expect(page.locator('.mobile-action-bar')).toBeVisible();
-    await expect(page.locator('.mobile-action-bar__whatsapp')).toBeVisible();
+    await expect(page.locator('.mobile-action-bar')).toHaveCount(0);
 
     await page.goto('/fleet/');
     await expect(page.locator('.mobile-action-bar, [data-mobile-filter-trigger], .fleet-filter-drawer')).toHaveCount(0);
@@ -694,7 +819,7 @@ test.describe('final theme experience', () => {
     const vehicleUrl = await page.locator('.vehicle-card h3 a').first().getAttribute('href');
     test.skip(!vehicleUrl, 'A published vehicle is required for mobile vehicle actions.');
     await page.goto(vehicleUrl!);
-    await expect(page.locator('.mobile-action-bar--vehicle [data-reservation-trigger]')).toBeVisible();
+    await expect(page.locator('.mobile-action-bar')).toHaveCount(0);
   });
 
   test('renders structured airport and information pages without legacy flight collection', async ({ page }) => {
@@ -704,7 +829,7 @@ test.describe('final theme experience', () => {
     await expect(page.locator('.airport-page__process li')).toHaveCount(3);
     await expect(page.locator('.airport-page__practical')).toContainText('VCE');
     await expect(page.locator('body')).not.toContainText(/flight number/i);
-    await expect(page.locator('.mobile-action-bar')).toBeVisible();
+    await expect(page.locator('.mobile-action-bar')).toHaveCount(0);
 
     await page.goto('/en/how-it-works/');
     await expect(page.locator('.information-steps li')).toHaveCount(5);

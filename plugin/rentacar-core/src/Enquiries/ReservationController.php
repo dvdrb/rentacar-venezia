@@ -1,7 +1,7 @@
 <?php
 defined( 'ABSPATH' ) || exit;
 
-/** Handles public reservation requests without persisting customer data. */
+/** Handles public reservation requests and records them before mail delivery. */
 final class Rentacar_Core_Reservation_Controller {
     public static function handle() {
         $input = self::input();
@@ -15,31 +15,36 @@ final class Rentacar_Core_Reservation_Controller {
             self::respond_error( $validation );
         }
 
+        $input = array_merge( $input, ( new Rentacar_Core_Phone_Number_Service() )->normalize( $input['phone_country'], $input['phone'], $input['phone_calling_code'] ) );
+
         if ( ! ( new Rentacar_Core_Reservation_Rate_Limiter() )->allows( $input['email'] ) ) {
             self::respond_error( new WP_Error( 'rate_limit', __( 'Please wait a moment before sending another request.', 'rentacar-core' ) ) );
         }
 
-        $recipient = apply_filters( 'rentacar_core_reservation_recipient', '' );
-        if ( ! is_email( $recipient ) ) {
-            self::respond_error( new WP_Error( 'recipient', __( 'Reservation requests are not configured yet. Please contact us directly.', 'rentacar-core' ) ) );
-        }
-
         $vehicle = ( new Rentacar_Core_Vehicle_Repository() )->find( $input['vehicle_id'] );
         $estimate = ( new Rentacar_Core_Estimate_Service() )->estimate( $input['vehicle_id'], $input['pickup_date'], $input['pickup_time'], $input['return_date'], $input['return_time'], $input['extras'], $input['insurance'], $input['pickup_location'], $input['return_location'] );
+        if ( ! $estimate || ! $estimate->get( 'available' ) ) {
+            self::respond_error( new WP_Error( 'estimate', __( 'An estimate is not available for the selected rental period.', 'rentacar-core' ) ) );
+        }
         $input['reference'] = Rentacar_Core_Reservation_Reference::generate();
         $input['vehicle_title'] = $vehicle ? $vehicle->get( 'title' ) : '';
+        $input['vehicle_url'] = $vehicle ? $vehicle->get( 'permalink' ) : '';
+        $input['powertrain'] = $vehicle ? $vehicle->get( 'powertrain' ) : 'other';
         $input['estimate_summary'] = self::estimate_summary( $estimate );
         $input['extras'] = $estimate ? $estimate->get( 'extras', array() ) : array();
         $input['inter_airport_surcharge'] = $estimate ? (float) $estimate->get( 'inter_airport_surcharge', 0 ) : 0;
         $input['after_hours_pickup'] = $estimate ? (float) $estimate->get( 'after_hours_pickup', 0 ) : 0;
+        $input['estimate'] = $estimate ? $estimate->to_array() : array();
         $input['submitted_at'] = wp_date( 'c' );
         $request = new Rentacar_Core_Reservation_Request( $input );
+        $store = new Rentacar_Core_Reservation_Store();
+        $stored_request_id = $store->create( $request );
+        if ( is_wp_error( $stored_request_id ) ) self::respond_error( new WP_Error( 'storage', __( 'We could not record the request. Please try again.', 'rentacar-core' ) ) );
 
-        $business_sent = ( new Rentacar_Core_Business_Notification() )->send( $request, $recipient );
+        $recipient = apply_filters( 'rentacar_core_reservation_recipient', '' );
+        $business_sent = is_email( $recipient ) ? ( new Rentacar_Core_Business_Notification() )->send( $request, $recipient ) : false;
         $customer_sent = ( new Rentacar_Core_Customer_Acknowledgement() )->send( $request );
-        if ( ! $business_sent || ! $customer_sent ) {
-            self::respond_error( new WP_Error( 'delivery', __( 'We could not send the request. Please contact us directly.', 'rentacar-core' ) ) );
-        }
+        $store->record_delivery( $stored_request_id, $business_sent, $customer_sent );
 
         $response = array(
             'reference' => $request->get( 'reference' ),
@@ -68,7 +73,7 @@ final class Rentacar_Core_Reservation_Controller {
             'vehicle_id' => absint( $raw['vehicle_id'] ?? 0 ), 'pickup_date' => sanitize_text_field( $raw['pickup_date'] ?? '' ), 'pickup_time' => sanitize_text_field( $raw['pickup_time'] ?? '' ),
             'return_date' => sanitize_text_field( $raw['return_date'] ?? '' ), 'return_time' => sanitize_text_field( $raw['return_time'] ?? '' ),
             'pickup_location' => sanitize_text_field( $raw['pickup_location'] ?? '' ), 'return_location' => sanitize_text_field( $raw['return_location'] ?? '' ),
-            'full_name' => sanitize_text_field( trim( ( $raw['full_name'] ?? '' ) ?: trim( ( $raw['first_name'] ?? '' ) . ' ' . ( $raw['last_name'] ?? '' ) ) ) ), 'first_name' => sanitize_text_field( $raw['first_name'] ?? '' ), 'last_name' => sanitize_text_field( $raw['last_name'] ?? '' ), 'phone' => sanitize_text_field( $raw['phone'] ?? '' ), 'email' => sanitize_email( $raw['email'] ?? '' ),
+            'full_name' => sanitize_text_field( trim( ( $raw['full_name'] ?? '' ) ?: trim( ( $raw['first_name'] ?? '' ) . ' ' . ( $raw['last_name'] ?? '' ) ) ) ), 'first_name' => sanitize_text_field( $raw['first_name'] ?? '' ), 'last_name' => sanitize_text_field( $raw['last_name'] ?? '' ), 'phone' => sanitize_text_field( $raw['phone'] ?? '' ), 'phone_country' => sanitize_key( $raw['phone_country'] ?? '' ), 'phone_calling_code' => sanitize_text_field( $raw['phone_calling_code'] ?? '' ), 'email' => sanitize_email( $raw['email'] ?? '' ),
             'similar_vehicle' => ! empty( $raw['similar_vehicle'] ), 'message' => sanitize_textarea_field( $raw['message'] ?? '' ), 'terms' => ! empty( $raw['terms'] ), 'insurance' => sanitize_key( $raw['insurance'] ?? '' ),
             'website' => sanitize_text_field( $raw['website'] ?? '' ), 'started_at' => absint( $raw['started_at'] ?? 0 ),
             'extras' => self::extra_keys( $raw['extras'] ?? array() ),

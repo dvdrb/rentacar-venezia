@@ -5,6 +5,24 @@ defined( 'ABSPATH' ) || exit;
 final class Rentacar_Core_Rental_Policy {
     const OPTION = 'rentacar_core_rental_policy';
     const INTER_AIRPORT_SURCHARGE_CENTS = 2500;
+    const MINIMUM_RENTAL_DAYS = 3;
+    const MAXIMUM_RENTAL_DAYS = 60;
+    const TIME_INCREMENT_MINUTES = 15;
+
+    /** One policy entry point for every reservation surface. */
+    public static function minimum_rental_days() {
+        return max( 1, (int) apply_filters( 'rentacar_core_minimum_rental_days', self::MINIMUM_RENTAL_DAYS ) );
+    }
+
+    public static function maximum_rental_days() {
+        return max( self::minimum_rental_days(), (int) apply_filters( 'rentacar_core_maximum_rental_days', self::MAXIMUM_RENTAL_DAYS ) );
+    }
+
+    public static function supports_reservation_time( $time ) {
+        $minutes = self::time_to_minutes( $time );
+
+        return false !== $minutes && 0 === $minutes % self::TIME_INCREMENT_MINUTES;
+    }
 
     public static function defaults() {
         return array(

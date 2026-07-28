@@ -34,6 +34,7 @@ final class Rentacar_Core_Vehicle_Mapper {
             'passengers'        => $this->integer_meta( $post->ID, 'max_passagers' ),
             'doors'             => $this->integer_meta( $post->ID, 'doors' ),
             'air_conditioning'  => (bool) get_post_meta( $post->ID, 'air_conditioning', true ),
+            'powertrain'        => class_exists( 'Rentacar_Core_Vehicle_Maintenance' ) ? Rentacar_Core_Vehicle_Maintenance::normalize_powertrain( get_post_meta( $post->ID, Rentacar_Core_Vehicle_Maintenance::POWERTRAIN_META, true ) ) : 'other',
             'pricing_bands' => new Rentacar_Core_Pricing_Band_Collection( array(
                 new Rentacar_Core_Pricing_Band( $this->integer_meta( $post->ID, 'price_1_days_1' ), $this->integer_meta( $post->ID, 'price_1_days_2' ), get_post_meta( $post->ID, 'price', true ) ),
                 new Rentacar_Core_Pricing_Band( $this->integer_meta( $post->ID, 'price_2_days_1' ), $this->integer_meta( $post->ID, 'price_2_days_2' ), get_post_meta( $post->ID, 'price2', true ) ),

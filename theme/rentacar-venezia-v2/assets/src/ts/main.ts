@@ -1,3 +1,6 @@
+import { parsePhoneNumberFromString } from 'libphonenumber-js/core';
+import phoneMetadata from '../../../../../plugin/rentacar-core/data/phone-metadata.json';
+
 document.documentElement.classList.add('js');
 
 type ReservationStrings = {
@@ -10,11 +13,28 @@ type ReservationStrings = {
   reference: string;
   stepTrip: string;
   stepDetails: string;
-  consentSaved: string;
+  minimumRental: string;
+  invalidPeriod: string;
+  loadingEstimate: string;
+  estimateUnavailable: string;
+  estimateError: string;
+  retryEstimate: string;
+  rentalDays: string;
+  dailyRate: string;
+  vehicleSubtotal: string;
+  insurance: string;
+  extras: string;
+  afterHoursFee: string;
+  airportTransfer: string;
+  indicativeTotal: string;
+  includedKm: string;
+  excessKm: string;
 };
 
 type ReservationConfig = {
   reservationUrl: string;
+  estimateUrl: string;
+  minimumRentalDays: number;
   strings: ReservationStrings;
 };
 
@@ -28,44 +48,142 @@ const track = (event: string): void => {
 };
 
 const configuration = (window as RentacarWindow).rentacarVenezia;
-const strings: ReservationStrings = configuration?.strings || {
-  menuOpen: 'Open navigation',
-  menuClose: 'Close navigation',
-  sending: 'Sending…',
-  sendRequest: 'Send request',
-  reviewForm: 'Please review the form and try again.',
-  deliveryFailed: 'We could not send the request. Please try again.',
-  reference: 'Reference: %s',
-  stepTrip: '1 of 2 · Trip',
-  stepDetails: '2 of 2 · Contact',
-  consentSaved: 'Your cookie preferences have been saved.',
+if (!configuration) throw new Error('Reservation interface configuration is unavailable.');
+const strings: ReservationStrings = configuration.strings;
+const minimumRentalDays = Number(configuration.minimumRentalDays);
+if (!Number.isInteger(minimumRentalDays) || minimumRentalDays < 1) throw new Error('Reservation minimum duration is unavailable.');
+
+type PhoneField = {
+  root: HTMLElement;
+  native: HTMLSelectElement;
+  enhanced: HTMLElement;
+  trigger: HTMLButtonElement;
+  dialog: HTMLElement;
+  search: HTMLInputElement;
+  options: HTMLButtonElement[];
+  empty: HTMLElement;
+  flag: HTMLElement;
+  name: HTMLElement;
+  code: HTMLElement;
+  helpCode: HTMLElement;
+  callingCode: HTMLInputElement;
+  number: HTMLInputElement;
 };
 
-const consentBanner = document.querySelector<HTMLElement>('[data-cookie-consent]');
-const consentDialog = document.querySelector<HTMLDialogElement>('[data-cookie-preferences-dialog]');
-const consentAnalytics = consentDialog?.querySelector<HTMLInputElement>('[data-cookie-analytics]');
-let consentReturnFocus: HTMLElement | null = null;
+const phoneFields = Array.from(document.querySelectorAll<HTMLElement>('[data-phone-field]')).flatMap((root) => {
+  const native = root.querySelector<HTMLSelectElement>('[data-phone-country]');
+  const enhanced = root.querySelector<HTMLElement>('[data-phone-enhanced]');
+  const trigger = root.querySelector<HTMLButtonElement>('[data-phone-trigger]');
+  const dialog = root.querySelector<HTMLElement>('[data-phone-dialog]');
+  const search = root.querySelector<HTMLInputElement>('[data-phone-search]');
+  const empty = root.querySelector<HTMLElement>('[data-phone-empty]');
+  const flag = root.querySelector<HTMLElement>('[data-phone-flag]');
+  const name = root.querySelector<HTMLElement>('[data-phone-country-name]');
+  const code = root.querySelector<HTMLElement>('[data-phone-code]');
+  const helpCode = root.querySelector<HTMLElement>('[data-phone-help-code]');
+  const callingCode = root.querySelector<HTMLInputElement>('[data-phone-calling-code]');
+  const number = root.querySelector<HTMLInputElement>('[data-phone-number]');
+  const options = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-phone-option]'));
+  return native && enhanced && trigger && dialog && search && empty && flag && name && code && helpCode && callingCode && number
+    ? [{ root, native, enhanced, trigger, dialog, search, options, empty, flag, name, code, helpCode, callingCode, number }]
+    : [];
+});
 
-const saveCookieConsent = (value: 'necessary' | 'analytics'): void => {
-  const expires = new Date(Date.now() + 180 * 24 * 60 * 60 * 1000).toUTCString();
-  document.cookie = `rentacar_cookie_consent=${value}; path=/; expires=${expires}; SameSite=Lax${window.location.protocol === 'https:' ? '; Secure' : ''}`;
-  window.location.reload();
+const visiblePhoneOptions = (field: PhoneField): HTMLButtonElement[] => field.options.filter((option) => !option.hidden);
+
+const setPhoneDialog = (field: PhoneField, open: boolean, focusSearch = false): void => {
+  field.dialog.hidden = !open;
+  field.trigger.setAttribute('aria-expanded', String(open));
+  if (open && focusSearch) requestAnimationFrame(() => field.search.focus());
 };
 
-const openCookiePreferences = (source: HTMLElement): void => {
-  if (!consentDialog) return;
-  consentReturnFocus = source;
-  consentDialog.showModal();
-  requestAnimationFrame(() => consentAnalytics?.focus());
+const setPhoneCountry = (field: PhoneField, country: string): void => {
+  const option = field.native.querySelector<HTMLOptionElement>(`option[value="${CSS.escape(country)}"]`);
+  const countryButton = field.options.find((item) => item.dataset.country === country);
+  if (!option || !countryButton) return;
+  const sourceFlag = countryButton.querySelector('span');
+  field.native.value = country;
+  field.callingCode.value = option.dataset.callingCode || countryButton.dataset.callingCode || '';
+  // WordPress replaces flag emoji with an image on supported browsers. Copy
+  // the rendered node rather than its text so the selected flag survives that
+  // transformation as well as browsers that retain the emoji character.
+  field.flag.replaceChildren(...Array.from(sourceFlag?.childNodes || []).map((node) => node.cloneNode(true)));
+  field.name.textContent = countryButton.querySelectorAll('span')[1]?.textContent || country;
+  field.code.textContent = field.callingCode.value;
+  field.helpCode.textContent = field.callingCode.value;
+  field.options.forEach((item) => item.setAttribute('aria-selected', String(item === countryButton)));
+  setPhoneDialog(field, false);
+  field.trigger.focus();
 };
 
-consentBanner?.querySelector<HTMLButtonElement>('[data-cookie-reject]')?.addEventListener('click', () => saveCookieConsent('necessary'));
-consentBanner?.querySelector<HTMLButtonElement>('[data-cookie-accept]')?.addEventListener('click', () => saveCookieConsent('analytics'));
-consentBanner?.querySelector<HTMLButtonElement>('[data-cookie-preferences]')?.addEventListener('click', (event) => openCookiePreferences(event.currentTarget as HTMLButtonElement));
-document.querySelectorAll<HTMLButtonElement>('[data-cookie-settings]').forEach((button) => button.addEventListener('click', () => openCookiePreferences(button)));
-consentDialog?.querySelector<HTMLButtonElement>('[data-cookie-close]')?.addEventListener('click', () => consentDialog.close());
-consentDialog?.querySelector<HTMLButtonElement>('[data-cookie-save]')?.addEventListener('click', () => saveCookieConsent(consentAnalytics?.checked ? 'analytics' : 'necessary'));
-consentDialog?.addEventListener('close', () => consentReturnFocus?.focus());
+const filterPhoneCountries = (field: PhoneField): void => {
+  const query = field.search.value.trim().toLocaleLowerCase();
+  let matches = 0;
+  field.options.forEach((option) => {
+    const match = !query || (option.dataset.search || '').toLocaleLowerCase().includes(query);
+    option.hidden = !match;
+    if (match) matches += 1;
+  });
+  field.empty.hidden = matches > 0;
+};
+
+phoneFields.forEach((field) => {
+  field.enhanced.hidden = false;
+  const nativeWrapper = field.root.querySelector<HTMLElement>('[data-phone-native]');
+  nativeWrapper?.setAttribute('hidden', '');
+
+  field.trigger.addEventListener('click', () => {
+    const open = field.trigger.getAttribute('aria-expanded') !== 'true';
+    setPhoneDialog(field, open, open);
+  });
+  field.search.addEventListener('input', () => filterPhoneCountries(field));
+  field.search.addEventListener('keydown', (event) => {
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      visiblePhoneOptions(field)[0]?.focus();
+    } else if (event.key === 'Escape') {
+      setPhoneDialog(field, false);
+      field.trigger.focus();
+    }
+  });
+  field.options.forEach((option) => {
+    option.addEventListener('click', () => setPhoneCountry(field, option.dataset.country || ''));
+    option.addEventListener('keydown', (event) => {
+      const options = visiblePhoneOptions(field);
+      const index = options.indexOf(option);
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+        event.preventDefault();
+        options[(index + (event.key === 'ArrowDown' ? 1 : -1) + options.length) % options.length]?.focus();
+      } else if (event.key === 'Escape') {
+        setPhoneDialog(field, false);
+        field.trigger.focus();
+      }
+    });
+  });
+  field.number.addEventListener('blur', () => {
+    if (!field.native.value || !field.number.value) return;
+    const parsed = parsePhoneNumberFromString(field.number.value, field.native.value as never, phoneMetadata as never);
+    if (parsed?.isValid() && parsed.country === field.native.value) field.number.value = parsed.formatNational();
+  });
+});
+
+document.addEventListener('pointerdown', (event) => {
+  const target = event.target;
+  if (!(target instanceof Node)) return;
+  phoneFields.forEach((field) => {
+    if (!field.root.contains(target)) setPhoneDialog(field, false);
+  });
+});
+
+document.addEventListener('keydown', (event) => {
+  if (event.key !== 'Escape') return;
+  phoneFields.forEach((field) => {
+    if (field.trigger.getAttribute('aria-expanded') === 'true') {
+      setPhoneDialog(field, false);
+      field.trigger.focus();
+    }
+  });
+});
 
 const toggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
 const navigation = document.querySelector<HTMLElement>('[data-primary-navigation]');
@@ -105,7 +223,7 @@ const setNavigation = (open: boolean): void => {
   toggle.setAttribute('aria-label', open ? strings.menuClose : strings.menuOpen);
   navigation.classList.toggle('is-open', open);
   document.body.classList.toggle('menu-open', open);
-  document.querySelectorAll<HTMLElement>('#main-content, .site-footer, .mobile-action-bar').forEach((target) => {
+  document.querySelectorAll<HTMLElement>('#main-content, .site-footer').forEach((target) => {
     target.toggleAttribute('inert', open);
     target.setAttribute('aria-hidden', String(open));
     if (!open) target.removeAttribute('aria-hidden');
@@ -141,8 +259,11 @@ document.addEventListener('pointerdown', (event) => {
 });
 
 const tripForm = document.querySelector<HTMLFormElement>('[data-trip-form]');
+const localDateValue = (date: Date): string => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 if (tripForm) {
   const pickup = tripForm.elements.namedItem('pickup_location') as HTMLSelectElement | null;
+  const pickupDate = tripForm.elements.namedItem('pickup_date') as HTMLInputElement | null;
+  const returnDate = tripForm.elements.namedItem('return_date') as HTMLInputElement | null;
   const quickLocations = Array.from(tripForm.querySelectorAll<HTMLButtonElement>('[data-trip-location]'));
 
   const syncTripLocations = (): void => {
@@ -152,6 +273,15 @@ if (tripForm) {
   };
 
   pickup?.addEventListener('change', syncTripLocations);
+  const syncTripDates = (): void => {
+    if (!pickupDate?.value || !returnDate) return;
+    const date = new Date(`${pickupDate.value}T00:00:00`);
+    date.setDate(date.getDate() + minimumRentalDays);
+    const minimum = localDateValue(date);
+    returnDate.min = minimum;
+    if (returnDate.value && returnDate.value < minimum) returnDate.value = '';
+  };
+  pickupDate?.addEventListener('change', syncTripDates);
   quickLocations.forEach((button) => button.addEventListener('click', () => {
     if (pickup && button.dataset.tripLocation) {
       pickup.value = button.dataset.tripLocation;
@@ -160,6 +290,7 @@ if (tripForm) {
   }));
   tripForm.addEventListener('submit', () => track('trip_filter_submit'));
   syncTripLocations();
+  syncTripDates();
 }
 
 document.querySelectorAll<HTMLAnchorElement>('a[href^="tel:"], a[href*="wa.me"], a[href*="whatsapp"]')
@@ -202,6 +333,8 @@ const setupReservationDetails = (): void => {
   const returnDifferent = form.querySelector<HTMLInputElement>('[data-reservation-return-different]');
   const returnWrapper = returnLocation?.closest('label');
   const locationFee = form.querySelector<HTMLElement>('[data-reservation-location-fee]');
+  const pickupDate = form.elements.namedItem('pickup_date') as HTMLInputElement | null;
+  const returnDate = form.elements.namedItem('return_date') as HTMLInputElement | null;
 
   const sync = (): void => {
     const different = Boolean(returnDifferent?.checked);
@@ -210,11 +343,27 @@ const setupReservationDetails = (): void => {
     if (!different && pickup && returnLocation) returnLocation.value = pickup.value;
   };
 
+  const syncRentalDates = (): void => {
+    if (!pickupDate?.value || !returnDate) return;
+    const minimumReturn = new Date(`${pickupDate.value}T00:00:00`);
+    minimumReturn.setDate(minimumReturn.getDate() + minimumRentalDays);
+    const minimum = localDateValue(minimumReturn);
+    returnDate.min = minimum;
+    if (returnDate.value && returnDate.value < minimum) returnDate.value = '';
+  };
+
   pickup?.addEventListener('change', () => { sync(); void refreshEstimate(); });
   returnDifferent?.addEventListener('change', () => { sync(); void refreshEstimate(); });
   returnLocation?.addEventListener('change', () => { void refreshEstimate(); });
+  pickupDate?.addEventListener('change', () => { syncRentalDates(); void refreshEstimate(); });
+  returnDate?.addEventListener('change', () => { void refreshEstimate(); });
   sync();
+  syncRentalDates();
 };
+
+let estimateTimer: number | undefined;
+let estimateRequest: AbortController | undefined;
+let estimateSequence = 0;
 
 const refreshEstimate = async (): Promise<void> => {
   if (!form) return;
@@ -224,6 +373,29 @@ const refreshEstimate = async (): Promise<void> => {
   const required = ['pickup_date', 'pickup_time', 'return_date', 'return_time'];
   const values = Object.fromEntries(required.map((name) => [name, (form.elements.namedItem(name) as HTMLInputElement | null)?.value || '']));
   if (!output || !content || !vehicleId || required.some((name) => !values[name])) return;
+  window.clearTimeout(estimateTimer);
+  estimateTimer = window.setTimeout(() => { void requestEstimate(output, content, vehicleId, values); }, 250);
+};
+
+const requestEstimate = async (output: HTMLElement, content: HTMLElement, vehicleId: string, values: Record<string, string>): Promise<void> => {
+  if (!form) return;
+  const requestId = ++estimateSequence;
+  estimateRequest?.abort();
+  estimateRequest = new AbortController();
+  output.hidden = false;
+  content.textContent = strings.loadingEstimate;
+  const pickupDate = new Date(`${values.pickup_date}T${values.pickup_time}`);
+  const returnDate = new Date(`${values.return_date}T${values.return_time}`);
+  const calendarDays = Math.floor((returnDate.getTime() - pickupDate.getTime()) / 86400000);
+  const billableDays = calendarDays + (values.return_time > values.pickup_time ? 1 : 0);
+  if (!Number.isFinite(billableDays) || returnDate <= pickupDate) {
+    content.textContent = strings.invalidPeriod;
+    return;
+  }
+  if (billableDays < minimumRentalDays) {
+    content.textContent = strings.minimumRental;
+    return;
+  }
   const extras = Array.from(form.querySelectorAll<HTMLInputElement>('input[name="extras[]"]:checked')).map((input) => input.value);
   const insurance = form.querySelector<HTMLInputElement>('input[name="insurance"]:checked')?.value || 'base';
   const pickupLocation = (form.elements.namedItem('pickup_location') as HTMLSelectElement | null)?.value || '';
@@ -231,19 +403,29 @@ const refreshEstimate = async (): Promise<void> => {
   const body = new URLSearchParams({ vehicle_id: vehicleId, ...values, insurance, pickup_location: pickupLocation, return_location: returnLocation });
   extras.forEach((extra) => body.append('extras[]', extra));
   try {
-    const response = await fetch('/wp-json/rentacar/v1/estimate', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body, credentials: 'same-origin' });
-    if (!response.ok) return;
-    const estimate = await response.json() as { days: number; line_items?: { label: string; amount: number }[]; estimate_total?: number; included_km?: number; excess_km_rate?: number; deposit?: number };
+    const response = await fetch(configuration.estimateUrl, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body, credentials: 'same-origin', signal: estimateRequest.signal });
+    if (requestId !== estimateSequence) return;
+    if (!response.ok) throw new Error('estimate request failed');
+    const estimate = await response.json() as { days: number; daily_price?: number; base_total?: number; line_items?: { key: string; label: string; amount: number }[]; estimate_total?: number; included_km?: number; excess_km_rate?: number };
     if (!Array.isArray(estimate.line_items) || typeof estimate.estimate_total !== 'number') {
-      content.textContent = 'An indicative total is not available for these dates. You can still send your request.';
+      content.textContent = strings.estimateUnavailable;
       output.hidden = false;
       return;
     }
-    content.replaceChildren(...estimate.line_items.map((item) => { const row = document.createElement('p'); row.textContent = `${item.label}: €${item.amount.toFixed(2)}`; return row; }));
-    const total = document.createElement('p'); total.innerHTML = `<strong>Indicative rental total: €${estimate.estimate_total.toFixed(2)}</strong>`;
-    const details = document.createElement('p'); details.textContent = `${estimate.days} rental days`;
-    content.append(total, details); output.hidden = false;
-  } catch { /* The form remains usable when estimates cannot be loaded. */ }
+    const money = (amount: number): string => new Intl.NumberFormat(document.documentElement.lang || undefined, { style: 'currency', currency: 'EUR' }).format(amount);
+    const labelFor = (item: { key: string; label: string }): string => ({ vehicle_base_rate: strings.vehicleSubtotal, insurance: strings.insurance, after_hours_pickup: strings.afterHoursFee, inter_airport_transfer: strings.airportTransfer }[item.key] || item.label);
+    content.replaceChildren(...estimate.line_items.map((item) => { const row = document.createElement('p'); row.textContent = `${labelFor(item)}: ${money(item.amount)}`; return row; }));
+    const days = document.createElement('p'); days.textContent = `${estimate.days} ${strings.rentalDays}`;
+    const total = document.createElement('p'); const totalStrong = document.createElement('strong'); totalStrong.textContent = `${strings.indicativeTotal}: ${money(estimate.estimate_total)}`; total.append(totalStrong);
+    const mileage = document.createElement('p'); mileage.textContent = `${strings.includedKm}: ${estimate.included_km || 0} km · ${strings.excessKm}: ${money(estimate.excess_km_rate || 0)}/km`;
+    content.append(days, total, mileage); output.hidden = false;
+  } catch (error) {
+    if ((error as DOMException).name === 'AbortError' || requestId !== estimateSequence) return;
+    content.replaceChildren();
+    const message = document.createElement('p'); message.textContent = strings.estimateError;
+    const retry = document.createElement('button'); retry.type = 'button'; retry.className = 'button button--secondary'; retry.textContent = strings.retryEstimate; retry.addEventListener('click', () => { void requestEstimate(output, content, vehicleId, values); });
+    content.append(message, retry);
+  }
 };
 
 const setBackgroundInert = (inert: boolean): void => {

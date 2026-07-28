@@ -13,6 +13,7 @@ final class Rentacar_Core_Vehicle_Field_Policy {
             'max_passagers',
             'doors',
             'air_conditioning',
+            '_rentacar_powertrain',
             'price_1_days_1',
             'price_1_days_2',
             'price',

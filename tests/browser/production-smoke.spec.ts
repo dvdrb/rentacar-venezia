@@ -9,7 +9,7 @@ test.describe('production smoke', () => {
       const response = await page.goto(path, { waitUntil: 'domcontentloaded' });
       expect(response?.status(), `${path} response`).toBe(200);
       await expect(page.locator('body')).toBeVisible();
-      await expect(page.locator('title')).not.toHaveText('');
+      expect(await page.title()).not.toBe('');
     }
 
     expect(pageErrors).toEqual([]);

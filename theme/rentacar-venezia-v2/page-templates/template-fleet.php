@@ -6,6 +6,8 @@
 defined( 'ABSPATH' ) || exit;
 
 $trip = rentacar_venezia_v2_trip_query();
+$sort = isset( $_GET['sort'] ) ? sanitize_key( wp_unslash( $_GET['sort'] ) ) : 'recommended';
+$sort = in_array( $sort, array( 'recommended', 'price_asc', 'price_desc' ), true ) ? $sort : 'recommended';
 
 $query_args = array(
     'post_type'           => 'cars',
@@ -16,6 +18,9 @@ $query_args = array(
     'orderby'             => 'menu_order title',
     'order'               => 'ASC',
 );
+if ( 'price_asc' === $sort || 'price_desc' === $sort ) {
+    $query_args['rentacar_starting_price_sort'] = 'price_asc' === $sort ? 'ASC' : 'DESC';
+}
 
 $vehicles_query = new WP_Query( $query_args );
 $mapper = class_exists( 'Rentacar_Core_Vehicle_Mapper' ) ? new Rentacar_Core_Vehicle_Mapper() : null;
@@ -32,7 +37,16 @@ get_header();
             </section>
         <?php endif; ?>
         <?php get_template_part( 'template-parts/global/notice' ); ?>
-        <nav class="fleet-airport-links" aria-label="<?php esc_attr_e( 'Airport pickup options', 'rentacar-venezia-v2' ); ?>"><a href="<?php echo esc_url( rentacar_venezia_v2_location_page_url( 'venice_marco_polo' ) ); ?>"><?php esc_html_e( 'Venice Marco Polo Airport pickup', 'rentacar-venezia-v2' ); ?></a><a href="<?php echo esc_url( rentacar_venezia_v2_location_page_url( 'treviso_airport' ) ); ?>"><?php esc_html_e( 'Treviso Airport pickup', 'rentacar-venezia-v2' ); ?></a></nav>
+        <form class="fleet-sort" method="get">
+            <?php foreach ( $trip as $key => $value ) : ?><input type="hidden" name="<?php echo esc_attr( $key ); ?>" value="<?php echo esc_attr( $value ); ?>"><?php endforeach; ?>
+            <label for="fleet-sort"><?php esc_html_e( 'Sort fleet', 'rentacar-venezia-v2' ); ?></label>
+            <select id="fleet-sort" name="sort">
+                <option value="recommended"<?php selected( $sort, 'recommended' ); ?>><?php esc_html_e( 'Recommended', 'rentacar-venezia-v2' ); ?></option>
+                <option value="price_asc"<?php selected( $sort, 'price_asc' ); ?>><?php esc_html_e( 'Price: low to high', 'rentacar-venezia-v2' ); ?></option>
+                <option value="price_desc"<?php selected( $sort, 'price_desc' ); ?>><?php esc_html_e( 'Price: high to low', 'rentacar-venezia-v2' ); ?></option>
+            </select>
+            <button class="button button--secondary" type="submit"><?php esc_html_e( 'Apply', 'rentacar-venezia-v2' ); ?></button>
+        </form>
         <?php if ( $mapper && $vehicles_query->have_posts() ) : ?><div class="vehicle-grid vehicle-grid--catalogue"><?php while ( $vehicles_query->have_posts() ) : $vehicles_query->the_post(); get_template_part( 'template-parts/vehicle/card', null, array( 'vehicle' => $mapper->map( get_post() ), 'variant' => 'fleet' ) ); endwhile; ?></div><?php else : ?><section class="empty-state"><h2><?php esc_html_e( 'Our fleet is being updated.', 'rentacar-venezia-v2' ); ?></h2><p><?php esc_html_e( 'Please contact us on WhatsApp and we will help you find the right car.', 'rentacar-venezia-v2' ); ?></p><p class="empty-state__actions"><?php if ( rentacar_venezia_v2_whatsapp_url() ) : ?><a class="button button--whatsapp" href="<?php echo esc_url( rentacar_venezia_v2_whatsapp_url() ); ?>"><?php esc_html_e( 'WhatsApp', 'rentacar-venezia-v2' ); ?></a><?php endif; ?></p></section><?php endif; ?>
         <?php wp_reset_postdata(); ?>
         <?php
@@ -43,7 +57,7 @@ get_header();
                 'type'     => 'list',
                 'prev_text' => __( 'Previous', 'rentacar-venezia-v2' ),
                 'next_text' => __( 'Next', 'rentacar-venezia-v2' ),
-                'add_args' => array_filter( $trip ),
+                'add_args' => array_merge( array_filter( $trip ), array( 'sort' => $sort ) ),
             )
         );
         if ( $fleet_pagination ) :

@@ -13,10 +13,14 @@ final class Rentacar_Core_Estimate_Service {
     }
 
     public function estimate( $vehicle_id, $pickup_date, $pickup_time, $return_date, $return_time, array $extra_keys = array(), $insurance_key = 'base', $pickup_location = '', $return_location = '' ) {
+        if ( ! Rentacar_Core_Rental_Policy::supports_reservation_time( $pickup_time ) || ! Rentacar_Core_Rental_Policy::supports_reservation_time( $return_time ) ) {
+            return null;
+        }
+
         $vehicle = $this->vehicles->find( $vehicle_id );
         $days = $this->duration->calculate( $pickup_date, $pickup_time, $return_date, $return_time );
 
-        if ( ! $vehicle || ! $days ) {
+        if ( ! $vehicle || ! $days || $days < Rentacar_Core_Rental_Policy::minimum_rental_days() || $days > Rentacar_Core_Rental_Policy::maximum_rental_days() ) {
             return null;
         }
 
@@ -46,17 +50,19 @@ final class Rentacar_Core_Estimate_Service {
 
         $line_items = array(
             array(
+                'key'    => 'vehicle_base_rate',
                 'label'  => 'Vehicle base rate',
                 'amount' => $base_total,
             ),
         );
-        if ( $insurance ) $line_items[] = array( 'label' => $insurance['label'], 'amount' => $insurance_total );
-        if ( $after_hours ) $line_items[] = array( 'label' => 'After-hours pickup surcharge', 'amount' => $after_hours );
-        if ( $inter_airport_surcharge ) $line_items[] = array( 'label' => 'Inter-airport transfer', 'amount' => $inter_airport_surcharge );
+        if ( $insurance ) $line_items[] = array( 'key' => 'insurance', 'label' => $insurance['label'], 'amount' => $insurance_total );
+        if ( $after_hours ) $line_items[] = array( 'key' => 'after_hours_pickup', 'label' => 'After-hours pickup surcharge', 'amount' => $after_hours );
+        if ( $inter_airport_surcharge ) $line_items[] = array( 'key' => 'inter_airport_transfer', 'label' => 'Inter-airport transfer', 'amount' => $inter_airport_surcharge );
 
         foreach ( $extras['items'] as $extra ) {
             if ( null !== $extra['subtotal'] ) {
                 $line_items[] = array(
+                    'key'    => $extra['key'],
                     'label'  => $extra['label'],
                     'amount' => $extra['subtotal'],
                 );

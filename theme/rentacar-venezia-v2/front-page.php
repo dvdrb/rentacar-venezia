@@ -34,7 +34,7 @@ get_header();
                     <div class="trip-form__grid">
                         <label><?php esc_html_e( 'Pickup location', 'rentacar-venezia-v2' ); ?><select name="pickup_location"><?php foreach ( $locations as $location ) : ?><option value="<?php echo esc_attr( $location['value'] ); ?>"<?php selected( $pickup_location, $location['value'] ); ?>><?php echo esc_html( $location['label'] ); ?></option><?php endforeach; ?></select></label>
                         <label><?php esc_html_e( 'Pickup date', 'rentacar-venezia-v2' ); ?><input name="pickup_date" type="date" min="<?php echo esc_attr( wp_date( 'Y-m-d' ) ); ?>" value="<?php echo esc_attr( $trip['pickup_date'] ?? '' ); ?>"></label>
-                        <label><?php esc_html_e( 'Return date', 'rentacar-venezia-v2' ); ?><input name="return_date" type="date" min="<?php echo esc_attr( wp_date( 'Y-m-d' ) ); ?>" value="<?php echo esc_attr( $trip['return_date'] ?? '' ); ?>"></label>
+                        <label><?php esc_html_e( 'Return date', 'rentacar-venezia-v2' ); ?><input name="return_date" type="date" min="<?php echo esc_attr( wp_date( 'Y-m-d', strtotime( '+' . ( class_exists( 'Rentacar_Core_Rental_Policy' ) ? Rentacar_Core_Rental_Policy::minimum_rental_days() : 3 ) . ' days' ) ) ); ?>" value="<?php echo esc_attr( $trip['return_date'] ?? '' ); ?>"></label>
                     </div>
                 </fieldset>
                 <button class="button" type="submit"><?php esc_html_e( 'Search cars', 'rentacar-venezia-v2' ); ?></button>

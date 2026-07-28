@@ -30,6 +30,7 @@ foreach ( $bands as $band ) {
     <div class="vehicle-card__body">
         <h3><a href="<?php echo esc_url( $vehicle->get( 'permalink' ) ); ?>"><?php echo esc_html( $title ); ?></a></h3>
         <?php if ( $specifications ) : ?><p class="vehicle-card__specs"><?php echo esc_html( implode( ' · ', $specifications ) ); ?></p><?php endif; ?>
+        <?php $powertrain = $vehicle->get( 'powertrain' ); if ( in_array( $powertrain, array( 'hybrid', 'plug_in_hybrid', 'electric' ), true ) ) : ?><p class="vehicle-card__powertrain vehicle-card__powertrain--<?php echo esc_attr( $powertrain ); ?>"><span aria-hidden="true">⚡</span> <?php echo esc_html( array( 'hybrid' => __( 'Hybrid', 'rentacar-venezia-v2' ), 'plug_in_hybrid' => __( 'Plug-in hybrid', 'rentacar-venezia-v2' ), 'electric' => __( 'Electric', 'rentacar-venezia-v2' ) )[ $powertrain ] ); ?></p><?php endif; ?>
         <?php if ( null !== $starting_price ) : ?>
             <p class="vehicle-card__starting-price"><span><?php esc_html_e( 'Starting from', 'rentacar-venezia-v2' ); ?></span><strong><?php echo esc_html( sprintf( __( '€%s/day', 'rentacar-venezia-v2' ), number_format_i18n( $starting_price, 0 ) ) ); ?></strong></p>
         <?php endif; ?>

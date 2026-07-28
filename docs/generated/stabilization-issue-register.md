@@ -1,0 +1,13 @@
+# Stabilization issue register
+
+| ID | Priority | Route/language/viewport | Current behaviour | Expected behaviour | Relevant files | Status | Validation |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| RCV-001 | P0 | Reservation, all languages | Two-day periods could pass server validation | Minimum three billable days everywhere | `RentalPolicy`, `ReservationValidator`, `EstimateService`, modal JS | Implemented | Focused PHP policy test passed; live route blocked |
+| RCV-002 | P0 | Reservation, all languages | Email failure lost the request | Store before delivery and retain delivery state | `ReservationStore`, `ReservationController` | Implemented | PHP lint passed; runtime mail fixture pending |
+| RCV-003 | P1 | Modal, all languages | Estimate display omitted structured detail/retry handling | Itemized authoritative result with debounce/cancellation | `EstimateService`, `main.ts` | Implemented | Typecheck/build passed; live route blocked |
+| RCV-004 | P1 | Fleet, all languages | No starting-price sort | GET sort with numeric complete-set ordering | `VehicleMaintenance`, `template-fleet.php` | Implemented | PHP lint/static test update passed; live route blocked |
+| RCV-005 | P1 | Fleet/detail/emails | No controlled powertrain data | Controlled field and accessible eco badge | `VehicleMaintenance`, `VehicleMapper`, card | Implemented | 12 explicit hybrid titles normalized locally; ambiguous records deliberately remain unset |
+| RCV-006 | P1 | Global, all languages | Cookie banner/dialog/settings rendered | No custom cookie UI; optional analytics disabled | `consent.php`, footer, JS, CSS | Implemented | Static/browser spec updated; live route blocked |
+| RCV-007 | P1 | Header/footer, 320–1440 | Previous logo assets were not approved | Use supplied logo and favicon with accessible contrast | `assets/images/brand/`, `functions.php`, `style.css` | Implemented | Local 390px capture confirms logo, favicon link, and no overflow |
+| RCV-008 | P1 | All localized routes | Translation completeness not mechanically verified | No English fallback in customer UI | Theme translations, reservation translations, PHP coverage test | Implemented | Source coverage test passed; Italian/Romanian/Russian live homepage review found and corrected six missed strings; customer emails and public validation messages are translated |
+| RCV-009 | P1 | 320×700–1440×900 | Local runtime was initially stopped | Screenshot/layout acceptance | LocalWP runtime, browser suite | Partially validated | LocalWP started; 45 browser tests passed with `PLAYWRIGHT_BASE_URL`; live DOM confirmed no cookie UI/no horizontal overflow at 390 and 1440; captures saved under `docs/generated/screenshots/` |

@@ -27,26 +27,9 @@
         <nav class="site-footer__legal" aria-label="<?php esc_attr_e( 'Legal information', 'rentacar-venezia-v2' ); ?>">
             <?php $terms_url = rentacar_venezia_v2_managed_page_url( 'terms' ); if ( $terms_url ) : ?><a href="<?php echo esc_url( $terms_url ); ?>"><?php esc_html_e( 'Terms and Conditions', 'rentacar-venezia-v2' ); ?></a><?php endif; ?>
             <?php $privacy_url = rentacar_venezia_v2_localized_privacy_policy_url(); if ( $privacy_url ) : ?><a href="<?php echo esc_url( $privacy_url ); ?>"><?php esc_html_e( 'Privacy Policy', 'rentacar-venezia-v2' ); ?></a><?php endif; ?>
-            <?php $cookie_policy_url = rentacar_venezia_v2_managed_page_url( 'cookie_policy' ); if ( $cookie_policy_url ) : ?><a href="<?php echo esc_url( $cookie_policy_url ); ?>"><?php echo esc_html( get_the_title( rentacar_venezia_v2_translated_post_id( rentacar_venezia_v2_managed_page_id( 'cookie_policy' ) ) ) ); ?></a><?php endif; ?>
-            <button class="site-footer__cookie-settings" type="button" data-cookie-settings><?php esc_html_e( 'Cookie Settings', 'rentacar-venezia-v2' ); ?></button>
         </nav>
     </div>
 </footer>
-<?php
-$mobile_whatsapp = rentacar_venezia_v2_whatsapp_url();
-$mobile_action_label = '';
-$mobile_action_url = '';
-if ( is_front_page() || is_page_template( 'page-templates/template-airport-location.php' ) ) {
-    $mobile_action_label = __( 'Explore the fleet', 'rentacar-venezia-v2' );
-    $mobile_action_url   = rentacar_venezia_v2_fleet_url();
-}
-?>
-<?php if ( $mobile_whatsapp && $mobile_action_url ) : ?>
-    <nav class="mobile-action-bar" aria-label="<?php esc_attr_e( 'Quick actions', 'rentacar-venezia-v2' ); ?>">
-        <a class="mobile-action-bar__whatsapp" href="<?php echo esc_url( $mobile_whatsapp ); ?>"><?php esc_html_e( 'WhatsApp', 'rentacar-venezia-v2' ); ?></a>
-        <a class="mobile-action-bar__primary" href="<?php echo esc_url( $mobile_action_url ); ?>"><?php echo esc_html( $mobile_action_label ); ?></a>
-    </nav>
-<?php endif; ?>
 <?php wp_footer(); ?>
 </body>
 </html>

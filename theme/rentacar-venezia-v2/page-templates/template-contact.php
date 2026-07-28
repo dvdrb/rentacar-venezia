@@ -4,6 +4,7 @@ defined( 'ABSPATH' ) || exit;
 
 $whatsapp_url = rentacar_venezia_v2_whatsapp_url();
 $contact_status = isset( $_GET['contact_status'] ) ? sanitize_key( wp_unslash( $_GET['contact_status'] ) ) : '';
+$contact_phone_error = isset( $_GET['contact_phone_error'] ) ? sanitize_key( wp_unslash( $_GET['contact_phone_error'] ) ) : '';
 $privacy_policy_url = function_exists( 'get_privacy_policy_url' ) ? get_privacy_policy_url() : '';
 
 get_header();
@@ -41,6 +42,8 @@ get_header();
                     <p><?php esc_html_e( 'For a vehicle reservation, please use the reservation request from the fleet. Use this form for other questions.', 'rentacar-venezia-v2' ); ?></p>
                     <?php if ( 'sent' === $contact_status ) : ?>
                         <p class="contact-form__status contact-form__status--success" role="status"><?php esc_html_e( 'Thank you. Your message has been sent.', 'rentacar-venezia-v2' ); ?></p>
+                    <?php elseif ( 'invalid_phone' === $contact_status ) : ?>
+                        <p class="contact-form__status contact-form__status--error" role="alert"><?php esc_html_e( 'Invalid phone number', 'rentacar-venezia-v2' ); ?></p>
                     <?php elseif ( $contact_status ) : ?>
                         <p class="contact-form__status contact-form__status--error" role="alert"><?php esc_html_e( 'We could not send your message. Please review the form or contact us by phone or WhatsApp.', 'rentacar-venezia-v2' ); ?></p>
                     <?php endif; ?>
@@ -48,7 +51,7 @@ get_header();
                         <input type="hidden" name="action" value="rentacar_submit_contact">
                         <?php wp_nonce_field( 'rentacar_submit_contact', 'rentacar_contact_nonce' ); ?>
                         <p class="honeypot" aria-hidden="true"><label><?php esc_html_e( 'Website', 'rentacar-venezia-v2' ); ?><input name="website" tabindex="-1" autocomplete="off"></label></p>
-                        <div class="contact-form__two"><label><?php esc_html_e( 'Full name', 'rentacar-venezia-v2' ); ?><input name="name" autocomplete="name" required></label><label><?php esc_html_e( 'Phone or WhatsApp', 'rentacar-venezia-v2' ); ?><input name="phone" autocomplete="tel" required></label></div>
+                        <div class="contact-form__two"><label><?php esc_html_e( 'Full name', 'rentacar-venezia-v2' ); ?><input name="name" autocomplete="name" required></label><?php get_template_part( 'template-parts/forms/phone-field', null, array( 'id' => 'contact-phone', 'error_code' => $contact_phone_error ) ); ?></div>
                         <label><?php esc_html_e( 'Email', 'rentacar-venezia-v2' ); ?><input name="email" type="email" autocomplete="email" required></label>
                         <label><?php esc_html_e( 'Topic', 'rentacar-venezia-v2' ); ?><select name="topic" required><option value=""><?php esc_html_e( 'Choose a topic', 'rentacar-venezia-v2' ); ?></option><option value="general"><?php esc_html_e( 'General question', 'rentacar-venezia-v2' ); ?></option><option value="airport"><?php esc_html_e( 'Airport pickup', 'rentacar-venezia-v2' ); ?></option><option value="existing_request"><?php esc_html_e( 'Existing request', 'rentacar-venezia-v2' ); ?></option></select></label>
                         <label><?php esc_html_e( 'Message', 'rentacar-venezia-v2' ); ?><textarea name="message" rows="5" required></textarea></label>

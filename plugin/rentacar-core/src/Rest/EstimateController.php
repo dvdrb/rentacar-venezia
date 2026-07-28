@@ -32,6 +32,10 @@ final class Rentacar_Core_Estimate_Controller {
             return new WP_Error( 'rentacar_estimate_rate_limited', __( 'Please wait a moment before requesting another estimate.', 'rentacar-core' ), array( 'status' => 429 ) );
         }
 
+        if ( ! Rentacar_Core_Rental_Policy::supports_reservation_time( $request->get_param( 'pickup_time' ) ) || ! Rentacar_Core_Rental_Policy::supports_reservation_time( $request->get_param( 'return_time' ) ) ) {
+            return new WP_Error( 'rentacar_invalid_time', __( 'Please choose pickup and return times in 15-minute intervals.', 'rentacar-core' ), array( 'status' => 400 ) );
+        }
+
         $estimate = ( new Rentacar_Core_Estimate_Service() )->estimate(
             $request->get_param( 'vehicle_id' ),
             $request->get_param( 'pickup_date' ),

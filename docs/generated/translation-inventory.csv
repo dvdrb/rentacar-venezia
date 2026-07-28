@@ -1,0 +1,5 @@
+source_surface,coverage,it,en,ro,ru,status
+Theme literal interface strings,tests/php/theme-translation-coverage-test.php,complete,source,complete,complete,automatically verified
+Client-side calculator and fleet labels,theme/rentacar-venezia-v2/inc/interface-translations.php,complete,source,complete,complete,live route reviewed
+Reservation acknowledgement email,plugin/rentacar-core/src/Multilingual/ReservationTranslations.php,complete,source,complete,complete,focused PHP test passed
+Reservation and estimate public errors,plugin/rentacar-core/src/Multilingual/ReservationTranslations.php,complete,source,complete,complete,plugin gettext filter
