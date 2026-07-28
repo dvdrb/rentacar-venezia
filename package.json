@@ -5,13 +5,14 @@
   "scripts": {
     "dev": "vite --config vite.config.ts",
     "build": "vite build --config vite.config.ts",
+    "check:assets": "node scripts/check-asset-manifest.mjs",
     "update:phone-metadata": "node scripts/update-phone-metadata.mjs",
     "typecheck": "tsc --noEmit",
     "lint:js": "eslint theme/rentacar-venezia-v2/assets/src --max-warnings=0",
     "lint:css": "stylelint 'theme/rentacar-venezia-v2/style.css'",
     "test:browser": "playwright test",
     "test:browser:production": "playwright test tests/browser/production-smoke.spec.ts",
-    "check": "npm run typecheck && npm run lint:js && npm run lint:css",
+    "check": "npm run typecheck && npm run lint:js && npm run lint:css && npm run check:assets",
     "test:deployment": "bash tests/deployment/run.sh",
     "deploy:production": "./scripts/deploy-production",
     "deploy:production:verify": "./scripts/deploy-production verify"

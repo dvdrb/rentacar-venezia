@@ -70,18 +70,29 @@ function rentacar_venezia_v2_register_home_patterns() {
 }
 add_action( 'init', 'rentacar_venezia_v2_register_home_patterns' );
 
-/** Uses the approved local brand asset while retaining a resilient text fallback. */
-function rentacar_venezia_v2_brand_mark( $inverse = false ) {
-    $classes = 'site-brand' . ( $inverse ? ' site-brand--inverse' : '' );
-    $asset = get_template_directory() . '/assets/images/brand/logo-reversed-cropped.png';
+/** Renders the approved light- or dark-surface brand asset without duplicating markup. */
+function rentacar_venezia_v2_brand_mark( $context = 'header' ) {
+    $context = in_array( $context, array( 'header', 'footer' ), true ) ? $context : 'header';
+    $assets = array(
+        'header' => 'assets/images/brand/gd-rent-a-car-logo.png',
+        'footer' => 'assets/images/brand/logo-reversed-cropped.png',
+    );
+    $relative_asset = $assets[ $context ];
+    $asset = get_template_directory() . '/' . $relative_asset;
+    $classes = 'site-brand site-brand--' . $context;
 
-    if ( file_exists( $asset ) ) {
+    if ( is_readable( $asset ) ) {
+        $dimensions = function_exists( 'wp_getimagesize' ) ? wp_getimagesize( $asset ) : getimagesize( $asset );
+        $width = is_array( $dimensions ) && ! empty( $dimensions[0] ) ? absint( $dimensions[0] ) : 0;
+        $height = is_array( $dimensions ) && ! empty( $dimensions[1] ) ? absint( $dimensions[1] ) : 0;
         printf(
-            '<a class="%1$s" href="%2$s" rel="home" aria-label="%3$s"><img src="%4$s" width="450" height="130" alt="%5$s"></a>',
+            '<a class="%1$s" href="%2$s" rel="home" aria-label="%3$s"><img src="%4$s"%5$s%6$s alt="%7$s"></a>',
             esc_attr( $classes ),
             esc_url( rentacar_venezia_v2_home_url() ),
             esc_attr__( 'G&D Rent A Car', 'rentacar-venezia-v2' ),
-            esc_url( get_template_directory_uri() . '/assets/images/brand/logo-reversed-cropped.png' ),
+            esc_url( get_template_directory_uri() . '/' . $relative_asset ),
+            $width ? ' width="' . esc_attr( $width ) . '"' : '',
+            $height ? ' height="' . esc_attr( $height ) . '"' : '',
             esc_attr__( 'G&D Rent A Car', 'rentacar-venezia-v2' )
         );
         return;
@@ -107,11 +118,12 @@ add_action( 'wp_head', 'rentacar_venezia_v2_favicon', 99 );
 
 function rentacar_venezia_v2_assets() {
     $theme = wp_get_theme();
-    $manifest = rentacar_venezia_v2_asset_manifest();
+    $style_path = get_stylesheet_directory() . '/style.css';
+    $script = rentacar_venezia_v2_compiled_asset( 'main' );
 
-    wp_enqueue_style( 'rentacar-venezia-v2', get_stylesheet_uri(), array(), $theme->get( 'Version' ) );
-    if ( isset( $manifest['main'] ) ) {
-        wp_enqueue_script( 'rentacar-venezia-v2', get_template_directory_uri() . '/assets/dist/' . ltrim( $manifest['main'], '/' ), array(), $theme->get( 'Version' ), true );
+    wp_enqueue_style( 'rentacar-venezia-v2', get_stylesheet_uri(), array(), rentacar_venezia_v2_asset_version( $style_path, $theme->get( 'Version' ) ) );
+    if ( $script ) {
+        wp_enqueue_script( 'rentacar-venezia-v2', $script['uri'], array(), $script['version'], true );
         wp_localize_script(
             'rentacar-venezia-v2',
             'rentacarVenezia',
@@ -269,10 +281,10 @@ add_filter( 'style_loader_src', 'rentacar_venezia_v2_local_http_asset_url', 999 
 add_filter( 'script_loader_src', 'rentacar_venezia_v2_local_http_asset_url', 999 );
 
 function rentacar_venezia_v2_manifest_warning() {
-    if ( ! current_user_can( 'manage_options' ) || ! defined( 'WP_DEBUG' ) || ! WP_DEBUG || rentacar_venezia_v2_asset_manifest() ) {
+    if ( ! current_user_can( 'manage_options' ) || ! defined( 'WP_DEBUG' ) || ! WP_DEBUG || rentacar_venezia_v2_compiled_asset( 'main' ) ) {
         return;
     }
-    echo '<div class="notice notice-warning"><p>' . esc_html__( 'Rentacar Venezia V2: asset manifest is missing. Run the production build before release.', 'rentacar-venezia-v2' ) . '</p></div>';
+    echo '<div class="notice notice-warning"><p>' . esc_html__( 'Rentacar Venezia V2: the compiled asset manifest or main bundle is missing. Run the production build before release.', 'rentacar-venezia-v2' ) . '</p></div>';
 }
 add_action( 'admin_notices', 'rentacar_venezia_v2_manifest_warning' );
 
@@ -297,12 +309,40 @@ function rentacar_venezia_v2_asset_manifest() {
     }
 
     foreach ( $manifest as $entry ) {
-        if ( isset( $entry['name'], $entry['file'] ) && 'main' === $entry['name'] ) {
+        if ( isset( $entry['name'], $entry['file'] ) && 'main' === $entry['name'] && is_string( $entry['file'] ) ) {
             $assets['main'] = $entry['file'];
         }
     }
 
     return $assets;
+}
+
+/** Uses a deployed file modification time so caches cannot reuse a previous asset URL. */
+function rentacar_venezia_v2_asset_version( $path, $fallback ) {
+    return is_file( $path ) ? (string) filemtime( $path ) : (string) $fallback;
+}
+
+/** Resolves a manifest asset only when it remains safely inside the theme build directory. */
+function rentacar_venezia_v2_compiled_asset( $name ) {
+    $manifest = rentacar_venezia_v2_asset_manifest();
+    $relative_path = isset( $manifest[ $name ] ) ? ltrim( (string) $manifest[ $name ], '/' ) : '';
+    $dist_directory = realpath( get_template_directory() . '/assets/dist' );
+
+    if ( ! $dist_directory || '' === $relative_path || ! preg_match( '/\.js$/', $relative_path ) ) {
+        return null;
+    }
+
+    $path = realpath( $dist_directory . '/' . $relative_path );
+    $prefix = trailingslashit( $dist_directory );
+    if ( ! $path || 0 !== strpos( $path, $prefix ) || ! is_file( $path ) ) {
+        return null;
+    }
+
+    return array(
+        'path'    => $path,
+        'uri'     => get_template_directory_uri() . '/assets/dist/' . str_replace( '%2F', '/', rawurlencode( $relative_path ) ),
+        'version' => rentacar_venezia_v2_asset_version( $path, wp_get_theme()->get( 'Version' ) ),
+    );
 }
 
 function rentacar_venezia_v2_register_routes() {

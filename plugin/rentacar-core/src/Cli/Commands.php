@@ -21,11 +21,45 @@ final class Rentacar_Core_Cli_Commands {
     }
 
     public static function backfill_starting_price( $args, $assoc_args ) {
-        $apply = ! empty( $assoc_args['apply'] ); $count = 0;
-        foreach ( get_posts( array( 'post_type' => 'cars', 'post_status' => 'any', 'posts_per_page' => -1, 'fields' => 'ids' ) ) as $post_id ) {
-            if ( $apply ) Rentacar_Core_Vehicle_Maintenance::update_starting_price( $post_id ); $count++;
+        $apply = ! empty( $assoc_args['apply'] );
+        $counts = array( 'examined' => 0, 'updated' => 0, 'unchanged' => 0, 'invalid' => 0, 'missing' => 0 );
+        $rows = array();
+
+        foreach ( get_posts( array( 'post_type' => 'cars', 'post_status' => 'any', 'posts_per_page' => -1, 'fields' => 'ids', 'suppress_filters' => true ) ) as $post_id ) {
+            $counts['examined']++;
+            $result = $apply ? Rentacar_Core_Vehicle_Maintenance::update_starting_price( $post_id ) : Rentacar_Core_Vehicle_Maintenance::starting_price_result( $post_id );
+            $status = $result['status'];
+
+            if ( ! $apply ) {
+                $current = (string) get_post_meta( $post_id, Rentacar_Core_Vehicle_Maintenance::STARTING_PRICE_META, true );
+                $result['updated'] = 'valid' === $status
+                    ? $current !== (string) $result['price']
+                    : '' !== $current;
+            }
+
+            if ( 'valid' === $status ) {
+                $counts[ ! empty( $result['updated'] ) ? 'updated' : 'unchanged' ]++;
+                continue;
+            }
+
+            if ( ! empty( $result['updated'] ) ) $counts['updated']++;
+            if ( isset( $counts[ $status ] ) ) $counts[ $status ]++;
+            $rows[] = array( 'id' => $post_id, 'status' => $status, 'issues' => implode( ', ', (array) $result['issues'] ) ?: 'review required' );
         }
-        WP_CLI::success( sprintf( '%s starting prices for %d vehicles.', $apply ? 'Updated' : 'Would update', $count ) );
+
+        if ( $rows ) WP_CLI\Utils\format_items( 'table', $rows, array( 'id', 'status', 'issues' ) );
+        WP_CLI::success(
+            sprintf(
+                '%s. Examined: %d; %s: %d; unchanged: %d; invalid: %d; missing: %d.',
+                $apply ? 'Starting-price backfill applied' : 'Dry run only; add --apply to write derived metadata',
+                $counts['examined'],
+                $apply ? 'updated' : 'would update',
+                $counts['updated'],
+                $counts['unchanged'],
+                $counts['invalid'],
+                $counts['missing']
+            )
+        );
     }
 
     public static function audit_powertrain() {

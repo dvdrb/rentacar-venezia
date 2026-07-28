@@ -87,12 +87,11 @@ test.describe('final theme experience', () => {
     await expect(returnDate).toHaveAttribute('min', '2026-07-31');
   });
 
-  test('offers native price sorting without unrelated fleet filters', async ({ page }) => {
+  test('uses a fixed increasing-price fleet order without public filters', async ({ page }) => {
     await page.goto('/fleet/');
     await expect(page.locator('#fleet-filters, [data-fleet-filters], [data-fleet-filter-drawer], .fleet-active-filters, .fleet-airport-links')).toHaveCount(0);
     await expect(page.locator('select[name="transmission"], select[name="passengers"], select[name="doors"], input[name="air_conditioning"]')).toHaveCount(0);
-    await expect(page.locator('select[name="sort"]')).toHaveCount(1);
-    await expect(page.locator('select[name="sort"] option')).toHaveCount(3);
+    await expect(page.locator('select[name="sort"], .fleet-sort')).toHaveCount(0);
     await expect(page.locator('.fleet-page .page-intro > .eyebrow')).toHaveCount(0);
     await expect(page.locator('body')).not.toContainText(/Filter and sort cars|Filtra e ordina le auto|Apply filters|Clear filters/i);
   });

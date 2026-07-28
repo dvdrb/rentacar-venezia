@@ -37,5 +37,7 @@ grep -q -- '--format=table' "$ROOT/scripts/deployment/lib/database.sh" && pass=$
 grep -q 'pll_languages_list' "$ROOT/scripts/deployment/lib/verify.sh" && pass=$((pass+1)) || fail=$((fail+1))
 grep -q 'verify_public_http' "$ROOT/scripts/deploy-production" && pass=$((pass+1)) || fail=$((fail+1))
 grep -q 'test:browser:production' "$ROOT/scripts/deployment/lib/verify.sh" && pass=$((pass+1)) || fail=$((fail+1))
+grep -q 'check:assets' "$ROOT/scripts/deployment/lib/local.sh" && pass=$((pass+1)) || fail=$((fail+1))
+grep -q 'deploying complete theme asset build before its manifest' "$ROOT/scripts/deployment/lib/code.sh" && pass=$((pass+1)) || fail=$((fail+1))
 grep -q 'SCP_CONNECTION_ARGS.*return 0' "$ROOT/scripts/deployment/lib/remote.sh" && pass=$((pass+1)) || fail=$((fail+1))
 printf '%s deployment checks passed; %s failed\n' "$pass" "$fail"; [ "$fail" -eq 0 ]

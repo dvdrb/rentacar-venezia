@@ -41,6 +41,28 @@ function rentacar_venezia_v2_vehicle_starting_price( Rentacar_Core_Vehicle $vehi
     return $prices ? min( $prices ) : null;
 }
 
+/** Keeps the catalogue's fixed low-to-high price order in the database query before pagination. */
+function rentacar_venezia_v2_fleet_query_args( $paged ) {
+    $args = array(
+        'post_type'           => 'cars',
+        'post_status'         => 'publish',
+        'posts_per_page'      => 12,
+        'paged'               => max( 1, absint( $paged ) ),
+        'ignore_sticky_posts' => true,
+        'orderby'             => 'menu_order title',
+        'order'               => 'ASC',
+    );
+
+    $args['rentacar_starting_price_sort'] = 'ASC';
+
+    return $args;
+}
+
+/** Retains an active trip query while paginating the catalogue. */
+function rentacar_venezia_v2_fleet_pagination_args( array $trip ) {
+    return array_filter( $trip );
+}
+
 /**
  * Presentation-only escape hatch for source images with excessive internal
  * whitespace. A theme or child theme may return one safe modifier class

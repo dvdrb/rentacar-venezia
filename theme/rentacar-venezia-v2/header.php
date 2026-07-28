@@ -11,7 +11,7 @@
 <header class="site-header" data-site-header>
     <div class="site-header__inner rc-container">
         <div class="site-branding">
-            <?php rentacar_venezia_v2_brand_mark(); ?>
+            <?php rentacar_venezia_v2_brand_mark( 'header' ); ?>
         </div>
         <nav id="primary-navigation" class="primary-navigation" aria-label="<?php esc_attr_e( 'Primary navigation', 'rentacar-venezia-v2' ); ?>" data-primary-navigation>
             <?php

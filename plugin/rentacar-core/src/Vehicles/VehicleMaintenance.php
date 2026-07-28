@@ -18,11 +18,44 @@ final class Rentacar_Core_Vehicle_Maintenance {
     }
 
     public static function update_starting_price( $post_id ) {
-        if ( wp_is_post_revision( $post_id ) || 'cars' !== get_post_type( $post_id ) ) return;
+        if ( wp_is_post_revision( $post_id ) || 'cars' !== get_post_type( $post_id ) ) return array( 'status' => 'skipped', 'updated' => false );
+
+        $result = self::starting_price_result( $post_id );
+        $current = get_post_meta( $post_id, self::STARTING_PRICE_META, true );
+
+        if ( 'valid' === $result['status'] ) {
+            if ( (string) $current !== (string) $result['price'] ) {
+                update_post_meta( $post_id, self::STARTING_PRICE_META, $result['price'] );
+                $result['updated'] = true;
+            }
+            return $result;
+        }
+
+        if ( '' !== (string) $current ) {
+            delete_post_meta( $post_id, self::STARTING_PRICE_META );
+            $result['updated'] = true;
+        }
+
+        return $result;
+    }
+
+    /** Returns only a trustworthy starting price; invalid price bands never create derived metadata. */
+    public static function starting_price_result( $post_id ) {
         $vehicle = ( new Rentacar_Core_Vehicle_Repository() )->find( $post_id );
+        if ( ! $vehicle ) return array( 'status' => 'missing', 'price' => null, 'issues' => array( 'vehicle_not_found' ), 'updated' => false );
+
+        $bands = $vehicle->get( 'pricing_bands' );
+        $issues = $bands->audit( Rentacar_Core_Rental_Policy::minimum_rental_days(), Rentacar_Core_Rental_Policy::maximum_rental_days() );
+        if ( $issues ) return array( 'status' => 'invalid', 'price' => null, 'issues' => array_unique( wp_list_pluck( $issues, 'code' ) ), 'updated' => false );
+
         $prices = array();
-        if ( $vehicle ) foreach ( $vehicle->get( 'pricing_bands' )->all() as $band ) if ( null !== $band->daily_price && $band->daily_price > 0 ) $prices[] = (float) $band->daily_price;
-        if ( $prices ) update_post_meta( $post_id, self::STARTING_PRICE_META, min( $prices ) ); else delete_post_meta( $post_id, self::STARTING_PRICE_META );
+        foreach ( $bands->all() as $band ) {
+            if ( null !== $band->daily_price && $band->daily_price > 0 ) $prices[] = (float) $band->daily_price;
+        }
+
+        return $prices
+            ? array( 'status' => 'valid', 'price' => min( $prices ), 'issues' => array(), 'updated' => false )
+            : array( 'status' => 'missing', 'price' => null, 'issues' => array( 'missing_price' ), 'updated' => false );
     }
 
     public static function refresh_starting_price_on_pricing_change( $meta_id, $post_id, $meta_key, $meta_value ) {
@@ -63,7 +96,7 @@ final class Rentacar_Core_Vehicle_Maintenance {
         global $wpdb;
         $alias = 'rentacar_starting_price';
         $clauses['join'] .= " LEFT JOIN {$wpdb->postmeta} AS {$alias} ON ({$wpdb->posts}.ID = {$alias}.post_id AND {$alias}.meta_key = '" . self::STARTING_PRICE_META . "')";
-        $clauses['orderby'] = "CASE WHEN {$alias}.meta_value IS NULL OR {$alias}.meta_value = '' THEN 1 ELSE 0 END ASC, CAST({$alias}.meta_value AS DECIMAL(12,2)) {$direction}, {$wpdb->posts}.post_title ASC";
+        $clauses['orderby'] = "CASE WHEN CAST({$alias}.meta_value AS DECIMAL(12,2)) > 0 THEN 0 ELSE 1 END ASC, CAST({$alias}.meta_value AS DECIMAL(12,2)) {$direction}, {$wpdb->posts}.post_title ASC";
         return $clauses;
     }
 }
