@@ -70,12 +70,13 @@ function rentacar_venezia_v2_register_home_patterns() {
 }
 add_action( 'init', 'rentacar_venezia_v2_register_home_patterns' );
 
-/** Renders the approved light- or dark-surface brand asset without duplicating markup. */
+/** Renders the approved brand asset for each header or footer surface without duplicating markup. */
 function rentacar_venezia_v2_brand_mark( $context = 'header' ) {
-    $context = in_array( $context, array( 'header', 'footer' ), true ) ? $context : 'header';
+    $context = in_array( $context, array( 'header', 'header-light', 'footer' ), true ) ? $context : 'header';
     $assets = array(
-        'header' => 'assets/images/brand/gd-rent-a-car-logo.png',
-        'footer' => 'assets/images/brand/logo-reversed-cropped.png',
+        'header'       => 'assets/images/brand/gd-rent-a-car-logo-light-background.png',
+        'header-light' => 'assets/images/brand/logo-reversed-cropped.png',
+        'footer'       => 'assets/images/brand/logo-reversed-cropped.png',
     );
     $relative_asset = $assets[ $context ];
     $asset = get_template_directory() . '/' . $relative_asset;

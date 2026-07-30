@@ -2237,6 +2237,7 @@ body.home .site-header {
 }
 
 body.home .site-header .site-brand { padding:4px 6px; border-radius:4px; background:rgb(255 255 255 / 94%); }
+body.home .site-header .site-brand--header-light { padding:0; border-radius:0; background:transparent; }
 body.home .site-header .primary-navigation__list a { color:#fff; }
 
 body.home .site-header .primary-navigation__list a:hover,
