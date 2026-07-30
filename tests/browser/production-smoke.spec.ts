@@ -57,7 +57,10 @@ test.describe('production smoke', () => {
 
     for (const route of ['/', '/fleet/']) {
       currentRoute = route;
-      const response = await page.goto(route, { waitUntil: 'domcontentloaded' });
+      // Wait for the route's script resources before moving to the next route.
+      // Navigating at DOMContentLoaded aborts late WordPress core scripts (such
+      // as wp-emoji-release) and turns a navigation race into a false failure.
+      const response = await page.goto(route, { waitUntil: 'load' });
       expect(response?.status(), `${route} response`).toBe(200);
       await expect(page.locator('body')).toBeVisible();
       expect(await page.title(), `${route} title`).not.toBe('');
