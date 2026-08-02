@@ -169,10 +169,11 @@ add_action( 'wp_head', 'rentacar_venezia_v2_favicon', 99 );
 
 function rentacar_venezia_v2_assets() {
     $theme = wp_get_theme();
-    $style_path = get_stylesheet_directory() . '/style.css';
+    $style = rentacar_venezia_v2_compiled_asset( 'style' );
+    $style_path = $style ? $style['path'] : get_stylesheet_directory() . '/style.css';
     $script = rentacar_venezia_v2_compiled_asset( 'main' );
 
-    wp_enqueue_style( 'rentacar-venezia-v2', get_stylesheet_uri(), array(), rentacar_venezia_v2_asset_version( $style_path, $theme->get( 'Version' ) ) );
+    wp_enqueue_style( 'rentacar-venezia-v2', $style ? $style['uri'] : get_stylesheet_uri(), array(), rentacar_venezia_v2_asset_version( $style_path, $theme->get( 'Version' ) ) );
     if ( $script ) {
         wp_enqueue_script( 'rentacar-venezia-v2', $script['uri'], array(), $script['version'], true );
         wp_localize_script(
@@ -213,11 +214,12 @@ function rentacar_venezia_v2_assets() {
         );
     }
 
-    $analytics_path = get_template_directory() . '/assets/js/analytics-events.js';
-    if ( is_readable( $analytics_path ) ) {
+    $analytics = rentacar_venezia_v2_compiled_asset( 'analytics' );
+    $analytics_path = $analytics ? $analytics['path'] : get_template_directory() . '/assets/js/analytics-events.js';
+    if ( $analytics || is_readable( $analytics_path ) ) {
         wp_enqueue_script(
             'rentacar-venezia-v2-analytics-events',
-            get_template_directory_uri() . '/assets/js/analytics-events.js',
+            $analytics ? $analytics['uri'] : get_template_directory_uri() . '/assets/js/analytics-events.js',
             array( 'rentacar-venezia-v2' ),
             (string) filemtime( $analytics_path ),
             true
@@ -394,8 +396,17 @@ function rentacar_venezia_v2_asset_manifest() {
     }
 
     foreach ( $manifest as $entry ) {
-        if ( isset( $entry['name'], $entry['file'] ) && 'main' === $entry['name'] && is_string( $entry['file'] ) ) {
-            $assets['main'] = $entry['file'];
+        if ( ! is_array( $entry ) || empty( $entry['file'] ) || ! is_string( $entry['file'] ) ) {
+            continue;
+        }
+
+        $name = isset( $entry['name'] ) && is_string( $entry['name'] ) ? $entry['name'] : '';
+        if ( '' === $name && isset( $entry['src'] ) && 'style.css' === basename( (string) $entry['src'] ) ) {
+            $name = 'style';
+        }
+
+        if ( '' !== $name ) {
+            $assets[ $name ] = $entry['file'];
         }
     }
 
@@ -413,7 +424,7 @@ function rentacar_venezia_v2_compiled_asset( $name ) {
     $relative_path = isset( $manifest[ $name ] ) ? ltrim( (string) $manifest[ $name ], '/' ) : '';
     $dist_directory = realpath( get_template_directory() . '/assets/dist' );
 
-    if ( ! $dist_directory || '' === $relative_path || ! preg_match( '/\.js$/', $relative_path ) ) {
+    if ( ! $dist_directory || '' === $relative_path || ! preg_match( '/\.(?:css|js)$/', $relative_path ) ) {
         return null;
     }
 

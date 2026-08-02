@@ -2525,3 +2525,75 @@ body.home .site-header .language-switcher__trigger { border-color:rgb(255 255 25
   .reservation-success__reference { padding:6px 8px; font-size:.76rem; }
   .reservation-success .button { min-height:44px; margin-top:18px; }
 }
+
+/* The home-page highlights should read as one composed service panel, not an
+   uneven list of keywords. Each point keeps the same visual weight at every
+   breakpoint. */
+.trust-strip {
+  border:0;
+  background:linear-gradient(90deg, #f8f4eb 0%, #fffdfa 46%, #f8f4eb 100%);
+}
+
+.trust-strip .rc-container { padding-block:clamp(14px, 2vw, 22px); }
+
+.trust-strip__list {
+  grid-template-columns:repeat(4, minmax(0, 1fr));
+  gap:10px;
+}
+
+.trust-strip__item {
+  position:relative;
+  align-items:flex-start;
+  justify-content:flex-start;
+  min-height:88px;
+  padding:18px 16px;
+  border:1px solid rgb(7 27 58 / 12%);
+  border-radius:4px 16px 16px;
+  background:rgb(255 255 255 / 82%);
+  box-shadow:0 8px 20px rgb(7 27 58 / 5%);
+  font-size:.91rem;
+  font-weight:700;
+  line-height:1.35;
+  transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+}
+
+.trust-strip__item + .trust-strip__item { border-left:1px solid rgb(7 27 58 / 12%); }
+
+.trust-strip__item::before { display:none; content:none; }
+
+.trust-strip__item:hover {
+  border-color:rgb(189 125 20 / 42%);
+  box-shadow:0 12px 24px rgb(7 27 58 / 9%);
+  transform:translateY(-2px);
+}
+
+.trust-strip__icon {
+  width:34px;
+  height:34px;
+  flex-basis:34px;
+  border:1px solid rgb(189 125 20 / 34%);
+  border-radius:11px 4px 11px 11px;
+  background:#fff5ce;
+  color:var(--rc-navy-800);
+}
+
+.trust-strip__icon svg { width:17px; height:17px; stroke-width:1.8; }
+
+.trust-strip__text { max-width:19ch; }
+
+@media (max-width:899px) {
+  .trust-strip__list { grid-template-columns:repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width:639px) {
+  .trust-strip .rc-container { padding-block:12px; }
+  .trust-strip__list { grid-template-columns:1fr; gap:7px; }
+  .trust-strip__item { min-height:0; padding:13px 14px; font-size:.92rem; }
+  .trust-strip__item + .trust-strip__item { border-top:1px solid rgb(7 27 58 / 12%); }
+  .trust-strip__icon { width:31px; height:31px; flex-basis:31px; border-radius:10px 4px 10px 10px; }
+  .trust-strip__text { max-width:none; }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  .trust-strip__item { transition:none; }
+}

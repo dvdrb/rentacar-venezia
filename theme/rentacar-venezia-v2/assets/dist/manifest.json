@@ -1,8 +1,19 @@
 {
+  "theme/rentacar-venezia-v2/assets/js/analytics-events.js": {
+    "file": "js/analytics-okUnwS8U.js",
+    "name": "analytics",
+    "src": "theme/rentacar-venezia-v2/assets/js/analytics-events.js",
+    "isEntry": true
+  },
   "theme/rentacar-venezia-v2/assets/src/ts/main.ts": {
     "file": "js/main-Bg-bv4xh.js",
     "name": "main",
     "src": "theme/rentacar-venezia-v2/assets/src/ts/main.ts",
+    "isEntry": true
+  },
+  "theme/rentacar-venezia-v2/style.css": {
+    "file": "css/style-e8ab1gHQ.css",
+    "src": "theme/rentacar-venezia-v2/style.css",
     "isEntry": true
   }
 }

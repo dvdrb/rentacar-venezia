@@ -23,8 +23,8 @@ verify_production() {
 
 verify_public_http() {
   [ "$DRY_RUN" -eq 1 ] && { dry 'would run public HTTP and browser smoke checks'; return 0; }
-  curl -fsSIL "$PRODUCTION_URL/" | head -1 | grep -q ' 200 ' || die 7 'homepage HTTP smoke test failed'
-  curl -fsSIL "$PRODUCTION_URL/fleet/" | head -1 | grep -q ' 200 ' || die 7 'fleet HTTP smoke test failed'
+  curl -fsSI "$PRODUCTION_URL/" | head -1 | grep -q ' 200 ' || die 7 'homepage HTTP smoke test failed'
+  curl -fsSI "$PRODUCTION_URL/flotta/" | head -1 | grep -q ' 200 ' || die 7 'fleet HTTP smoke test failed'
   if [ "$RUN_BROWSER_TESTS" -eq 1 ] && [ "$SKIP_BROWSER_TESTS" -ne 1 ]; then
     (cd "$PROJECT_ROOT" && PLAYWRIGHT_BASE_URL="$PRODUCTION_URL" npm run test:browser:production) || die 7 'production browser smoke tests failed'
   fi
