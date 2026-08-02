@@ -5,8 +5,8 @@ function rentacar_venezia_v2_pickup_locations() {
     return apply_filters(
         'rentacar_venezia_v2_pickup_locations',
         array(
-            'venice_marco_polo' => array( 'value' => 'Airport Venice Marco Polo', 'label' => __( 'Venice Marco Polo Airport', 'rentacar-venezia-v2' ) ),
-            'treviso_airport'   => array( 'value' => 'Treviso Airport Arrivals', 'label' => __( 'Treviso Airport', 'rentacar-venezia-v2' ) ),
+            'venice_marco_polo' => array( 'value' => 'Airport Venice Marco Polo', 'label' => __( 'Venice Marco Polo Airport', 'rentacar-venezia-v2' ), 'map_url' => 'https://www.google.com/maps/search/?api=1&query=Venice+Marco+Polo+Airport' ),
+            'treviso_airport'   => array( 'value' => 'Treviso Airport Arrivals', 'label' => __( 'Treviso Airport', 'rentacar-venezia-v2' ), 'map_url' => 'https://www.google.com/maps/search/?api=1&query=Treviso+Airport' ),
         )
     );
 }
@@ -70,8 +70,8 @@ function rentacar_venezia_v2_location_theme_image( $location_key ) {
         ),
         'treviso_airport' => array(
             'path'   => '/assets/images/locations/treviso-airport.webp',
-            'width'  => 2880,
-            'height' => 1620,
+            'width'  => 1600,
+            'height' => 900,
         ),
     );
 

@@ -3,6 +3,7 @@ defined( 'ABSPATH' ) || exit;
 
 require_once get_template_directory() . '/inc/presentation.php';
 require_once get_template_directory() . '/inc/multilingual.php';
+require_once get_template_directory() . '/inc/business.php';
 require_once get_template_directory() . '/inc/interface-translations.php';
 require_once get_template_directory() . '/inc/consent.php';
 require_once get_template_directory() . '/inc/seo.php';
@@ -48,9 +49,18 @@ add_filter( 'rentacar_core_airport_locations', 'rentacar_venezia_v2_core_airport
 
 /** The public contact form uses the approved business inbox unless an owner override is configured. */
 function rentacar_venezia_v2_contact_recipient( $recipient ) {
-    return is_email( $recipient ) ? $recipient : 'info@rentacarvenezia.it';
+    return is_email( $recipient ) ? $recipient : rentacar_venezia_v2_business_value( 'email' );
 }
 add_filter( 'rentacar_core_contact_recipient', 'rentacar_venezia_v2_contact_recipient' );
+
+function rentacar_venezia_v2_reservation_recipient( $recipient ) {
+    return is_email( $recipient ) ? $recipient : rentacar_venezia_v2_business_value( 'email' );
+}
+add_filter( 'rentacar_core_reservation_recipient', 'rentacar_venezia_v2_reservation_recipient' );
+
+add_filter( 'rentacar_core_whatsapp_url', 'rentacar_venezia_v2_business_whatsapp_url' );
+add_filter( 'rentacar_core_email_public_name', function( $name ) { return rentacar_venezia_v2_business_value( 'public_name' ); } );
+add_filter( 'rentacar_core_email_footer', function( $footer ) { return implode( ' · ', array_filter( array( rentacar_venezia_v2_business_value( 'public_name' ), rentacar_venezia_v2_business_value( 'phone_display' ), rentacar_venezia_v2_business_value( 'email' ) ) ) ); } );
 
 function rentacar_venezia_v2_register_home_patterns() {
     if ( ! function_exists( 'register_block_pattern' ) ) {
@@ -70,6 +80,45 @@ function rentacar_venezia_v2_register_home_patterns() {
 }
 add_action( 'init', 'rentacar_venezia_v2_register_home_patterns' );
 
+/**
+ * Guides are noindexed by default. This small editorial control makes an
+ * explicit factual/legal/language review the only route into the sitemap.
+ */
+function rentacar_venezia_v2_add_guide_indexing_meta_box() {
+    add_meta_box(
+        'rentacar-guide-indexing',
+        __( 'Guide search visibility', 'rentacar-venezia-v2' ),
+        'rentacar_venezia_v2_render_guide_indexing_meta_box',
+        'post',
+        'side',
+        'default'
+    );
+}
+add_action( 'add_meta_boxes_post', 'rentacar_venezia_v2_add_guide_indexing_meta_box' );
+
+function rentacar_venezia_v2_render_guide_indexing_meta_box( $post ) {
+    wp_nonce_field( 'rentacar_save_guide_indexing', 'rentacar_guide_indexing_nonce' );
+    $indexable = '1' === (string) get_post_meta( $post->ID, '_rc_seo_indexable', true );
+    ?>
+    <p><?php esc_html_e( 'Guides are noindexed by default. Enable this only after factual, legal and language review.', 'rentacar-venezia-v2' ); ?></p>
+    <label><input type="checkbox" name="rentacar_guide_indexable" value="1" <?php checked( $indexable ); ?>> <?php esc_html_e( 'Allow this guide in search and the sitemap', 'rentacar-venezia-v2' ); ?></label>
+    <?php
+}
+
+function rentacar_venezia_v2_save_guide_indexing_meta( $post_id ) {
+    if ( wp_is_post_autosave( $post_id ) || wp_is_post_revision( $post_id ) || ! isset( $_POST['rentacar_guide_indexing_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['rentacar_guide_indexing_nonce'] ) ), 'rentacar_save_guide_indexing' ) || ! current_user_can( 'edit_post', $post_id ) ) {
+        return;
+    }
+
+    if ( ! empty( $_POST['rentacar_guide_indexable'] ) ) {
+        update_post_meta( $post_id, '_rc_seo_indexable', '1' );
+        return;
+    }
+
+    delete_post_meta( $post_id, '_rc_seo_indexable' );
+}
+add_action( 'save_post_post', 'rentacar_venezia_v2_save_guide_indexing_meta' );
+
 /** Renders the approved brand asset for each header or footer surface without duplicating markup. */
 function rentacar_venezia_v2_brand_mark( $context = 'header' ) {
     $context = in_array( $context, array( 'header', 'header-light', 'footer' ), true ) ? $context : 'header';
@@ -81,6 +130,7 @@ function rentacar_venezia_v2_brand_mark( $context = 'header' ) {
     $relative_asset = $assets[ $context ];
     $asset = get_template_directory() . '/' . $relative_asset;
     $classes = 'site-brand site-brand--' . $context;
+    $public_name = rentacar_venezia_v2_business_value( 'public_name' );
 
     if ( is_readable( $asset ) ) {
         $dimensions = function_exists( 'wp_getimagesize' ) ? wp_getimagesize( $asset ) : getimagesize( $asset );
@@ -90,11 +140,11 @@ function rentacar_venezia_v2_brand_mark( $context = 'header' ) {
             '<a class="%1$s" href="%2$s" rel="home" aria-label="%3$s"><img src="%4$s"%5$s%6$s alt="%7$s"></a>',
             esc_attr( $classes ),
             esc_url( rentacar_venezia_v2_home_url() ),
-            esc_attr__( 'G&D Rent A Car', 'rentacar-venezia-v2' ),
+            esc_attr( $public_name ),
             esc_url( get_template_directory_uri() . '/' . $relative_asset ),
             $width ? ' width="' . esc_attr( $width ) . '"' : '',
             $height ? ' height="' . esc_attr( $height ) . '"' : '',
-            esc_attr__( 'G&D Rent A Car', 'rentacar-venezia-v2' )
+            esc_attr( $public_name )
         );
         return;
     }
@@ -103,9 +153,9 @@ function rentacar_venezia_v2_brand_mark( $context = 'header' ) {
         '<a class="%1$s" href="%2$s" rel="home" aria-label="%3$s"><span class="site-brand__main">%4$s</span><span class="site-brand__sub">%5$s</span></a>',
         esc_attr( $classes ),
         esc_url( rentacar_venezia_v2_home_url() ),
-        esc_attr__( 'Rent A Car Venezia', 'rentacar-venezia-v2' ),
-        esc_html__( 'RENT A CAR', 'rentacar-venezia-v2' ),
-        esc_html__( 'VENEZIA', 'rentacar-venezia-v2' )
+        esc_attr( $public_name ),
+        esc_html( $public_name ),
+        ''
     );
 }
 
@@ -162,8 +212,42 @@ function rentacar_venezia_v2_assets() {
             )
         );
     }
+
+    $analytics_path = get_template_directory() . '/assets/js/analytics-events.js';
+    if ( is_readable( $analytics_path ) ) {
+        wp_enqueue_script(
+            'rentacar-venezia-v2-analytics-events',
+            get_template_directory_uri() . '/assets/js/analytics-events.js',
+            array( 'rentacar-venezia-v2' ),
+            (string) filemtime( $analytics_path ),
+            true
+        );
+    }
 }
 add_action( 'wp_enqueue_scripts', 'rentacar_venezia_v2_assets' );
+
+/**
+ * Contact Form 7 was loading its global assets on every page although the
+ * active theme uses Rentacar Core's own protected contact form. Keep CF7
+ * assets available for a future page that actually contains its shortcode.
+ */
+function rentacar_venezia_v2_current_request_has_contact_form_7() {
+    $post_id = get_queried_object_id();
+    $content = $post_id ? (string) get_post_field( 'post_content', $post_id ) : '';
+
+    return '' !== $content && ( has_shortcode( $content, 'contact-form-7' ) || false !== stripos( $content, 'wpcf7' ) );
+}
+
+function rentacar_venezia_v2_dequeue_unused_contact_form_7_assets() {
+    if ( is_admin() || rentacar_venezia_v2_current_request_has_contact_form_7() ) {
+        return;
+    }
+
+    wp_dequeue_style( 'contact-form-7' );
+    wp_dequeue_script( 'contact-form-7' );
+    wp_dequeue_script( 'swv' );
+}
+add_action( 'wp_enqueue_scripts', 'rentacar_venezia_v2_dequeue_unused_contact_form_7_assets', 100 );
 
 /**
  * LocalWP's port-forwarded HTTP preview can coexist with a database whose
@@ -476,7 +560,7 @@ function rentacar_venezia_v2_language_links() {
 }
 
 function rentacar_venezia_v2_whatsapp_url() {
-    return (string) apply_filters( 'rentacar_venezia_v2_whatsapp_url', 'https://wa.me/393445068823' );
+    return (string) apply_filters( 'rentacar_venezia_v2_whatsapp_url', rentacar_venezia_v2_business_whatsapp_url() );
 }
 
 function rentacar_venezia_v2_telegram_url() {

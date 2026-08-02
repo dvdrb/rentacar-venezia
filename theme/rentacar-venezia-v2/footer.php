@@ -1,4 +1,5 @@
 <footer class="site-footer">
+    <?php $business = rentacar_venezia_v2_business_data(); ?>
     <div class="rc-container site-footer__grid">
         <section aria-labelledby="footer-brand-title">
             <div id="footer-brand-title" class="site-footer__brand">
@@ -11,10 +12,11 @@
         </nav>
         <section class="site-footer__contact" aria-labelledby="footer-contact-title">
             <h2 id="footer-contact-title"><?php esc_html_e( 'Contact', 'rentacar-venezia-v2' ); ?></h2>
-            <a href="tel:+393445068823">+39 344 506 8823</a>
-            <a href="mailto:info@rentacarvenezia.it">info@rentacarvenezia.it</a>
-            <p><?php esc_html_e( 'Monday–Friday, 24/24', 'rentacar-venezia-v2' ); ?></p>
-            <p><?php esc_html_e( 'Saturday–Sunday, 07:00–23:00', 'rentacar-venezia-v2' ); ?></p>
+            <p><?php echo esc_html( $business['street_address'] . ', ' . $business['locality'] ); ?></p>
+            <a href="tel:<?php echo esc_attr( $business['phone'] ); ?>"><?php echo esc_html( $business['phone_display'] ); ?></a>
+            <a href="mailto:<?php echo esc_attr( $business['email'] ); ?>"><?php echo esc_html( $business['email'] ); ?></a>
+            <p><?php echo esc_html( $business['weekday_hours'] ); ?></p>
+            <?php if ( '' !== $business['weekend_hours'] ) : ?><p><?php echo esc_html( $business['weekend_hours'] ); ?></p><?php endif; ?>
             <nav class="site-footer__social" aria-label="<?php esc_attr_e( 'Social links', 'rentacar-venezia-v2' ); ?>">
                 <a class="site-footer__social-link" href="https://www.instagram.com/rentacar_veniceairport/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.7" r=".9" class="site-footer__social-fill"/></svg><span class="screen-reader-text">Instagram</span></a>
                 <a class="site-footer__social-link" href="https://www.facebook.com/people/Rent-A-Car-Venezia-no-credit-card/61585973730435/#" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14 21v-8h2.8l.4-3H14V8.1c0-.9.3-1.6 1.7-1.6H17V3.8c-.3 0-1.2-.1-2.2-.1-2.2 0-3.7 1.3-3.7 3.8V10H8.5v3h2.6v8H14Z" class="site-footer__social-fill"/></svg><span class="screen-reader-text">Facebook</span></a>
@@ -24,7 +26,7 @@
         </section>
     </div>
     <div class="site-footer__bottom rc-container">
-        <small>&copy; <?php echo esc_html( wp_date( 'Y' ) ); ?> <?php bloginfo( 'name' ); ?></small>
+        <small>&copy; <?php echo esc_html( wp_date( 'Y' ) ); ?> <?php echo esc_html( $business['public_name'] ); ?></small>
         <nav class="site-footer__legal" aria-label="<?php esc_attr_e( 'Legal information', 'rentacar-venezia-v2' ); ?>">
             <?php $terms_url = rentacar_venezia_v2_managed_page_url( 'terms' ); if ( $terms_url ) : ?><a href="<?php echo esc_url( $terms_url ); ?>"><?php esc_html_e( 'Terms and Conditions', 'rentacar-venezia-v2' ); ?></a><?php endif; ?>
             <?php $privacy_url = rentacar_venezia_v2_localized_privacy_policy_url(); if ( $privacy_url ) : ?><a href="<?php echo esc_url( $privacy_url ); ?>"><?php esc_html_e( 'Privacy Policy', 'rentacar-venezia-v2' ); ?></a><?php endif; ?>

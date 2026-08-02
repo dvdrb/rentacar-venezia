@@ -116,6 +116,30 @@ function rentacar_venezia_v2_languages() {
 }
 
 /**
+ * Provides a deterministic fallback for visitors whose language does not have
+ * a dedicated version of the current resource. Polylang only emits x-default
+ * when its global option is enabled; the default-language equivalent is the
+ * correct fallback here and avoids changing any language route.
+ */
+function rentacar_venezia_v2_add_hreflang_x_default( $hreflangs ) {
+    if ( ! is_array( $hreflangs ) || isset( $hreflangs['x-default'] ) ) {
+        return $hreflangs;
+    }
+
+    $default_language = rentacar_venezia_v2_default_language();
+
+    if ( $default_language && ! empty( $hreflangs[ $default_language ] ) ) {
+        $hreflangs['x-default'] = $hreflangs[ $default_language ];
+    }
+
+    return $hreflangs;
+}
+
+if ( function_exists( 'pll_current_language' ) ) {
+    add_filter( 'pll_rel_hreflang_attributes', 'rentacar_venezia_v2_add_hreflang_x_default', 20 );
+}
+
+/**
  * Returns a current-language home URL without assuming a language directory.
  * This is deliberately limited to internal recovery/navigation links; normal
  * page permalinks continue to come from WordPress and Polylang directly.

@@ -22,13 +22,16 @@ get_header();
             </section>
             <section class="airport-page__practical" aria-labelledby="airport-practical-title">
                 <h2 id="airport-practical-title"><?php esc_html_e( 'Practical information', 'rentacar-venezia-v2' ); ?></h2>
-                <dl><div><dt><?php esc_html_e( 'Airport code', 'rentacar-venezia-v2' ); ?></dt><dd><?php echo esc_html( $airport_code ); ?></dd></div><div><dt><?php esc_html_e( 'After-hours pickup', 'rentacar-venezia-v2' ); ?></dt><dd><?php esc_html_e( '07:30–19:30 included; 19:30–22:30 €25; 22:30–05:30 €50; 05:30–07:30 €25.', 'rentacar-venezia-v2' ); ?></dd></div><div><dt><?php esc_html_e( 'Different-airport return', 'rentacar-venezia-v2' ); ?></dt><dd><?php esc_html_e( 'A €25 charge applies when pickup and return airports differ.', 'rentacar-venezia-v2' ); ?></dd></div></dl>
+                <dl><div><dt><?php esc_html_e( 'Airport code', 'rentacar-venezia-v2' ); ?></dt><dd><?php echo esc_html( $airport_code ); ?></dd></div><div><dt><?php esc_html_e( 'After-hours pickup', 'rentacar-venezia-v2' ); ?></dt><dd><?php echo esc_html( rentacar_venezia_v2_after_hours_policy_label() ); ?></dd></div><div><dt><?php esc_html_e( 'Different-airport return', 'rentacar-venezia-v2' ); ?></dt><dd><?php echo esc_html( rentacar_venezia_v2_inter_airport_policy_label() ); ?></dd></div></dl>
+                <?php if ( ! empty( $location['map_url'] ) ) : ?><p><a class="text-link" href="<?php echo esc_url( $location['map_url'] ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'View airport map', 'rentacar-venezia-v2' ); ?></a></p><?php endif; ?>
             </section>
             <section class="airport-page__faq" aria-labelledby="airport-faq-title">
                 <h2 id="airport-faq-title"><?php esc_html_e( 'Airport pickup questions', 'rentacar-venezia-v2' ); ?></h2>
                 <details><summary><?php esc_html_e( 'Is there an airport desk?', 'rentacar-venezia-v2' ); ?></summary><p><?php esc_html_e( 'Pickup arrangements are confirmed directly with you before collection.', 'rentacar-venezia-v2' ); ?></p></details>
-                <details><summary><?php esc_html_e( 'Can I return to the other airport?', 'rentacar-venezia-v2' ); ?></summary><p><?php esc_html_e( 'Yes. Select a different return airport in the reservation form; the applicable €25 charge is shown separately in the estimate.', 'rentacar-venezia-v2' ); ?></p></details>
+                <details><summary><?php esc_html_e( 'Can I return to the other airport?', 'rentacar-venezia-v2' ); ?></summary><p><?php echo esc_html( rentacar_venezia_v2_inter_airport_return_policy_label() ); ?></p></details>
             </section>
+            <?php $review_url = rentacar_venezia_v2_location_review_url( $location_key ); ?>
+            <?php if ( $review_url ) : ?><section class="airport-page__cta" aria-labelledby="airport-review-title"><h2 id="airport-review-title"><?php esc_html_e( 'Have you rented with us?', 'rentacar-venezia-v2' ); ?></h2><p><?php esc_html_e( 'Your review helps future travellers choose a local rental service.', 'rentacar-venezia-v2' ); ?></p><a class="button button--secondary" href="<?php echo esc_url( $review_url ); ?>" target="_blank" rel="noopener noreferrer" data-review-cta><?php esc_html_e( 'Leave a review', 'rentacar-venezia-v2' ); ?></a></section><?php endif; ?>
             <section class="airport-page__cta"><h2><?php esc_html_e( 'Choose the car for your journey', 'rentacar-venezia-v2' ); ?></h2><a class="button" href="<?php echo esc_url( add_query_arg( 'pickup_location', $location['value'] ?? '', rentacar_venezia_v2_fleet_url() ) ); ?>"><?php esc_html_e( 'Explore the fleet', 'rentacar-venezia-v2' ); ?></a></section>
         <?php endwhile; ?>
     </article>

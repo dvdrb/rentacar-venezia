@@ -23,9 +23,9 @@ get_header();
     <section class="hero hero--split">
         <div class="rc-container hero__inner">
             <div class="hero__copy">
-                <p class="eyebrow"><?php esc_html_e( 'Venice & Treviso airport pickup', 'rentacar-venezia-v2' ); ?></p>
-                <h1><?php esc_html_e( 'Your journey starts with the right car.', 'rentacar-venezia-v2' ); ?></h1>
-                <p><?php esc_html_e( 'Choose from our fleet and reserve your car in a few simple steps. Direct assistance from a local team.', 'rentacar-venezia-v2' ); ?></p>
+                <p class="eyebrow"><?php esc_html_e( 'Car rental at Venice and Treviso airports', 'rentacar-venezia-v2' ); ?></p>
+                <h1><?php esc_html_e( 'Car Rental in Venice & Treviso', 'rentacar-venezia-v2' ); ?></h1>
+                <p><?php esc_html_e( 'Choose your car and send a reservation request with no credit card required. Airport pickup and direct local assistance.', 'rentacar-venezia-v2' ); ?></p>
                 <div class="hero__actions"><a class="button" href="<?php echo esc_url( rentacar_venezia_v2_fleet_url() ); ?>"><?php esc_html_e( 'Explore our cars', 'rentacar-venezia-v2' ); ?></a><?php if ( $whatsapp_url ) : ?><a class="button button--whatsapp" href="<?php echo esc_url( $whatsapp_url ); ?>"><?php esc_html_e( 'Ask on WhatsApp', 'rentacar-venezia-v2' ); ?></a><?php endif; ?></div>
             </div>
             <form id="trip-filter" class="trip-form hero__trip-form" method="get" action="<?php echo esc_url( rentacar_venezia_v2_fleet_url() ); ?>" data-trip-form>
@@ -43,7 +43,7 @@ get_header();
     </section>
     <section class="trust-strip" aria-label="<?php esc_attr_e( 'Service highlights', 'rentacar-venezia-v2' ); ?>">
         <div class="rc-container">
-            <ul class="trust-strip__list"><li class="trust-strip__item"><?php esc_html_e( 'Venice and Treviso airport pickup', 'rentacar-venezia-v2' ); ?></li><li class="trust-strip__item"><?php esc_html_e( 'Fast and simple reservation', 'rentacar-venezia-v2' ); ?></li><li class="trust-strip__item"><?php esc_html_e( 'Direct local assistance', 'rentacar-venezia-v2' ); ?></li></ul>
+            <ul class="trust-strip__list"><li class="trust-strip__item"><?php esc_html_e( 'Venice and Treviso airport pickup', 'rentacar-venezia-v2' ); ?></li><li class="trust-strip__item"><?php esc_html_e( 'Fast and simple reservation', 'rentacar-venezia-v2' ); ?></li><li class="trust-strip__item"><?php esc_html_e( 'No credit card required to send a request', 'rentacar-venezia-v2' ); ?></li><li class="trust-strip__item"><?php esc_html_e( 'Direct local assistance', 'rentacar-venezia-v2' ); ?></li></ul>
         </div>
     </section>
     <section id="fleet" class="section fleet-section" aria-labelledby="featured-cars-title">
