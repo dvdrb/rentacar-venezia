@@ -21,6 +21,7 @@ get_header();
 ?>
 <main id="main-content" class="site-main site-main--home">
     <section class="hero hero--split">
+        <img class="hero__background-image" src="<?php echo esc_url( get_theme_file_uri( 'assets/images/hero/hero-airport-background.webp' ) ); ?>" width="1672" height="941" alt="<?php esc_attr_e( 'Rental car for Venice and Treviso', 'rentacar-venezia-v2' ); ?>" fetchpriority="high">
         <div class="rc-container hero__inner">
             <div class="hero__copy">
                 <p class="eyebrow"><?php esc_html_e( 'Car rental at Venice and Treviso airports', 'rentacar-venezia-v2' ); ?></p>

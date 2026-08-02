@@ -13,12 +13,27 @@ function rentacar_venezia_v2_business_defaults() {
         'phone_display'  => '+39 344 506 8823',
         'email'          => 'info@rentacarvenezia.it',
         'whatsapp'       => '393445068823',
-        'weekday_hours'  => 'Monday–Sunday, 24/24',
-        'weekend_hours'  => '',
+        'weekday_hours'  => 'Monday–Friday, 24/24',
+        'weekend_hours'  => 'Saturday–Sunday, 07:00–23:00',
         'venice_review_url'  => 'https://search.google.com/local/writereview?placeid=ChIJX5MLBACzfkcRkpzxcPjF0es',
         'treviso_review_url' => 'https://search.google.com/local/writereview?placeid=ChIJ_4ELE5U3eUcRjwKQKULkwKA',
     );
 }
+
+/** Restore the approved pre-24/7 public hours when the former value is saved. */
+function rentacar_venezia_v2_restore_business_hours() {
+    $saved = get_option( 'rentacar_venezia_business', array() );
+
+    if ( ! is_array( $saved ) || 'Monday–Sunday, 24/24' !== ( $saved['weekday_hours'] ?? '' ) || '' !== ( $saved['weekend_hours'] ?? '' ) ) {
+        return;
+    }
+
+    $defaults = rentacar_venezia_v2_business_defaults();
+    $saved['weekday_hours'] = $defaults['weekday_hours'];
+    $saved['weekend_hours'] = $defaults['weekend_hours'];
+    update_option( 'rentacar_venezia_business', $saved );
+}
+add_action( 'init', 'rentacar_venezia_v2_restore_business_hours', 1 );
 
 function rentacar_venezia_v2_business_data() {
     $saved = get_option( 'rentacar_venezia_business', array() );

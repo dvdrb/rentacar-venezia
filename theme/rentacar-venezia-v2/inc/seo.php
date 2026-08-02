@@ -40,9 +40,15 @@ function rentacar_venezia_v2_yoast_business_organization( $organization ) {
     $organization['openingHoursSpecification'] = array(
         array(
             '@type'     => 'OpeningHoursSpecification',
-            'dayOfWeek' => array( 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday' ),
+            'dayOfWeek' => array( 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday' ),
             'opens'     => '00:00',
             'closes'    => '23:59',
+        ),
+        array(
+            '@type'     => 'OpeningHoursSpecification',
+            'dayOfWeek' => array( 'Saturday', 'Sunday' ),
+            'opens'     => '07:00',
+            'closes'    => '23:00',
         ),
     );
 

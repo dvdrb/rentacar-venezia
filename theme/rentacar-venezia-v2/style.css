@@ -2247,7 +2247,18 @@ body.home .site-header .language-switcher__trigger { border-color:rgb(255 255 25
 .hero--split {
   min-height:780px;
   padding:0;
-  background:url("assets/images/hero/hero-airport-background.webp") 70% center / cover no-repeat;
+  background:#03122b;
+}
+
+.hero--split .hero__background-image {
+  position:absolute;
+  inset:0;
+  z-index:0;
+  width:100%;
+  height:100%;
+  max-width:none;
+  object-fit:cover;
+  object-position:70% center;
 }
 
 .hero--split::before {
@@ -2259,6 +2270,7 @@ body.home .site-header .language-switcher__trigger { border-color:rgb(255 255 25
   border-radius:0;
   box-shadow:none;
   background:linear-gradient(90deg, rgb(3 18 43 / 99%) 0%, rgb(5 24 54 / 95%) 31%, rgb(6 28 61 / 77%) 52%, rgb(6 27 58 / 32%) 73%, rgb(6 27 58 / 8%) 100%);
+  z-index:1;
 }
 
 .hero--split .hero__inner {
@@ -2268,6 +2280,7 @@ body.home .site-header .language-switcher__trigger { border-color:rgb(255 255 25
   gap:clamp(28px, 4vw, 52px);
   padding-top:118px;
   padding-bottom:48px;
+  z-index:2;
 }
 
 .hero--split .hero__copy { display:block; grid-area:copy; align-self:center; max-width:560px; }
@@ -2295,8 +2308,9 @@ body.home .site-header .language-switcher__trigger { border-color:rgb(255 255 25
   .hero--split {
     min-height:0;
     padding:0;
-    background-position:70% center;
   }
+
+  .hero--split .hero__background-image { object-position:70% center; }
 
   .hero--split::before {
     display:block;
