@@ -21,13 +21,35 @@ verify_production() {
   ok 'production internal verification passed'
 }
 
+verify_http_200() {
+  local label=$1
+  local url=$2
+  local status
+
+  status=$(curl -sS -L --max-redirs 5 \
+    -o /dev/null \
+    -w '%{http_code}' \
+    "$url") || die 7 "$label HTTP request failed"
+
+  [ "$status" = "200" ] || die 7 "$label HTTP smoke test failed with status $status: $url"
+}
+
 verify_public_http() {
-  [ "$DRY_RUN" -eq 1 ] && { dry 'would run public HTTP and browser smoke checks'; return 0; }
-  curl -fsSI "$PRODUCTION_URL/" | head -1 | grep -q ' 200 ' || die 7 'homepage HTTP smoke test failed'
-  curl -fsSI "$PRODUCTION_URL/flotta/" | head -1 | grep -q ' 200 ' || die 7 'fleet HTTP smoke test failed'
+  [ "$DRY_RUN" -eq 1 ] && {
+    dry 'would run public HTTP and browser smoke checks'
+    return 0
+  }
+
+  verify_http_200 "homepage" "$PRODUCTION_URL/"
+  verify_http_200 "fleet" "$PRODUCTION_URL/fleet/"
+
   if [ "$RUN_BROWSER_TESTS" -eq 1 ] && [ "$SKIP_BROWSER_TESTS" -ne 1 ]; then
-    (cd "$PROJECT_ROOT" && PLAYWRIGHT_BASE_URL="$PRODUCTION_URL" npm run test:browser:production) || die 7 'production browser smoke tests failed'
+    (
+      cd "$PROJECT_ROOT" &&
+      PLAYWRIGHT_BASE_URL="$PRODUCTION_URL" npm run test:browser:production
+    ) || die 7 'production browser smoke tests failed'
   fi
+
   ok 'production public smoke checks passed'
 }
 

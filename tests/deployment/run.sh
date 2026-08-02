@@ -38,7 +38,7 @@ grep -q 'pll_languages_list' "$ROOT/scripts/deployment/lib/verify.sh" && pass=$(
 grep -q 'verify_public_http' "$ROOT/scripts/deploy-production" && pass=$((pass+1)) || fail=$((fail+1))
 grep -q 'test:browser:production' "$ROOT/scripts/deployment/lib/verify.sh" && pass=$((pass+1)) || fail=$((fail+1))
 grep -q 'minify' "$ROOT/vite.config.ts" && grep -q 'analytics:' "$ROOT/vite.config.ts" && grep -q 'style:' "$ROOT/vite.config.ts" && pass=$((pass+1)) || fail=$((fail+1))
-grep -q 'PRODUCTION_URL/flotta/' "$ROOT/scripts/deployment/lib/verify.sh" && pass=$((pass+1)) || fail=$((fail+1))
+grep -q 'PRODUCTION_URL/fleet/' "$ROOT/scripts/deployment/lib/verify.sh" && pass=$((pass+1)) || fail=$((fail+1))
 grep -q 'check:assets' "$ROOT/scripts/deployment/lib/local.sh" && pass=$((pass+1)) || fail=$((fail+1))
 grep -q 'deploying complete theme asset build before its manifest' "$ROOT/scripts/deployment/lib/code.sh" && pass=$((pass+1)) || fail=$((fail+1))
 grep -q 'SCP_CONNECTION_ARGS.*return 0' "$ROOT/scripts/deployment/lib/remote.sh" && pass=$((pass+1)) || fail=$((fail+1))
