@@ -273,9 +273,9 @@ function rentacar_venezia_v2_managed_page_id( $key ) {
     return $pages[ $key ] = $ids ? (int) $ids[0] : 0;
 }
 
-function rentacar_venezia_v2_managed_page_url( $key ) {
+function rentacar_venezia_v2_managed_page_url( $key, $language = null ) {
     $page_id = rentacar_venezia_v2_managed_page_id( $key );
-    $page_id = $page_id ? rentacar_venezia_v2_translated_post_id( $page_id ) : 0;
+    $page_id = $page_id ? rentacar_venezia_v2_translated_post_id( $page_id, $language ) : 0;
 
     return $page_id ? get_permalink( $page_id ) : '';
 }

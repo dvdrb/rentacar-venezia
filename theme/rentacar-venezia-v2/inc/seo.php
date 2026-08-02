@@ -408,6 +408,52 @@ function rentacar_venezia_v2_yoast_utility_page_robots( $robots ) {
 add_filter( 'wpseo_robots', 'rentacar_venezia_v2_yoast_utility_page_robots' );
 
 /**
+ * Keeps the multilingual slug migration direct and language-safe.
+ *
+ * WordPress's generic old-slug redirect cannot distinguish an old Italian
+ * slug from the now-valid English equivalent. Match only the published legacy
+ * paths and resolve each destination through the active language provider.
+ */
+function rentacar_venezia_v2_redirect_migrated_localized_urls() {
+    $path = isset( $_SERVER['REQUEST_URI'] ) ? wp_parse_url( wp_unslash( $_SERVER['REQUEST_URI'] ), PHP_URL_PATH ) : '';
+    $path = is_string( $path ) ? trailingslashit( '/' . ltrim( $path, '/' ) ) : '';
+
+    $redirects = array(
+        '/fleet/'                                         => array( 'fleet', 'it' ),
+        '/how-it-works/'                                  => array( 'how_it_works', 'it' ),
+        '/rental-requirements/'                           => array( 'rental_requirements', 'it' ),
+        '/terms-and-conditions/'                          => array( 'terms', 'it' ),
+        '/guides/'                                        => array( 'guides', 'it' ),
+        '/venice-marco-polo-airport-car-rental/'          => array( 'venice_marco_polo', 'it' ),
+        '/treviso-airport-car-rental/'                    => array( 'treviso_airport', 'it' ),
+        '/privacy-policy/'                                => array( 'privacy_policy', 'it' ),
+        '/faq/'                                           => array( 'faq', 'it' ),
+        '/en/fleet-2/'                                    => array( 'fleet', 'en' ),
+        '/en/how-it-works-2/'                             => array( 'how_it_works', 'en' ),
+        '/en/rental-requirements-2/'                      => array( 'rental_requirements', 'en' ),
+        '/en/terms-and-conditions-2/'                     => array( 'terms', 'en' ),
+        '/en/guides-2/'                                   => array( 'guides', 'en' ),
+        '/en/venice-marco-polo-airport-car-rental-2/'     => array( 'venice_marco_polo', 'en' ),
+        '/en/treviso-airport-car-rental-2/'               => array( 'treviso_airport', 'en' ),
+        '/en/privacy-policy-2/'                           => array( 'privacy_policy', 'en' ),
+        '/en/frequents/'                                  => array( 'faq', 'en' ),
+    );
+
+    if ( ! isset( $redirects[ $path ] ) ) {
+        return;
+    }
+
+    list( $key, $language ) = $redirects[ $path ];
+    $destination = rentacar_venezia_v2_managed_page_url( $key, $language );
+
+    if ( $destination ) {
+        wp_safe_redirect( $destination, 301, 'Rentacar Venezia' );
+        exit;
+    }
+}
+add_action( 'init', 'rentacar_venezia_v2_redirect_migrated_localized_urls', -1000 );
+
+/**
  * The historic Italian terms page has one exact, maintained replacement.
  * Redirect only this page ID so transactional legacy utilities remain
  * available to visitors who still have their old reservation links.

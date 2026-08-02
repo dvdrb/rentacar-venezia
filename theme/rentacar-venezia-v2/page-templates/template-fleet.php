@@ -47,7 +47,7 @@ get_header();
                 <?php echo $fleet_page_content['after']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- rendered through the_content. ?>
             </section>
         <?php endif; ?>
-        <section class="fleet-final-cta"><h2><?php esc_html_e( 'Need help choosing a car?', 'rentacar-venezia-v2' ); ?></h2><p><?php esc_html_e( 'Read how the request works and the rental requirements before sending your dates.', 'rentacar-venezia-v2' ); ?></p><a class="text-link" href="<?php echo esc_url( home_url( '/how-it-works/' ) ); ?>"><?php esc_html_e( 'How it works', 'rentacar-venezia-v2' ); ?></a> <a class="text-link" href="<?php echo esc_url( home_url( '/rental-requirements/' ) ); ?>"><?php esc_html_e( 'Rental requirements', 'rentacar-venezia-v2' ); ?></a></section>
+        <section class="fleet-final-cta"><h2><?php esc_html_e( 'Need help choosing a car?', 'rentacar-venezia-v2' ); ?></h2><p><?php esc_html_e( 'Read how the request works and the rental requirements before sending your dates.', 'rentacar-venezia-v2' ); ?></p><?php $how_it_works_url = rentacar_venezia_v2_managed_page_url( 'how_it_works' ); $rental_requirements_url = rentacar_venezia_v2_managed_page_url( 'rental_requirements' ); ?><?php if ( $how_it_works_url ) : ?><a class="text-link" href="<?php echo esc_url( $how_it_works_url ); ?>"><?php esc_html_e( 'How it works', 'rentacar-venezia-v2' ); ?></a><?php endif; ?><?php if ( $rental_requirements_url ) : ?> <a class="text-link" href="<?php echo esc_url( $rental_requirements_url ); ?>"><?php esc_html_e( 'Rental requirements', 'rentacar-venezia-v2' ); ?></a><?php endif; ?></section>
     </div>
 </main>
 <?php get_template_part( 'template-parts/enquiry/reservation-modal' ); ?>
