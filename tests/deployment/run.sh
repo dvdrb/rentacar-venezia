@@ -37,6 +37,7 @@ grep -q -- '--format=table' "$ROOT/scripts/deployment/lib/database.sh" && pass=$
 grep -q 'pll_languages_list' "$ROOT/scripts/deployment/lib/verify.sh" && pass=$((pass+1)) || fail=$((fail+1))
 grep -q 'verify_public_http' "$ROOT/scripts/deploy-production" && pass=$((pass+1)) || fail=$((fail+1))
 grep -q 'test:browser:production' "$ROOT/scripts/deployment/lib/verify.sh" && pass=$((pass+1)) || fail=$((fail+1))
+grep -q 'RankMath\\Sitemap\\Cache::invalidate_storage' "$ROOT/scripts/deployment/lib/maintenance.sh" && pass=$((pass+1)) || fail=$((fail+1))
 grep -q 'minify' "$ROOT/vite.config.ts" && grep -q 'analytics:' "$ROOT/vite.config.ts" && grep -q 'style:' "$ROOT/vite.config.ts" && pass=$((pass+1)) || fail=$((fail+1))
 grep -q 'PRODUCTION_URL/fleet/' "$ROOT/scripts/deployment/lib/verify.sh" && pass=$((pass+1)) || fail=$((fail+1))
 grep -q 'check:assets' "$ROOT/scripts/deployment/lib/local.sh" && pass=$((pass+1)) || fail=$((fail+1))

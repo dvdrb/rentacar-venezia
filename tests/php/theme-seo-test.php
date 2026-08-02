@@ -1,6 +1,7 @@
 <?php
 /** Focused PHP 7.4 checks for theme-level SEO helpers. */
 define( 'ABSPATH', __DIR__ . '/' );
+define( 'RANK_MATH_VERSION', 'test' );
 
 $GLOBALS['theme_seo_filters'] = array();
 $GLOBALS['theme_seo_query_vars'] = array( 'rc_fleet' => 1, 'paged' => 0, 'page' => 0 );
@@ -9,6 +10,7 @@ $GLOBALS['theme_seo_post_status'] = array( 10 => 'publish', 110 => 'publish' );
 $GLOBALS['theme_seo_attachment_alts'] = array();
 $GLOBALS['theme_seo_is_page'] = false;
 $GLOBALS['theme_seo_is_singular'] = false;
+$GLOBALS['theme_seo_templates'] = array();
 
 function add_filter( $tag, $callback, $priority = 10, $accepted_args = 1 ) { $GLOBALS['theme_seo_filters'][ $tag ][ $priority ][] = $callback; }
 function add_action( $tag, $callback, $priority = 10, $accepted_args = 1 ) { add_filter( $tag, $callback, $priority, $accepted_args ); }
@@ -27,6 +29,7 @@ function is_singular() { return $GLOBALS['theme_seo_is_singular']; }
 function is_archive() { return false; }
 function is_home() { return false; }
 function get_queried_object_id() { return 42; }
+function get_page_template_slug( $id ) { return isset( $GLOBALS['theme_seo_templates'][ $id ] ) ? $GLOBALS['theme_seo_templates'][ $id ] : ''; }
 function get_post_meta( $id ) { return isset( $GLOBALS['theme_seo_attachment_alts'][ $id ] ) ? $GLOBALS['theme_seo_attachment_alts'][ $id ] : ''; }
 function wp_get_attachment_image_url( $id ) { return $id ? 'https://example.test/media/' . $id . '.webp' : false; }
 function get_post_field( $field, $id ) { return 'post_content' === $field ? 'A visible vehicle description.' : ''; }
@@ -42,6 +45,16 @@ function get_post_ancestors() { return array(); }
 function wp_get_document_title() { return 'Archive'; }
 function determine_locale() { return 'en_US'; }
 function get_post_type( $post_id ) { return 'page'; }
+
+class WP_Post {
+    public $ID;
+    public $post_type;
+
+    public function __construct( $id, $post_type = 'page' ) {
+        $this->ID = $id;
+        $this->post_type = $post_type;
+    }
+}
 
 require_once dirname( __DIR__, 2 ) . '/plugin/rentacar-core/src/Vehicles/PricingBand.php';
 require_once dirname( __DIR__, 2 ) . '/plugin/rentacar-core/src/Vehicles/PricingBandCollection.php';
@@ -87,6 +100,7 @@ $vehicle = new Rentacar_Core_Vehicle( array(
     'title'           => 'Fiat 500',
     'permalink'       => 'https://example.test/vehicles/fiat-500/',
     'vehicle_gallery' => new Rentacar_Core_Vehicle_Gallery( 99 ),
+    'pricing_bands'   => new Rentacar_Core_Pricing_Band_Collection( array() ),
 ) );
 $GLOBALS['theme_seo_vehicle'] = $vehicle;
 theme_seo_assert( 'Fiat 500 rental vehicle' === rentacar_venezia_v2_vehicle_image_alt( $vehicle, 99, true ), 'Primary images receive a restrained title-based fallback alt.' );
@@ -99,6 +113,10 @@ $schema = rentacar_venezia_v2_vehicle_schema_data( $vehicle );
 $schema_json = json_encode( $schema );
 theme_seo_assert( false === strpos( $schema_json, 'Offer' ) && false === strpos( $schema_json, 'InStock' ), 'Vehicle schema excludes commercial availability claims.' );
 $GLOBALS['theme_seo_is_singular'] = true;
+theme_seo_assert( isset( $GLOBALS['theme_seo_filters']['rank_math/frontend/title'] ), 'Rank Math receives the vehicle title localization filter.' );
+theme_seo_assert( isset( $GLOBALS['theme_seo_filters']['rank_math/frontend/description'] ), 'Rank Math receives the vehicle description localization filter.' );
+theme_seo_assert( 'Example title 42 rental in Venice and Treviso' === rentacar_venezia_v2_rank_math_vehicle_title( 'legacy title' ), 'Rank Math vehicle titles are generated from the current vehicle record.' );
+theme_seo_assert( false !== strpos( rentacar_venezia_v2_rank_math_vehicle_description( 'legacy description' ), 'Example title 42' ), 'Rank Math vehicle descriptions are generated from the current vehicle record.' );
 add_filter( 'rentacar_venezia_v2_enable_vehicle_schema_fallback', function() { return false; } );
 ob_start();
 rentacar_venezia_v2_vehicle_schema();
@@ -107,5 +125,11 @@ theme_seo_assert( '' === ob_get_clean(), 'Vehicle schema output can be suppresse
 $_GET = array();
 $breadcrumb_items = rentacar_venezia_v2_breadcrumb_items();
 theme_seo_assert( 2 === count( $breadcrumb_items ) && 'Fleet' === $breadcrumb_items[1]['label'], 'Fleet breadcrumbs include crawlable Home and current Fleet items.' );
+
+$GLOBALS['theme_seo_is_page'] = true;
+$GLOBALS['theme_seo_templates'][42] = 'template-results.php';
+$rank_math_robots = rentacar_venezia_v2_rank_math_noindex_robots( array( 'index' => 'index', 'nofollow' => 'nofollow' ) );
+theme_seo_assert( 'noindex' === $rank_math_robots['noindex'] && 'follow' === $rank_math_robots['follow'], 'Rank Math noindexes transactional pages while retaining link discovery.' );
+theme_seo_assert( false === rentacar_venezia_v2_rank_math_sitemap_entry( array( 'loc' => 'https://example.test/total/' ), 'post', new WP_Post( 42 ) ), 'Rank Math excludes transactional pages from the sitemap.' );
 
 echo "Theme SEO checks passed.\n";

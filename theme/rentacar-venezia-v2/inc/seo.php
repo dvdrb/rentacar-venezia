@@ -4,11 +4,12 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Returns whether an external SEO plugin owns the SEO output for the request.
  *
- * Yoast is the only planned integration. The filter keeps the theme fallback
- * deliberately small and lets a later integration take ownership cleanly.
+ * The site can use either Yoast or Rank Math as its SEO owner. The filter
+ * keeps the theme fallbacks deliberately small and lets that owner emit the
+ * document-level tags without duplicates.
  */
 function rentacar_venezia_v2_external_seo_plugin_active() {
-    $active = defined( 'WPSEO_VERSION' ) || class_exists( 'WPSEO_Frontend' );
+    $active = defined( 'WPSEO_VERSION' ) || class_exists( 'WPSEO_Frontend' ) || defined( 'RANK_MATH_VERSION' );
 
     return (bool) apply_filters( 'rentacar_venezia_v2_external_seo_plugin_active', $active );
 }
@@ -226,16 +227,16 @@ add_filter( 'wp_robots', 'rentacar_venezia_v2_fleet_robots' );
  * pages. They remain reachable for existing visitors but are excluded from
  * search results and sitemap discovery.
  */
-function rentacar_venezia_v2_is_utility_page() {
-    if ( ! is_page() ) {
-        return false;
-    }
-
+function rentacar_venezia_v2_is_utility_page_id( $page_id ) {
     return in_array(
-        get_page_template_slug( get_queried_object_id() ),
+        get_page_template_slug( absint( $page_id ) ),
         array( 'template-results.php', 'template-success.php', 'page-templates/template-review-request.php' ),
         true
     );
+}
+
+function rentacar_venezia_v2_is_utility_page() {
+    return is_page() && rentacar_venezia_v2_is_utility_page_id( get_queried_object_id() );
 }
 
 /**
@@ -408,6 +409,28 @@ function rentacar_venezia_v2_yoast_utility_page_robots( $robots ) {
 add_filter( 'wpseo_robots', 'rentacar_venezia_v2_yoast_utility_page_robots' );
 
 /**
+ * Rank Math owns production metadata and sitemaps. Keep its robots output in
+ * step with the WordPress and Yoast fallbacks above so transactional and
+ * unapproved legacy pages cannot re-enter the production sitemap.
+ */
+function rentacar_venezia_v2_rank_math_noindex_robots( $robots ) {
+    $should_noindex = rentacar_venezia_v2_is_utility_page()
+        || ( is_page() && ! rentacar_venezia_v2_is_indexable_page() )
+        || ( is_singular( 'post' ) && ! rentacar_venezia_v2_is_indexable_guide() );
+
+    if ( ! $should_noindex ) {
+        return $robots;
+    }
+
+    unset( $robots['index'], $robots['nofollow'] );
+    $robots['noindex'] = 'noindex';
+    $robots['follow']  = 'follow';
+
+    return $robots;
+}
+add_filter( 'rank_math/frontend/robots', 'rentacar_venezia_v2_rank_math_noindex_robots' );
+
+/**
  * Keeps the multilingual slug migration direct and language-safe.
  *
  * WordPress's generic old-slug redirect cannot distinguish an old Italian
@@ -456,22 +479,60 @@ function rentacar_venezia_v2_redirect_migrated_localized_urls() {
 add_action( 'init', 'rentacar_venezia_v2_redirect_migrated_localized_urls', -1000 );
 
 /**
- * The historic Italian terms page has one exact, maintained replacement.
- * Redirect only this page ID so transactional legacy utilities remain
- * available to visitors who still have their old reservation links.
+ * The historic terms group has one maintained replacement. Resolve its
+ * Polylang siblings from the known source record so every legacy locale is
+ * redirected to its matching current-language terms page.
  */
+function rentacar_venezia_v2_legacy_terms_page_ids() {
+    static $page_ids = null;
+
+    if ( null !== $page_ids ) {
+        return $page_ids;
+    }
+
+    $page_ids = array( 3216 );
+    if ( function_exists( 'rentacar_venezia_v2_translations' ) ) {
+        $page_ids = array_merge( $page_ids, array_values( (array) rentacar_venezia_v2_translations( 3216 ) ) );
+    }
+
+    return $page_ids = array_values( array_unique( array_filter( array_map( 'absint', $page_ids ) ) ) );
+}
+
+function rentacar_venezia_v2_is_legacy_terms_page_id( $page_id ) {
+    return in_array( absint( $page_id ), rentacar_venezia_v2_legacy_terms_page_ids(), true );
+}
+
 function rentacar_venezia_v2_redirect_legacy_terms_page() {
-    if ( ! is_page( 3216 ) ) {
+    $page_id = get_queried_object_id();
+    if ( ! is_page() || ! rentacar_venezia_v2_is_legacy_terms_page_id( $page_id ) ) {
         return;
     }
 
-    $destination = rentacar_venezia_v2_managed_page_url( 'terms' );
-    if ( $destination ) {
+    $language = function_exists( 'rentacar_venezia_v2_post_language' ) ? rentacar_venezia_v2_post_language( $page_id ) : null;
+    $destination = rentacar_venezia_v2_managed_page_url( 'terms', $language );
+    $source_path = trailingslashit( (string) wp_parse_url( get_permalink( $page_id ), PHP_URL_PATH ) );
+    $destination_path = $destination ? trailingslashit( (string) wp_parse_url( $destination, PHP_URL_PATH ) ) : '';
+
+    if ( $destination && $source_path !== $destination_path ) {
         wp_safe_redirect( $destination, 301, 'Rentacar Venezia' );
         exit;
     }
 }
 add_action( 'template_redirect', 'rentacar_venezia_v2_redirect_legacy_terms_page', 1 );
+
+/** Excludes transactional and superseded pages from Rank Math's sitemap. */
+function rentacar_venezia_v2_rank_math_sitemap_entry( $entry, $type, $object ) {
+    if ( ! $object instanceof WP_Post || 'page' !== $object->post_type ) {
+        return $entry;
+    }
+
+    if ( rentacar_venezia_v2_is_utility_page_id( $object->ID ) || rentacar_venezia_v2_is_legacy_terms_page_id( $object->ID ) ) {
+        return false;
+    }
+
+    return $entry;
+}
+add_filter( 'rank_math/sitemap/entry', 'rentacar_venezia_v2_rank_math_sitemap_entry', 10, 3 );
 
 /** Keep author archives out of the XML sitemap on this single-business site. */
 function rentacar_venezia_v2_disable_user_sitemap( $provider, $name ) {
@@ -518,6 +579,16 @@ function rentacar_venezia_v2_yoast_fleet_canonical( $canonical ) {
     return rentacar_venezia_v2_fleet_canonical_url();
 }
 add_filter( 'wpseo_canonical', 'rentacar_venezia_v2_yoast_fleet_canonical' );
+
+/**
+ * Polylang gives each homepage translation its own language URL. Never let a
+ * saved SEO-plugin homepage canonical collapse those pages back to Italian.
+ */
+function rentacar_venezia_v2_localized_home_canonical( $canonical ) {
+    return is_front_page() ? rentacar_venezia_v2_home_url() : $canonical;
+}
+add_filter( 'wpseo_canonical', 'rentacar_venezia_v2_localized_home_canonical', 20 );
+add_filter( 'rank_math/frontend/canonical', 'rentacar_venezia_v2_localized_home_canonical', 20 );
 
 function rentacar_venezia_v2_document_title( $parts ) {
     if ( get_query_var( 'rc_fleet' ) && ! rentacar_venezia_v2_external_seo_plugin_active() ) {
@@ -611,6 +682,19 @@ function rentacar_venezia_v2_yoast_vehicle_description( $description ) {
 }
 add_filter( 'wpseo_metadesc', 'rentacar_venezia_v2_yoast_vehicle_description' );
 add_filter( 'wpseo_opengraph_desc', 'rentacar_venezia_v2_yoast_vehicle_description' );
+
+/** Mirrors the localized vehicle metadata with Rank Math in production. */
+function rentacar_venezia_v2_rank_math_vehicle_title( $title ) {
+    return rentacar_venezia_v2_yoast_vehicle_title( $title );
+}
+add_filter( 'rank_math/frontend/title', 'rentacar_venezia_v2_rank_math_vehicle_title' );
+add_filter( 'rank_math/opengraph/facebook/og_title', 'rentacar_venezia_v2_rank_math_vehicle_title' );
+
+function rentacar_venezia_v2_rank_math_vehicle_description( $description ) {
+    return rentacar_venezia_v2_yoast_vehicle_description( $description );
+}
+add_filter( 'rank_math/frontend/description', 'rentacar_venezia_v2_rank_math_vehicle_description' );
+add_filter( 'rank_math/opengraph/facebook/og_description', 'rentacar_venezia_v2_rank_math_vehicle_description' );
 
 /**
  * Builds FAQ schema exclusively from visible <details>/<summary> content on
