@@ -445,8 +445,10 @@ function rentacar_venezia_v2_redirect_migrated_localized_urls() {
 
     list( $key, $language ) = $redirects[ $path ];
     $destination = rentacar_venezia_v2_managed_page_url( $key, $language );
+    $destination_path = $destination ? wp_parse_url( $destination, PHP_URL_PATH ) : '';
+    $destination_path = is_string( $destination_path ) ? trailingslashit( '/' . ltrim( $destination_path, '/' ) ) : '';
 
-    if ( $destination ) {
+    if ( $destination && $destination_path !== $path ) {
         wp_safe_redirect( $destination, 301, 'Rentacar Venezia' );
         exit;
     }
