@@ -30,6 +30,8 @@ final class Rentacar_Core_Reservation_Controller {
         $input['vehicle_title'] = $vehicle ? $vehicle->get( 'title' ) : '';
         $input['vehicle_url'] = $vehicle ? $vehicle->get( 'permalink' ) : '';
         $input['powertrain'] = $vehicle ? $vehicle->get( 'powertrain' ) : 'other';
+        $input['pickup_location_label'] = apply_filters( 'rentacar_core_reservation_location_label', $input['pickup_location'], $input['pickup_location'], $input['language'] );
+        $input['return_location_label'] = apply_filters( 'rentacar_core_reservation_location_label', $input['return_location'], $input['return_location'], $input['language'] );
         $input['estimate_summary'] = self::estimate_summary( $estimate );
         $input['extras'] = $estimate ? $estimate->get( 'extras', array() ) : array();
         $input['inter_airport_surcharge'] = $estimate ? (float) $estimate->get( 'inter_airport_surcharge', 0 ) : 0;

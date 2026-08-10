@@ -10,8 +10,8 @@ final class Rentacar_Core_Customer_Acknowledgement {
         $extras = array_map( function( $label ) use ( $language ) { return Rentacar_Core_Reservation_Translations::label( $language, $label ); }, Rentacar_Core_Reservation_Extras::customer_labels( (array) $request->get( 'extras', array() ) ) );
         $details = array(
             $t( 'vehicle' ) => $request->get( 'vehicle_title' ),
-            $t( 'pickup' ) => $request->get( 'pickup_location' ) . ' — ' . $request->get( 'pickup_date' ) . ' ' . $request->get( 'pickup_time' ),
-            $t( 'return' ) => $request->get( 'return_location' ) . ' — ' . $request->get( 'return_date' ) . ' ' . $request->get( 'return_time' ),
+            $t( 'pickup' ) => $request->get( 'pickup_location_label', $request->get( 'pickup_location' ) ) . ' — ' . $request->get( 'pickup_date' ) . ' ' . $request->get( 'pickup_time' ),
+            $t( 'return' ) => $request->get( 'return_location_label', $request->get( 'return_location' ) ) . ' — ' . $request->get( 'return_date' ) . ' ' . $request->get( 'return_time' ),
             $t( 'rental_duration' ) => absint( $estimate['days'] ?? 0 ) . ' ' . $t( 'days' ),
             Rentacar_Core_Reservation_Translations::label( $language, 'Phone' ) => $request->get( 'phone_display', $request->get( 'phone' ) ),
             $t( 'selected_insurance' ) => Rentacar_Core_Reservation_Translations::label( $language, $estimate['insurance']['label'] ?? $t( 'none' ) ),

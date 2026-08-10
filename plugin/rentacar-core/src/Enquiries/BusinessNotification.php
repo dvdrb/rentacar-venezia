@@ -12,8 +12,8 @@ final class Rentacar_Core_Business_Notification {
             'Vehicle ID' => $request->get( 'vehicle_id' ),
             'Vehicle URL' => $request->get( 'vehicle_url' ),
             'Powertrain' => $request->get( 'powertrain', 'other' ),
-            'Pickup' => $request->get( 'pickup_location' ) . ' — ' . $request->get( 'pickup_date' ) . ' ' . $request->get( 'pickup_time' ),
-            'Return' => $request->get( 'return_location' ) . ' — ' . $request->get( 'return_date' ) . ' ' . $request->get( 'return_time' ),
+            'Pickup' => $request->get( 'pickup_location_label', $request->get( 'pickup_location' ) ) . ' — ' . $request->get( 'pickup_date' ) . ' ' . $request->get( 'pickup_time' ),
+            'Return' => $request->get( 'return_location_label', $request->get( 'return_location' ) ) . ' — ' . $request->get( 'return_date' ) . ' ' . $request->get( 'return_time' ),
             'Rental duration' => self::estimate_value( $request, 'days', '—' ) . ' days',
         );
 

@@ -7,6 +7,7 @@ final class Rentacar_Core_Cli_Commands {
         if ( ! defined( 'WP_CLI' ) || ! WP_CLI ) return;
         WP_CLI::add_command( 'rentacar pricing audit', array( __CLASS__, 'pricing_audit' ) );
         WP_CLI::add_command( 'rentacar vehicles backfill-starting-price', array( __CLASS__, 'backfill_starting_price' ) );
+        WP_CLI::add_command( 'rentacar vehicles sync-translations', array( __CLASS__, 'sync_translations' ) );
         WP_CLI::add_command( 'rentacar vehicles audit-powertrain', array( __CLASS__, 'audit_powertrain' ) );
         WP_CLI::add_command( 'rentacar vehicles infer-powertrain', array( __CLASS__, 'infer_powertrain' ) );
     }
@@ -60,6 +61,11 @@ final class Rentacar_Core_Cli_Commands {
                 $counts['missing']
             )
         );
+    }
+
+    public static function sync_translations() {
+        $result = Rentacar_Core_Vehicle_Field_Synchronizer::synchronize_all_from_default_language();
+        WP_CLI::success( sprintf( 'Synchronized %d controlled translation field set(s) across %d vehicle group(s).', $result['translations'], $result['groups'] ) );
     }
 
     public static function audit_powertrain() {

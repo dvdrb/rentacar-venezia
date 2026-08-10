@@ -766,19 +766,6 @@ function rentacar_venezia_v2_vehicle_schema_data( Rentacar_Core_Vehicle $vehicle
             $vehicle->get( 'air_conditioning' ) ? array( '@type' => 'PropertyValue', 'name' => rentacar_venezia_v2_vehicle_schema_text( 'air_conditioning' ), 'value' => rentacar_venezia_v2_vehicle_schema_text( 'yes' ) ) : null,
         )
     );
-    $offers = array();
-    foreach ( rentacar_venezia_v2_vehicle_bands( $vehicle ) as $band ) {
-        $offers[] = array(
-            '@type'         => 'Offer',
-            'price'         => number_format( (float) $band->daily_price, 2, '.', '' ),
-            'priceCurrency' => 'EUR',
-            'description'   => sprintf(
-                rentacar_venezia_v2_vehicle_schema_text( 'indicative_offer' ),
-                rentacar_venezia_v2_price_range_label( $band )
-            ),
-        );
-    }
-
     return array_filter(
         array(
             '@context'            => 'https://schema.org',
@@ -790,7 +777,6 @@ function rentacar_venezia_v2_vehicle_schema_data( Rentacar_Core_Vehicle $vehicle
             'description'         => $description,
             'vehicleConfiguration'=> rentacar_venezia_v2_vehicle_schema_text( 'rental_vehicle' ),
             'additionalProperty'  => $properties,
-            'offers'              => $offers,
         )
     );
 }

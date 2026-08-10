@@ -40,7 +40,7 @@ final class Rentacar_Core_Reservation_Store {
         if ( is_wp_error( $post_id ) ) return $post_id;
 
         $data = $request->to_array();
-        $allowed = array( 'reference', 'vehicle_id', 'vehicle_title', 'vehicle_url', 'powertrain', 'language', 'pickup_location', 'pickup_date', 'pickup_time', 'return_location', 'return_date', 'return_time', 'full_name', 'phone', 'phone_country', 'phone_calling_code', 'phone_national', 'phone_e164', 'phone_display', 'email', 'message', 'insurance', 'extras', 'estimate', 'submitted_at' );
+        $allowed = array( 'reference', 'vehicle_id', 'vehicle_title', 'vehicle_url', 'powertrain', 'language', 'pickup_location', 'pickup_location_label', 'pickup_date', 'pickup_time', 'return_location', 'return_location_label', 'return_date', 'return_time', 'full_name', 'phone', 'phone_country', 'phone_calling_code', 'phone_national', 'phone_e164', 'phone_display', 'email', 'message', 'insurance', 'extras', 'estimate', 'submitted_at' );
         foreach ( $allowed as $key ) {
             if ( array_key_exists( $key, $data ) ) update_post_meta( $post_id, '_rentacar_' . $key, $data[ $key ] );
         }

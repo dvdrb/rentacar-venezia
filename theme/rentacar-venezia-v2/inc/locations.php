@@ -5,10 +5,57 @@ function rentacar_venezia_v2_pickup_locations() {
     return apply_filters(
         'rentacar_venezia_v2_pickup_locations',
         array(
-            'venice_marco_polo' => array( 'value' => 'Airport Venice Marco Polo', 'label' => __( 'Venice Marco Polo Airport', 'rentacar-venezia-v2' ), 'map_url' => 'https://www.google.com/maps/search/?api=1&query=Venice+Marco+Polo+Airport' ),
-            'treviso_airport'   => array( 'value' => 'Treviso Airport Arrivals', 'label' => __( 'Treviso Airport', 'rentacar-venezia-v2' ), 'map_url' => 'https://www.google.com/maps/search/?api=1&query=Treviso+Airport' ),
+            'venice_marco_polo'     => array( 'value' => 'Airport Venice Marco Polo', 'label' => rentacar_venezia_v2_location_label( 'venice_marco_polo' ), 'map_url' => 'https://www.google.com/maps/search/?api=1&query=Venice+Marco+Polo+Airport', 'is_airport' => true ),
+            'treviso_airport'       => array( 'value' => 'Treviso Airport Arrivals', 'label' => rentacar_venezia_v2_location_label( 'treviso_airport' ), 'map_url' => 'https://www.google.com/maps/search/?api=1&query=Treviso+Airport', 'is_airport' => true ),
+            'treviso_station'       => array( 'value' => 'treviso_station', 'label' => rentacar_venezia_v2_location_label( 'treviso_station' ) ),
+            'venezia_mestre_station'=> array( 'value' => 'venezia_mestre_station', 'label' => rentacar_venezia_v2_location_label( 'venezia_mestre_station' ) ),
+            'venezia_piazzale_roma' => array( 'value' => 'venezia_piazzale_roma', 'label' => rentacar_venezia_v2_location_label( 'venezia_piazzale_roma' ) ),
+            'treviso_hotel'         => array( 'value' => 'treviso_hotel', 'label' => rentacar_venezia_v2_location_label( 'treviso_hotel' ) ),
+            'venice_hotel'          => array( 'value' => 'venice_hotel', 'label' => rentacar_venezia_v2_location_label( 'venice_hotel' ) ),
         )
     );
+}
+
+/** Centralized labels keep Polylang-aware templates free of language branches. */
+function rentacar_venezia_v2_location_label( $location_key, $language = null ) {
+    $labels = array(
+        'venice_marco_polo'      => array( 'it' => 'Aeroporto di Venezia Marco Polo', 'en' => 'Venice Marco Polo Airport', 'ro' => 'Aeroportul Veneția Marco Polo', 'ru' => 'Аэропорт Венеция-Марко-Поло' ),
+        'treviso_airport'        => array( 'it' => 'Aeroporto di Treviso', 'en' => 'Treviso Airport', 'ro' => 'Aeroportul Treviso', 'ru' => 'Аэропорт Тревизо' ),
+        'treviso_station'        => array( 'it' => 'Stazione Treviso', 'en' => 'Treviso Train Station', 'ro' => 'Gara Treviso', 'ru' => 'Ж/д вокзал Тревизо' ),
+        'venezia_mestre_station' => array( 'it' => 'Stazione Venezia Mestre', 'en' => 'Venice Mestre Train Station', 'ro' => 'Gara Venezia Mestre', 'ru' => 'Ж/д вокзал Венеция-Местре' ),
+        'venezia_piazzale_roma'  => array( 'it' => 'Piazzale Roma', 'en' => 'Piazzale Roma', 'ro' => 'Piazzale Roma', 'ru' => 'Пьяццале Рома' ),
+        'treviso_hotel'          => array( 'it' => 'Hotel a Treviso', 'en' => 'Hotel in Treviso', 'ro' => 'Hotel în Treviso', 'ru' => 'Отель в Тревизо' ),
+        'venice_hotel'           => array( 'it' => 'Hotel a Venezia', 'en' => 'Hotel in Venice', 'ro' => 'Hotel în Veneția', 'ru' => 'Отель в Венеции' ),
+    );
+    $language = $language ?: rentacar_venezia_v2_current_language();
+
+    return $labels[ $location_key ][ $language ] ?? ( $labels[ $location_key ]['en'] ?? '' );
+}
+
+function rentacar_venezia_v2_reservation_location_label( $value, $language = null ) {
+    foreach ( rentacar_venezia_v2_pickup_locations() as $key => $location ) {
+        if ( (string) $location['value'] === (string) $value ) {
+            return rentacar_venezia_v2_location_label( $key, $language );
+        }
+    }
+
+    return (string) $value;
+}
+
+function rentacar_venezia_v2_hotel_location_values() {
+    return array( 'treviso_hotel', 'venice_hotel' );
+}
+
+function rentacar_venezia_v2_hotel_details_instruction( $language = null ) {
+    $instructions = array(
+        'it' => 'Indica il nome e l’indirizzo dell’hotel.',
+        'en' => 'Please provide the hotel name and address.',
+        'ro' => 'Indică numele și adresa hotelului.',
+        'ru' => 'Укажите название и адрес отеля.',
+    );
+    $language = $language ?: rentacar_venezia_v2_current_language();
+
+    return $instructions[ $language ] ?? $instructions['en'];
 }
 
 function rentacar_venezia_v2_location_page_id( $location_key ) {

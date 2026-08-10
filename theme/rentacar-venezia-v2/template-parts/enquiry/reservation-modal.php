@@ -37,7 +37,7 @@ $return_time = in_array( $trip['return_time'] ?? '', $reservation_times, true ) 
             <p class="reservation-summary__prices" data-reservation-prices></p>
           </div>
         </aside>
-        <form class="reservation-form" data-reservation-form data-airport-locations="<?php echo esc_attr( wp_json_encode( $location_values ) ); ?>" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="post" novalidate>
+        <form class="reservation-form" data-reservation-form data-hotel-locations="<?php echo esc_attr( wp_json_encode( rentacar_venezia_v2_hotel_location_values() ) ); ?>" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="post" novalidate>
           <input type="hidden" name="action" value="rentacar_submit_reservation">
           <input type="hidden" name="vehicle_id" data-reservation-vehicle-id value="">
           <input type="hidden" name="started_at" value="<?php echo esc_attr( time() ); ?>">
@@ -90,6 +90,7 @@ $return_time = in_array( $trip['return_time'] ?? '', $reservation_times, true ) 
             <label><?php esc_html_e( 'Email', 'rentacar-venezia-v2' ); ?><input name="email" type="email" autocomplete="email" required></label>
           </fieldset>
 
+          <p class="reservation-form__hotel-details" data-reservation-hotel-details hidden><?php echo esc_html( rentacar_venezia_v2_hotel_details_instruction() ); ?></p>
           <details class="reservation-form__optional-note"><summary><?php esc_html_e( 'Add a note (optional)', 'rentacar-venezia-v2' ); ?></summary><label><?php esc_html_e( 'Message', 'rentacar-venezia-v2' ); ?><textarea name="message" rows="3"></textarea></label></details>
           <section class="reservation-estimate" aria-live="polite" data-reservation-estimate hidden><h3><?php esc_html_e( 'Your estimate', 'rentacar-venezia-v2' ); ?></h3><div data-reservation-estimate-content></div></section>
           <fieldset class="reservation-form__consents">

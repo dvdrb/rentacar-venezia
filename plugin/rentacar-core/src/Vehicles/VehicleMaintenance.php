@@ -96,7 +96,7 @@ final class Rentacar_Core_Vehicle_Maintenance {
         global $wpdb;
         $alias = 'rentacar_starting_price';
         $clauses['join'] .= " LEFT JOIN {$wpdb->postmeta} AS {$alias} ON ({$wpdb->posts}.ID = {$alias}.post_id AND {$alias}.meta_key = '" . self::STARTING_PRICE_META . "')";
-        $clauses['orderby'] = "CASE WHEN CAST({$alias}.meta_value AS DECIMAL(12,2)) > 0 THEN 0 ELSE 1 END ASC, CAST({$alias}.meta_value AS DECIMAL(12,2)) {$direction}, {$wpdb->posts}.post_title ASC";
+        $clauses['orderby'] = "CASE WHEN CAST({$alias}.meta_value AS DECIMAL(12,2)) > 0 THEN 0 ELSE 1 END ASC, CAST({$alias}.meta_value AS DECIMAL(12,2)) {$direction}, {$wpdb->posts}.menu_order ASC, {$wpdb->posts}.post_title ASC";
         return $clauses;
     }
 }

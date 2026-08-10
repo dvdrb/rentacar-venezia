@@ -153,7 +153,6 @@ function rentacar_venezia_v2_vehicle_schema_text( $key ) {
         'air_conditioning'     => array( 'en' => 'Air conditioning', 'it' => 'Aria condizionata', 'ro' => 'Aer condiționat', 'ru' => 'Кондиционер' ),
         'yes'                  => array( 'en' => 'Yes', 'it' => 'Sì', 'ro' => 'Da', 'ru' => 'Да' ),
         'rental_vehicle'       => array( 'en' => 'Rental vehicle', 'it' => 'Veicolo a noleggio', 'ro' => 'Vehicul de închiriat', 'ru' => 'Арендный автомобиль' ),
-        'indicative_offer'     => array( 'en' => 'Indicative daily price for rentals of %s. Availability and final price are confirmed personally.', 'it' => 'Prezzo giornaliero indicativo per noleggi di %s. Disponibilità e prezzo finale sono confermati personalmente.', 'ro' => 'Preț zilnic orientativ pentru închirieri de %s. Disponibilitatea și prețul final sunt confirmate personal.', 'ru' => 'Ориентировочная дневная цена для аренды на %s. Наличие и окончательная цена подтверждаются лично.' ),
     );
     if ( empty( $strings[ $key ] ) ) {
         return '';
@@ -196,6 +195,49 @@ function rentacar_venezia_v2_vehicle_starting_price( Rentacar_Core_Vehicle $vehi
     }
 
     return $prices ? min( $prices ) : null;
+}
+
+/**
+ * Sorts the rendered fleet by the exact starting price shown on its cards.
+ * This runs on the server after vehicles are mapped, so translated records
+ * never rely on an out-of-date derived-meta cache.
+ *
+ * @param Rentacar_Core_Vehicle[] $vehicles Vehicles in the current language.
+ * @return Rentacar_Core_Vehicle[]
+ */
+function rentacar_venezia_v2_sort_fleet_vehicles( array $vehicles ) {
+    usort(
+        $vehicles,
+        function( Rentacar_Core_Vehicle $left, Rentacar_Core_Vehicle $right ) {
+            $left_price = rentacar_venezia_v2_vehicle_starting_price( $left );
+            $right_price = rentacar_venezia_v2_vehicle_starting_price( $right );
+
+            if ( null === $left_price || null === $right_price ) {
+                if ( null !== $left_price ) {
+                    return -1;
+                }
+                if ( null !== $right_price ) {
+                    return 1;
+                }
+            } elseif ( $left_price !== $right_price ) {
+                return $left_price < $right_price ? -1 : 1;
+            }
+
+            $menu_order = (int) $left->get( 'menu_order' ) <=> (int) $right->get( 'menu_order' );
+            if ( 0 !== $menu_order ) {
+                return $menu_order;
+            }
+
+            $title = strcasecmp(
+                rentacar_venezia_v2_vehicle_title( $left ),
+                rentacar_venezia_v2_vehicle_title( $right )
+            );
+
+            return 0 !== $title ? $title : (int) $left->get( 'id' ) <=> (int) $right->get( 'id' );
+        }
+    );
+
+    return $vehicles;
 }
 
 /** Keeps the catalogue's fixed low-to-high price order in the database query before pagination. */

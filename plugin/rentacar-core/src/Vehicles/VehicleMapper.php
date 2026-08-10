@@ -23,6 +23,7 @@ final class Rentacar_Core_Vehicle_Mapper {
         return new Rentacar_Core_Vehicle( array(
             'id'                => (int) $post->ID,
             'title'             => get_the_title( $post ),
+            'menu_order'        => (int) $post->menu_order,
             'slug'              => $post->post_name,
             'permalink'         => get_permalink( $post ),
             'language'          => $this->language_resolver->post_language( $post->ID ),

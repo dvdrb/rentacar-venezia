@@ -333,6 +333,14 @@ const setupReservationDetails = (): void => {
   const returnDifferent = form.querySelector<HTMLInputElement>('[data-reservation-return-different]');
   const returnWrapper = returnLocation?.closest('label');
   const locationFee = form.querySelector<HTMLElement>('[data-reservation-location-fee]');
+  const hotelDetails = form.querySelector<HTMLElement>('[data-reservation-hotel-details]');
+  let hotelLocations: string[] = [];
+  try {
+    const locations = JSON.parse(form.dataset.hotelLocations || '[]');
+    hotelLocations = Array.isArray(locations) ? locations.filter((location): location is string => typeof location === 'string') : [];
+  } catch {
+    hotelLocations = [];
+  }
   const pickupDate = form.elements.namedItem('pickup_date') as HTMLInputElement | null;
   const returnDate = form.elements.namedItem('return_date') as HTMLInputElement | null;
 
@@ -341,6 +349,10 @@ const setupReservationDetails = (): void => {
     if (returnWrapper) returnWrapper.hidden = !different;
     if (locationFee) locationFee.hidden = !different;
     if (!different && pickup && returnLocation) returnLocation.value = pickup.value;
+    if (hotelDetails) {
+      const selectedLocations = [pickup?.value, different ? returnLocation?.value : pickup?.value];
+      hotelDetails.hidden = !selectedLocations.some((location) => Boolean(location) && hotelLocations.includes(location as string));
+    }
   };
 
   const syncRentalDates = (): void => {

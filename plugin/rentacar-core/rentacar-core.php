@@ -53,6 +53,7 @@ add_action( 'init', array( 'Rentacar_Core_Cars_Post_Type', 'register_when_legacy
 add_action( 'init', array( 'Rentacar_Core_Reservation_Store', 'register_post_type' ), 9 );
 add_action( 'add_meta_boxes_rentacar_request', array( 'Rentacar_Core_Reservation_Store', 'register_admin_meta_box' ) );
 add_action( 'init', array( 'Rentacar_Core_Vehicle_Maintenance', 'register' ), 10 );
+add_action( 'save_post_cars', array( 'Rentacar_Core_Vehicle_Field_Synchronizer', 'synchronize_from_default_translation' ), 40, 1 );
 add_filter( 'pll_get_post_types', function( $post_types, $is_settings = false ) { $post_types['cars'] = 'cars'; return $post_types; }, 10, 2 );
 add_filter( 'posts_clauses', array( 'Rentacar_Core_Cars_Post_Type', 'constrain_main_query_to_language' ), 20, 2 );
 add_action( 'admin_init', array( 'Rentacar_Core_Marketing_Claim_Registry', 'register_setting' ) );

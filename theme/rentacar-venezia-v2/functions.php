@@ -43,9 +43,22 @@ function rentacar_venezia_v2_core_reservation_locations( $locations ) {
 add_filter( 'rentacar_core_reservation_locations', 'rentacar_venezia_v2_core_reservation_locations' );
 
 function rentacar_venezia_v2_core_airport_locations( $locations ) {
-    return wp_list_pluck( rentacar_venezia_v2_pickup_locations(), 'value' );
+    return wp_list_pluck(
+        array_filter(
+            rentacar_venezia_v2_pickup_locations(),
+            function( $location ) {
+                return ! empty( $location['is_airport'] );
+            }
+        ),
+        'value'
+    );
 }
 add_filter( 'rentacar_core_airport_locations', 'rentacar_venezia_v2_core_airport_locations' );
+
+function rentacar_venezia_v2_filter_reservation_location_label( $label, $location, $language ) {
+    return rentacar_venezia_v2_reservation_location_label( $location, $language );
+}
+add_filter( 'rentacar_core_reservation_location_label', 'rentacar_venezia_v2_filter_reservation_location_label', 10, 3 );
 
 /** The public contact form uses the approved business inbox unless an owner override is configured. */
 function rentacar_venezia_v2_contact_recipient( $recipient ) {
