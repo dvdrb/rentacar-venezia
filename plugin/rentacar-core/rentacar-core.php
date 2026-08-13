@@ -48,6 +48,8 @@ require_once RENTACAR_CORE_PATH . 'src/Enquiries/ReservationRateLimiter.php';
 require_once RENTACAR_CORE_PATH . 'src/Enquiries/ReservationController.php';
 require_once RENTACAR_CORE_PATH . 'src/Enquiries/ContactController.php';
 require_once RENTACAR_CORE_PATH . 'src/Cli/Commands.php';
+require_once RENTACAR_CORE_PATH . 'src/Cli/FleetMigration.php';
+require_once RENTACAR_CORE_PATH . 'src/Cli/FleetTranslationPricingSync.php';
 
 add_action( 'init', array( 'Rentacar_Core_Cars_Post_Type', 'register_when_legacy_absent' ), 9 );
 add_action( 'init', array( 'Rentacar_Core_Reservation_Store', 'register_post_type' ), 9 );

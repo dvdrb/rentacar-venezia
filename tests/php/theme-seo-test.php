@@ -8,8 +8,10 @@ $GLOBALS['theme_seo_query_vars'] = array( 'rc_fleet' => 1, 'paged' => 0, 'page' 
 $GLOBALS['theme_seo_page_ids'] = array( 10 );
 $GLOBALS['theme_seo_post_status'] = array( 10 => 'publish', 110 => 'publish' );
 $GLOBALS['theme_seo_attachment_alts'] = array();
+$GLOBALS['theme_seo_post_meta'] = array();
 $GLOBALS['theme_seo_is_page'] = false;
 $GLOBALS['theme_seo_is_singular'] = false;
+$GLOBALS['theme_seo_current_post_type'] = 'page';
 $GLOBALS['theme_seo_templates'] = array();
 
 function add_filter( $tag, $callback, $priority = 10, $accepted_args = 1 ) { $GLOBALS['theme_seo_filters'][ $tag ][ $priority ][] = $callback; }
@@ -25,12 +27,17 @@ function wp_parse_url( $url, $component = -1 ) { return parse_url( $url, $compon
 function get_query_var( $key ) { return isset( $GLOBALS['theme_seo_query_vars'][ $key ] ) ? $GLOBALS['theme_seo_query_vars'][ $key ] : ''; }
 function is_page( $id = 0 ) { return $GLOBALS['theme_seo_is_page'] && ( ! $id || 110 === (int) $id ); }
 function is_front_page() { return false; }
-function is_singular() { return $GLOBALS['theme_seo_is_singular']; }
+function is_singular( $post_type = '' ) { return $GLOBALS['theme_seo_is_singular'] && ( '' === $post_type || $post_type === $GLOBALS['theme_seo_current_post_type'] ); }
 function is_archive() { return false; }
 function is_home() { return false; }
 function get_queried_object_id() { return 42; }
 function get_page_template_slug( $id ) { return isset( $GLOBALS['theme_seo_templates'][ $id ] ) ? $GLOBALS['theme_seo_templates'][ $id ] : ''; }
-function get_post_meta( $id ) { return isset( $GLOBALS['theme_seo_attachment_alts'][ $id ] ) ? $GLOBALS['theme_seo_attachment_alts'][ $id ] : ''; }
+function get_post_meta( $id, $key = '', $single = true ) {
+    if ( isset( $GLOBALS['theme_seo_post_meta'][ $id ][ $key ] ) ) {
+        return $GLOBALS['theme_seo_post_meta'][ $id ][ $key ];
+    }
+    return '_wp_attachment_image_alt' === $key && isset( $GLOBALS['theme_seo_attachment_alts'][ $id ] ) ? $GLOBALS['theme_seo_attachment_alts'][ $id ] : '';
+}
 function wp_get_attachment_image_url( $id ) { return $id ? 'https://example.test/media/' . $id . '.webp' : false; }
 function get_post_field( $field, $id ) { return 'post_content' === $field ? 'A visible vehicle description.' : ''; }
 function wp_strip_all_tags( $value ) { return strip_tags( $value ); }
@@ -44,7 +51,7 @@ function get_the_title( $id = 0 ) { return 'Example title ' . $id; }
 function get_post_ancestors() { return array(); }
 function wp_get_document_title() { return 'Archive'; }
 function determine_locale() { return 'en_US'; }
-function get_post_type( $post_id ) { return 'page'; }
+function get_post_type( $post_id ) { return $GLOBALS['theme_seo_current_post_type']; }
 
 class WP_Post {
     public $ID;
@@ -113,10 +120,21 @@ $schema = rentacar_venezia_v2_vehicle_schema_data( $vehicle );
 $schema_json = json_encode( $schema );
 theme_seo_assert( false === strpos( $schema_json, 'Offer' ) && false === strpos( $schema_json, 'InStock' ), 'Vehicle schema excludes commercial availability claims.' );
 $GLOBALS['theme_seo_is_singular'] = true;
+$GLOBALS['theme_seo_current_post_type'] = 'cars';
+$GLOBALS['theme_seo_post_meta'][42] = array(
+    'rank_math_title'       => 'Noleggio Fiat 500 a Venezia | G&D Rent',
+    'rank_math_description' => 'Noleggia Fiat 500 a Venezia e Treviso.',
+);
 theme_seo_assert( isset( $GLOBALS['theme_seo_filters']['rank_math/frontend/title'] ), 'Rank Math receives the vehicle title localization filter.' );
 theme_seo_assert( isset( $GLOBALS['theme_seo_filters']['rank_math/frontend/description'] ), 'Rank Math receives the vehicle description localization filter.' );
-theme_seo_assert( 'Example title 42 rental in Venice and Treviso' === rentacar_venezia_v2_rank_math_vehicle_title( 'legacy title' ), 'Rank Math vehicle titles are generated from the current vehicle record.' );
-theme_seo_assert( false !== strpos( rentacar_venezia_v2_rank_math_vehicle_description( 'legacy description' ), 'Example title 42' ), 'Rank Math vehicle descriptions are generated from the current vehicle record.' );
+theme_seo_assert( 'Noleggio Fiat 500 a Venezia | G&D Rent' === rentacar_venezia_v2_rank_math_vehicle_title( 'legacy title' ), 'Stored Rank Math vehicle titles take precedence over the generic fallback.' );
+theme_seo_assert( 'Noleggia Fiat 500 a Venezia e Treviso.' === rentacar_venezia_v2_rank_math_vehicle_description( 'legacy description' ), 'Stored Rank Math vehicle descriptions take precedence over the generic fallback.' );
+unset( $GLOBALS['theme_seo_post_meta'][42] );
+theme_seo_assert( 'Example title 42 rental in Venice and Treviso' === rentacar_venezia_v2_rank_math_vehicle_title( 'legacy title' ), 'Rank Math vehicle titles retain the generic fallback when stored metadata is empty.' );
+theme_seo_assert( false !== strpos( rentacar_venezia_v2_rank_math_vehicle_description( 'legacy description' ), 'Example title 42' ), 'Rank Math vehicle descriptions retain the generic fallback when stored metadata is empty.' );
+$GLOBALS['theme_seo_current_post_type'] = 'page';
+$GLOBALS['theme_seo_post_meta'][42] = array( 'rank_math_title' => 'Vehicle-only title' );
+theme_seo_assert( 'legacy title' === rentacar_venezia_v2_rank_math_vehicle_title( 'legacy title' ), 'Rank Math vehicle metadata does not override non-car pages.' );
 add_filter( 'rentacar_venezia_v2_enable_vehicle_schema_fallback', function() { return false; } );
 ob_start();
 rentacar_venezia_v2_vehicle_schema();

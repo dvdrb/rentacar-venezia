@@ -32,6 +32,7 @@ final class Rentacar_Core_Vehicle_Mapper {
             'gallery'           => $images,
             'vehicle_gallery'   => new Rentacar_Core_Vehicle_Gallery( get_post_thumbnail_id( $post ), $images ),
             'transmission'      => get_post_meta( $post->ID, 'gearbox', true ),
+            'engine'            => get_post_meta( $post->ID, '_rentacar_engine', true ),
             'passengers'        => $this->integer_meta( $post->ID, 'max_passagers' ),
             'doors'             => $this->integer_meta( $post->ID, 'doors' ),
             'air_conditioning'  => (bool) get_post_meta( $post->ID, 'air_conditioning', true ),

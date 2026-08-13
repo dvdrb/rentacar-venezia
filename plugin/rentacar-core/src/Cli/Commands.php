@@ -10,6 +10,8 @@ final class Rentacar_Core_Cli_Commands {
         WP_CLI::add_command( 'rentacar vehicles sync-translations', array( __CLASS__, 'sync_translations' ) );
         WP_CLI::add_command( 'rentacar vehicles audit-powertrain', array( __CLASS__, 'audit_powertrain' ) );
         WP_CLI::add_command( 'rentacar vehicles infer-powertrain', array( __CLASS__, 'infer_powertrain' ) );
+        WP_CLI::add_command( 'rentacar fleet migrate', array( 'Rentacar_Core_Fleet_Migration', 'run' ) );
+        WP_CLI::add_command( 'rentacar fleet sync-translations', array( 'Rentacar_Core_Fleet_Translation_Pricing_Sync', 'run' ) );
     }
 
     public static function pricing_audit() {

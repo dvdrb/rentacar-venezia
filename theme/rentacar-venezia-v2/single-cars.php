@@ -6,6 +6,10 @@ $vehicle = $repository ? $repository->find( get_queried_object_id() ) : null;
 $image_ids = $vehicle ? $vehicle->get( 'vehicle_gallery' )->all_image_ids() : array();
 $image_url = $vehicle ? rentacar_venezia_v2_primary_image_url( $vehicle, 'medium_large' ) : '';
 $specifications = $vehicle ? rentacar_venezia_v2_vehicle_specs( $vehicle ) : array();
+$engine = $vehicle ? trim( (string) $vehicle->get( 'engine' ) ) : '';
+if ( '' !== $engine ) {
+    $specifications[] = $engine;
+}
 $bands = $vehicle ? rentacar_venezia_v2_vehicle_bands( $vehicle ) : array();
 $price_labels = array();
 $related = $repository && $vehicle ? $repository->query(

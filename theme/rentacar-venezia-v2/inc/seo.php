@@ -685,12 +685,24 @@ add_filter( 'wpseo_opengraph_desc', 'rentacar_venezia_v2_yoast_vehicle_descripti
 
 /** Mirrors the localized vehicle metadata with Rank Math in production. */
 function rentacar_venezia_v2_rank_math_vehicle_title( $title ) {
+    $stored = is_singular( 'cars' ) ? trim( (string) get_post_meta( get_queried_object_id(), 'rank_math_title', true ) ) : '';
+
+    if ( '' !== $stored ) {
+        return $stored;
+    }
+
     return rentacar_venezia_v2_yoast_vehicle_title( $title );
 }
 add_filter( 'rank_math/frontend/title', 'rentacar_venezia_v2_rank_math_vehicle_title' );
 add_filter( 'rank_math/opengraph/facebook/og_title', 'rentacar_venezia_v2_rank_math_vehicle_title' );
 
 function rentacar_venezia_v2_rank_math_vehicle_description( $description ) {
+    $stored = is_singular( 'cars' ) ? trim( (string) get_post_meta( get_queried_object_id(), 'rank_math_description', true ) ) : '';
+
+    if ( '' !== $stored ) {
+        return $stored;
+    }
+
     return rentacar_venezia_v2_yoast_vehicle_description( $description );
 }
 add_filter( 'rank_math/frontend/description', 'rentacar_venezia_v2_rank_math_vehicle_description' );
