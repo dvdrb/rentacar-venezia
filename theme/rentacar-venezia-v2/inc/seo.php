@@ -760,53 +760,6 @@ function rentacar_venezia_v2_visible_faq_schema() {
 }
 add_action( 'wp_head', 'rentacar_venezia_v2_visible_faq_schema', 30 );
 
-function rentacar_venezia_v2_vehicle_schema_data( Rentacar_Core_Vehicle $vehicle ) {
-    $vehicle_id = absint( $vehicle->get( 'id' ) );
-    $url = (string) $vehicle->get( 'permalink' );
-    $description = trim( wp_strip_all_tags( (string) get_post_field( 'post_content', $vehicle_id ) ) );
-
-    if ( '' === $description ) {
-        $description = __( 'Vehicle shown in the Rent a Car Venezia fleet. Availability is confirmed personally.', 'rentacar-venezia-v2' );
-    }
-
-    $properties = array_filter(
-        array(
-            $vehicle->get( 'transmission' ) ? array( '@type' => 'PropertyValue', 'name' => __( 'Transmission', 'rentacar-venezia-v2' ), 'value' => rentacar_venezia_v2_vehicle_transmission_label( $vehicle->get( 'transmission' ) ) ) : null,
-            $vehicle->get( 'powertrain' ) && rentacar_venezia_v2_vehicle_powertrain_label( $vehicle->get( 'powertrain' ) ) ? array( '@type' => 'PropertyValue', 'name' => rentacar_venezia_v2_vehicle_schema_text( 'fuel_type' ), 'value' => rentacar_venezia_v2_vehicle_powertrain_label( $vehicle->get( 'powertrain' ) ) ) : null,
-            $vehicle->get( 'passengers' ) ? array( '@type' => 'PropertyValue', 'name' => rentacar_venezia_v2_vehicle_schema_text( 'passenger_capacity' ), 'value' => (string) absint( $vehicle->get( 'passengers' ) ) ) : null,
-            $vehicle->get( 'doors' ) ? array( '@type' => 'PropertyValue', 'name' => rentacar_venezia_v2_vehicle_schema_text( 'doors' ), 'value' => (string) absint( $vehicle->get( 'doors' ) ) ) : null,
-            $vehicle->get( 'air_conditioning' ) ? array( '@type' => 'PropertyValue', 'name' => rentacar_venezia_v2_vehicle_schema_text( 'air_conditioning' ), 'value' => rentacar_venezia_v2_vehicle_schema_text( 'yes' ) ) : null,
-        )
-    );
-    return array_filter(
-        array(
-            '@context'            => 'https://schema.org',
-            '@type'               => 'Vehicle',
-            '@id'                 => $url ? trailingslashit( $url ) . '#vehicle' : '',
-            'name'                => rentacar_venezia_v2_vehicle_title( $vehicle ),
-            'url'                 => $url,
-            'image'               => rentacar_venezia_v2_primary_image_url( $vehicle ),
-            'description'         => $description,
-            'vehicleConfiguration'=> rentacar_venezia_v2_vehicle_schema_text( 'rental_vehicle' ),
-            'additionalProperty'  => $properties,
-        )
-    );
-}
-
-function rentacar_venezia_v2_vehicle_schema() {
-    if ( ! is_singular( 'cars' ) || ! class_exists( 'Rentacar_Core_Vehicle_Repository' ) ) {
-        return;
-    }
-
-    $vehicle = ( new Rentacar_Core_Vehicle_Repository() )->find( get_queried_object_id() );
-    if ( ! $vehicle || ! apply_filters( 'rentacar_venezia_v2_enable_vehicle_schema_fallback', true, $vehicle ) ) {
-        return;
-    }
-
-    printf( "<script type=\"application/ld+json\">%s</script>\n", wp_json_encode( rentacar_venezia_v2_vehicle_schema_data( $vehicle ), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) );
-}
-add_action( 'wp_head', 'rentacar_venezia_v2_vehicle_schema', 30 );
-
 /**
  * Renders stored page content through normal WordPress content filters.
  */

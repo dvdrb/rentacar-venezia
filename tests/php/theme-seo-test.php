@@ -116,9 +116,7 @@ $GLOBALS['theme_seo_attachment_alts'][99] = 'White Fiat 500 parked in Venice';
 theme_seo_assert( 'White Fiat 500 parked in Venice' === rentacar_venezia_v2_vehicle_image_alt( $vehicle, 99, true ), 'Attachment alt text takes precedence.' );
 theme_seo_assert( 'https://example.test/media/99.webp' === rentacar_venezia_v2_primary_image_url( $vehicle ), 'Primary image URLs use WordPress media.' );
 
-$schema = rentacar_venezia_v2_vehicle_schema_data( $vehicle );
-$schema_json = json_encode( $schema );
-theme_seo_assert( false === strpos( $schema_json, 'Offer' ) && false === strpos( $schema_json, 'InStock' ), 'Vehicle schema excludes commercial availability claims.' );
+theme_seo_assert( ! function_exists( 'rentacar_venezia_v2_vehicle_schema' ), 'Vehicle JSON-LD is not emitted because availability and final pricing require a manual confirmation.' );
 $GLOBALS['theme_seo_is_singular'] = true;
 $GLOBALS['theme_seo_current_post_type'] = 'cars';
 $GLOBALS['theme_seo_post_meta'][42] = array(
@@ -133,12 +131,8 @@ unset( $GLOBALS['theme_seo_post_meta'][42] );
 theme_seo_assert( 'Example title 42 rental in Venice and Treviso' === rentacar_venezia_v2_rank_math_vehicle_title( 'legacy title' ), 'Rank Math vehicle titles retain the generic fallback when stored metadata is empty.' );
 theme_seo_assert( false !== strpos( rentacar_venezia_v2_rank_math_vehicle_description( 'legacy description' ), 'Example title 42' ), 'Rank Math vehicle descriptions retain the generic fallback when stored metadata is empty.' );
 $GLOBALS['theme_seo_current_post_type'] = 'page';
-$GLOBALS['theme_seo_post_meta'][42] = array( 'rank_math_title' => 'Vehicle-only title' );
+$GLOBALS['theme_seo_post_meta'][42] = array( 'rank_math_title' => 'Non-car title' );
 theme_seo_assert( 'legacy title' === rentacar_venezia_v2_rank_math_vehicle_title( 'legacy title' ), 'Rank Math vehicle metadata does not override non-car pages.' );
-add_filter( 'rentacar_venezia_v2_enable_vehicle_schema_fallback', function() { return false; } );
-ob_start();
-rentacar_venezia_v2_vehicle_schema();
-theme_seo_assert( '' === ob_get_clean(), 'Vehicle schema output can be suppressed by filter.' );
 
 $_GET = array();
 $breadcrumb_items = rentacar_venezia_v2_breadcrumb_items();
