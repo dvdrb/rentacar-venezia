@@ -1826,6 +1826,8 @@ h3,
     #0a2449;
 }
 
+.contact-page { padding-top:0; }
+
 .contact-page__guide { border-radius: 3px 18px; background: var(--rc-cream); }
 
 .site-footer { margin-top: clamp(48px, 8vw, 112px); background: #081f40; }
@@ -2596,4 +2598,198 @@ body.home .site-header .language-switcher__trigger { border-color:rgb(255 255 25
 
 @media (prefers-reduced-motion:reduce) {
   .trust-strip__item { transition:none; }
+}
+
+/* Contact is a local-concierge page: immediate action first, editorial detail
+   second. These rules intentionally supersede the earlier generic layout. */
+.contact-page__hero {
+  position:relative;
+  isolation:isolate;
+  padding-block:clamp(34px, 6vw, 82px);
+  margin-bottom:clamp(28px, 5vw, 68px);
+}
+
+.contact-page__hero::after {
+  position:absolute;
+  z-index:-1;
+  right:-10vw;
+  bottom:-18vw;
+  width:min(46vw, 620px);
+  aspect-ratio:1;
+  border:1px solid rgb(255 255 255 / 14%);
+  border-radius:50%;
+  box-shadow:0 0 0 46px rgb(255 255 255 / 4%), 0 0 0 94px rgb(255 255 255 / 3%);
+  content:"";
+}
+
+.contact-page__hero-grid {
+  display:grid;
+  grid-template-columns:minmax(0, 1.15fr) minmax(280px, .6fr);
+  gap:clamp(28px, 6vw, 92px);
+  align-items:end;
+}
+
+.contact-page__hero-copy { max-width:650px; }
+
+.contact-page__hero-card {
+  position:relative;
+  overflow:hidden;
+  padding:clamp(22px, 3vw, 32px);
+  border:1px solid rgb(255 255 255 / 24%);
+  border-radius:3px 24px 3px 24px;
+  background:rgb(255 255 255 / 9%);
+  box-shadow:18px 18px 0 rgb(255 201 40 / 14%);
+  backdrop-filter:blur(8px);
+}
+
+.contact-page__hero-card::before {
+  position:absolute;
+  top:0;
+  right:0;
+  width:64px;
+  height:4px;
+  background:var(--rc-yellow-500);
+  content:"";
+}
+
+.contact-page__hero-card-label,
+.contact-page__rail-label,
+.contact-page__detail span {
+  margin:0;
+  color:var(--rc-gold-600);
+  font-size:.72rem;
+  font-weight:800;
+  letter-spacing:.1em;
+  line-height:1.3;
+  text-transform:uppercase;
+}
+
+.contact-page__hero-card-label { color:var(--rc-yellow-500); }
+
+.contact-page__hero-phone,
+.contact-page__hero-email {
+  display:block;
+  width:max-content;
+  max-width:100%;
+  color:#fff;
+  overflow-wrap:anywhere;
+  text-decoration:none;
+}
+
+.contact-page__hero-phone {
+  margin-top:11px;
+  font-family:var(--rc-font-display);
+  font-size:clamp(1.45rem, 2.3vw, 2rem);
+  font-weight:650;
+  letter-spacing:-.04em;
+  line-height:1;
+}
+
+.contact-page__hero-email { margin-top:10px; color:#dce7f2; font-size:.92rem; }
+.contact-page__hero-phone:hover,
+.contact-page__hero-email:hover { color:var(--rc-yellow-500); }
+
+.contact-page__hero-location { margin:25px 0 0; color:#dce7f2; font-size:.9rem; line-height:1.55; }
+
+.contact-page__hero-hours {
+  display:grid;
+  gap:5px;
+  margin-top:20px;
+  padding-top:14px;
+  border-top:1px solid rgb(255 255 255 / 18%);
+  color:#fff;
+  font-size:.79rem;
+  font-weight:700;
+  line-height:1.35;
+}
+
+.contact-page__layout {
+  grid-template-columns:minmax(0, .47fr) minmax(0, 1fr);
+  grid-template-areas:"rail primary";
+  gap:clamp(28px, 5vw, 72px);
+  align-items:start;
+  padding-bottom:clamp(48px, 7vw, 96px);
+}
+
+.contact-page__rail { grid-area:rail; display:grid; gap:22px; }
+.contact-page__primary { grid-area:primary; min-width:0; }
+
+.contact-page__details {
+  padding:26px;
+  border:1px solid rgb(7 27 58 / 13%);
+  border-radius:3px 18px 18px;
+  background:#fffdf9;
+}
+
+.contact-page__rail-label { margin-bottom:20px; }
+
+.contact-page__detail {
+  display:grid;
+  gap:5px;
+  padding:14px 0;
+  border-top:1px solid rgb(7 27 58 / 11%);
+}
+
+.contact-page__detail a { color:var(--rc-navy-950); font-weight:750; overflow-wrap:anywhere; text-decoration-thickness:1px; text-underline-offset:4px; }
+.contact-page__detail p { margin:0; color:var(--rc-ink); font-size:.92rem; line-height:1.55; }
+
+.contact-page__guide {
+  grid-area:auto;
+  position:static;
+  padding:26px;
+  border:0;
+  border-radius:3px 18px 18px;
+  background:var(--rc-cream);
+}
+
+.contact-page__guide ol { gap:18px; margin-top:20px; }
+.contact-page__guide li { padding-left:50px; }
+.contact-page__guide li::before { width:32px; height:32px; font-size:.7rem; }
+
+.contact-form {
+  margin:0;
+  padding:clamp(26px, 4vw, 46px);
+  border:1px solid rgb(7 27 58 / 15%);
+  border-radius:3px 24px 3px 24px;
+  background:#fff;
+  box-shadow:16px 16px 0 rgb(7 27 58 / 5%);
+}
+
+.contact-form h2 { margin:0; font-family:var(--rc-font-display); font-size:clamp(1.7rem, 3.4vw, 2.5rem); font-weight:650; letter-spacing:-.045em; line-height:1; }
+.contact-form > p:not(.contact-form__status) { max-width:53ch; margin:12px 0 0; color:var(--rc-muted); }
+.contact-form form { margin-top:28px; }
+.contact-form input:focus,
+.contact-form select:focus,
+.contact-form textarea:focus { border-color:var(--rc-gold-600); box-shadow:0 0 0 3px rgb(189 125 20 / 13%); outline:0; }
+.contact-form form > .button { width:max-content; min-width:176px; }
+
+.contact-page__content {
+  margin-top:clamp(44px, 7vw, 78px);
+  padding:clamp(24px, 4vw, 42px) 0 0;
+  border-top:1px solid rgb(7 27 58 / 14%);
+}
+
+.contact-page__content.content-page__body { border-right:0; border-bottom:0; border-left:0; border-radius:0; background:transparent; }
+
+@media (min-width:900px) {
+  .contact-page__rail { position:sticky; top:24px; }
+}
+
+@media (max-width:899px) {
+  .contact-page__hero-grid,
+  .contact-page__layout { grid-template-columns:1fr; grid-template-areas:"copy" "card"; }
+  .contact-page__hero-grid { grid-template-areas:"copy" "card"; }
+  .contact-page__hero-copy { grid-area:copy; }
+  .contact-page__hero-card { grid-area:card; width:min(100%, 560px); margin-inline:auto; }
+  .contact-page__layout { grid-template-areas:"primary" "rail"; }
+}
+
+@media (max-width:639px) {
+  .contact-page__hero { padding-block:34px 42px; }
+  .contact-page__hero-card { box-shadow:10px 10px 0 rgb(255 201 40 / 14%); }
+  .contact-page__actions { gap:10px; }
+  .contact-page__details,
+  .contact-page__guide { padding:22px; }
+  .contact-form { padding:24px 20px; box-shadow:10px 10px 0 rgb(7 27 58 / 5%); }
+  .contact-form form > .button { width:100%; }
 }

@@ -978,6 +978,13 @@ function rentacar_venezia_v2_interface_translation_map() {
     );
     foreach ( $phone_control_translations as $language => $strings ) $translations[ $language ] = array_merge( $translations[ $language ], $strings );
 
+    $contact_layout_translations = array(
+        'it' => array( 'Address' => 'Indirizzo', 'Contact details' => 'Recapiti' ),
+        'ro' => array( 'Address' => 'Adresă', 'Contact details' => 'Date de contact' ),
+        'ru' => array( 'Address' => 'Адрес', 'Contact details' => 'Контактные данные' ),
+    );
+    foreach ( $contact_layout_translations as $language => $strings ) $translations[ $language ] = array_merge( $translations[ $language ], $strings );
+
     return $translations;
 }
 
