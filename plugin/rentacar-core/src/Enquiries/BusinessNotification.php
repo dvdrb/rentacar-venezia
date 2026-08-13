@@ -23,6 +23,9 @@ final class Rentacar_Core_Business_Notification {
         if ( (float) $request->get( 'after_hours_pickup', 0 ) > 0 ) {
             $details['After-hours pickup surcharge'] = '€' . number_format_i18n( (float) $request->get( 'after_hours_pickup' ), 2 );
         }
+        if ( (float) $request->get( 'after_hours_return', 0 ) > 0 ) {
+            $details['After-hours return surcharge'] = '€' . number_format_i18n( (float) $request->get( 'after_hours_return' ), 2 );
+        }
 
         $estimate = (array) $request->get( 'estimate', array() );
         $pricing = array(
@@ -30,6 +33,7 @@ final class Rentacar_Core_Business_Notification {
             'Vehicle subtotal' => self::money( $estimate['base_total'] ?? null ),
             'Insurance' => ! empty( $estimate['insurance']['label'] ) ? $estimate['insurance']['label'] . ' — ' . self::money( $estimate['insurance']['amount'] ?? null ) : '—',
             'After-hours pickup' => self::money( $estimate['after_hours_pickup'] ?? 0 ),
+            'After-hours return' => self::money( $estimate['after_hours_return'] ?? 0 ),
             'Different-airport transfer' => self::money( $estimate['inter_airport_surcharge'] ?? 0 ),
             'Indicative rental total' => self::money( $estimate['estimate_total'] ?? null ),
             'Refundable deposit' => self::money( $estimate['deposit'] ?? null ),

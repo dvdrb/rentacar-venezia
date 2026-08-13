@@ -28,7 +28,8 @@ final class Rentacar_Core_Estimate_Service {
         $extras = Rentacar_Core_Reservation_Extras::calculate( $extra_keys, $days );
         $insurance = Rentacar_Core_Rental_Policy::insurance( $insurance_key );
         $insurance_total = $insurance ? (int) $insurance['daily_cents'] / 100 * $days : 0;
-        $after_hours = Rentacar_Core_Rental_Policy::after_hours_cents( $pickup_time ) / 100;
+        $after_hours_pickup = Rentacar_Core_Rental_Policy::after_hours_cents( $pickup_time ) / 100;
+        $after_hours_return = Rentacar_Core_Rental_Policy::after_hours_cents( $return_time ) / 100;
         $inter_airport_surcharge = Rentacar_Core_Rental_Policy::inter_airport_surcharge_cents( $pickup_location, $return_location ) / 100;
 
         if ( ! $band ) {
@@ -56,7 +57,8 @@ final class Rentacar_Core_Estimate_Service {
             ),
         );
         if ( $insurance ) $line_items[] = array( 'key' => 'insurance', 'label' => $insurance['label'], 'amount' => $insurance_total );
-        if ( $after_hours ) $line_items[] = array( 'key' => 'after_hours_pickup', 'label' => 'After-hours pickup surcharge', 'amount' => $after_hours );
+        if ( $after_hours_pickup > 0 ) $line_items[] = array( 'key' => 'after_hours_pickup', 'label' => 'After-hours pickup surcharge', 'amount' => $after_hours_pickup );
+        if ( $after_hours_return > 0 ) $line_items[] = array( 'key' => 'after_hours_return', 'label' => 'After-hours return surcharge', 'amount' => $after_hours_return );
         if ( $inter_airport_surcharge ) $line_items[] = array( 'key' => 'inter_airport_transfer', 'label' => 'Inter-airport transfer', 'amount' => $inter_airport_surcharge );
 
         foreach ( $extras['items'] as $extra ) {
@@ -80,12 +82,13 @@ final class Rentacar_Core_Estimate_Service {
                 'extras'       => $extras['items'],
                 'extras_total' => $extras['total'],
                 'insurance' => $insurance ? array( 'key' => $insurance_key, 'label' => $insurance['label'], 'amount' => $insurance_total ) : null,
-                'after_hours_pickup' => $after_hours,
+                'after_hours_pickup' => $after_hours_pickup,
+                'after_hours_return' => $after_hours_return,
                 'inter_airport_surcharge' => $inter_airport_surcharge,
                 'included_km' => $days * (int) Rentacar_Core_Rental_Policy::get()['mileage']['daily_km'],
                 'excess_km_rate' => (int) Rentacar_Core_Rental_Policy::get()['mileage']['excess_cents'] / 100,
                 'deposit' => Rentacar_Core_Rental_Policy::deposit_cents( $vehicle->get( 'passengers' ) ) / 100,
-                'estimate_total' => round( $base_total + $extras['total'] + $insurance_total + $after_hours + $inter_airport_surcharge, 2 ),
+                'estimate_total' => round( $base_total + $extras['total'] + $insurance_total + $after_hours_pickup + $after_hours_return + $inter_airport_surcharge, 2 ),
                 'line_items'   => $line_items,
                 'disclaimer'   => self::DISCLAIMER,
                 'unconfigured' => array( 'insurance', 'extras', 'night_charges', 'taxes' ),

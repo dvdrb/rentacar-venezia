@@ -24,7 +24,8 @@ type ReservationStrings = {
   vehicleSubtotal: string;
   insurance: string;
   extras: string;
-  afterHoursFee: string;
+  afterHoursPickupFee: string;
+  afterHoursReturnFee: string;
   airportTransfer: string;
   indicativeTotal: string;
   includedKm: string;
@@ -425,7 +426,7 @@ const requestEstimate = async (output: HTMLElement, content: HTMLElement, vehicl
       return;
     }
     const money = (amount: number): string => new Intl.NumberFormat(document.documentElement.lang || undefined, { style: 'currency', currency: 'EUR' }).format(amount);
-    const labelFor = (item: { key: string; label: string }): string => ({ vehicle_base_rate: strings.vehicleSubtotal, insurance: strings.insurance, after_hours_pickup: strings.afterHoursFee, inter_airport_transfer: strings.airportTransfer }[item.key] || item.label);
+    const labelFor = (item: { key: string; label: string }): string => ({ vehicle_base_rate: strings.vehicleSubtotal, insurance: strings.insurance, after_hours_pickup: strings.afterHoursPickupFee, after_hours_return: strings.afterHoursReturnFee, inter_airport_transfer: strings.airportTransfer }[item.key] || item.label);
     content.replaceChildren(...estimate.line_items.map((item) => { const row = document.createElement('p'); row.textContent = `${labelFor(item)}: ${money(item.amount)}`; return row; }));
     const days = document.createElement('p'); days.textContent = `${estimate.days} ${strings.rentalDays}`;
     const total = document.createElement('p'); const totalStrong = document.createElement('strong'); totalStrong.textContent = `${strings.indicativeTotal}: ${money(estimate.estimate_total)}`; total.append(totalStrong);

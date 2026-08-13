@@ -36,6 +36,7 @@ final class Rentacar_Core_Reservation_Controller {
         $input['extras'] = $estimate ? $estimate->get( 'extras', array() ) : array();
         $input['inter_airport_surcharge'] = $estimate ? (float) $estimate->get( 'inter_airport_surcharge', 0 ) : 0;
         $input['after_hours_pickup'] = $estimate ? (float) $estimate->get( 'after_hours_pickup', 0 ) : 0;
+        $input['after_hours_return'] = $estimate ? (float) $estimate->get( 'after_hours_return', 0 ) : 0;
         $input['estimate'] = $estimate ? $estimate->to_array() : array();
         $input['submitted_at'] = wp_date( 'c' );
         $request = new Rentacar_Core_Reservation_Request( $input );

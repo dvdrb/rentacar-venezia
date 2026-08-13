@@ -17,6 +17,7 @@ final class Rentacar_Core_Customer_Acknowledgement {
             $t( 'selected_insurance' ) => Rentacar_Core_Reservation_Translations::label( $language, $estimate['insurance']['label'] ?? $t( 'none' ) ),
             $t( 'selected_extras' ) => $extras ? implode( ', ', $extras ) : $t( 'none' ),
             $t( 'after_hours_pickup_surcharge' ) => (float) $request->get( 'after_hours_pickup', 0 ) > 0 ? '€' . number_format_i18n( (float) $request->get( 'after_hours_pickup' ), 2 ) : $t( 'none' ),
+            $t( 'after_hours_return_surcharge' ) => (float) $request->get( 'after_hours_return', 0 ) > 0 ? '€' . number_format_i18n( (float) $request->get( 'after_hours_return' ), 2 ) : $t( 'none' ),
             $t( 'your_message' ) => $request->get( 'message' ) ?: $t( 'none' ),
         );
         $pricing = array( $t( 'vehicle_subtotal' ) => self::money( $estimate['base_total'] ?? null ), $t( 'insurance' ) => self::money( $estimate['insurance']['amount'] ?? null ), $t( 'indicative_rental_total' ) => self::money( $estimate['estimate_total'] ?? null ), $t( 'refundable_deposit' ) => self::money( $estimate['deposit'] ?? null ), $t( 'included_kilometres' ) => isset( $estimate['included_km'] ) ? absint( $estimate['included_km'] ) . ' km' : '—', $t( 'excess_kilometre_rate' ) => self::money( $estimate['excess_km_rate'] ?? null ) . '/km' );
