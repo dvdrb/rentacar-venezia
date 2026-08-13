@@ -10,6 +10,7 @@ final class Rentacar_Core_Cli_Commands {
         WP_CLI::add_command( 'rentacar vehicles sync-translations', array( __CLASS__, 'sync_translations' ) );
         WP_CLI::add_command( 'rentacar vehicles audit-powertrain', array( __CLASS__, 'audit_powertrain' ) );
         WP_CLI::add_command( 'rentacar vehicles infer-powertrain', array( __CLASS__, 'infer_powertrain' ) );
+        WP_CLI::add_command( 'rentacar pricing update-after-hours', array( __CLASS__, 'update_after_hours' ) );
         WP_CLI::add_command( 'rentacar fleet migrate', array( 'Rentacar_Core_Fleet_Migration', 'run' ) );
         WP_CLI::add_command( 'rentacar fleet sync-translations', array( 'Rentacar_Core_Fleet_Translation_Pricing_Sync', 'run' ) );
     }
@@ -80,6 +81,62 @@ final class Rentacar_Core_Cli_Commands {
         foreach ( get_posts( array( 'post_type' => 'cars', 'post_status' => 'any', 'posts_per_page' => -1 ) ) as $post ) { $suggestion = self::suggest_powertrain( $post->post_title ); if ( $apply && $suggestion ) update_post_meta( $post->ID, Rentacar_Core_Vehicle_Maintenance::POWERTRAIN_META, $suggestion ); $rows[] = array( 'id' => $post->ID, 'name' => $post->post_title, 'suggestion' => $suggestion ?: 'review required' ); }
         WP_CLI\Utils\format_items( 'table', $rows, array( 'id', 'name', 'suggestion' ) );
         WP_CLI::success( $apply ? 'Applied suggestions; review the results.' : 'Dry run only; add --apply to save suggestions.' );
+    }
+
+    /**
+     * Reports or applies the approved after-hours policy without changing any
+     * other rental-policy section.
+     */
+    public static function update_after_hours( $args, $assoc_args ) {
+        $result = self::after_hours_update_result( ! empty( $assoc_args['apply'] ) );
+
+        foreach ( $result['fields'] as $field => $values ) {
+            WP_CLI::log( sprintf( '%-16s %s -> %s%s', $field, $values['before'], $values['after'], $values['changed'] ? '' : ' (unchanged)' ) );
+        }
+
+        WP_CLI::success( $result['applied']
+            ? 'Approved after-hours policy applied.'
+            : ( $result['changed'] ? 'Dry run only; add --apply to save the approved after-hours policy.' : 'After-hours policy already matches the approved values.' )
+        );
+    }
+
+    /**
+     * Kept public for focused tests; CLI callers should use update_after_hours().
+     */
+    public static function after_hours_update_result( $apply = false ) {
+        $target = array(
+            'early_start'   => 390,
+            'normal_start'  => 510,
+            'evening_start' => 1170,
+            'night_start'   => 1350,
+            'early_cents'   => 2500,
+            'evening_cents' => 2500,
+            'night_cents'   => 5000,
+        );
+        $effective = Rentacar_Core_Rental_Policy::get()['after_hours'];
+        $fields = array();
+        $changed = false;
+
+        foreach ( $target as $key => $value ) {
+            $before = (int) $effective[ $key ];
+            $is_time = false !== strpos( $key, '_start' );
+            $fields[ $key ] = array(
+                'before'  => $is_time ? Rentacar_Core_Rental_Policy::minutes_to_time( $before ) : sprintf( '€%.2f', $before / 100 ),
+                'after'   => $is_time ? Rentacar_Core_Rental_Policy::minutes_to_time( $value ) : sprintf( '€%.2f', $value / 100 ),
+                'changed' => $before !== $value,
+            );
+            $changed = $changed || $fields[ $key ]['changed'];
+        }
+
+        if ( $apply && $changed ) {
+            $stored = get_option( Rentacar_Core_Rental_Policy::OPTION, array() );
+            $stored = is_array( $stored ) ? $stored : array();
+            $stored_hours = isset( $stored['after_hours'] ) && is_array( $stored['after_hours'] ) ? $stored['after_hours'] : array();
+            $stored['after_hours'] = array_merge( $stored_hours, $target );
+            update_option( Rentacar_Core_Rental_Policy::OPTION, $stored );
+        }
+
+        return array( 'fields' => $fields, 'changed' => $changed, 'applied' => $apply && $changed );
     }
 
     private static function ranges( $bands ) { $out = array(); foreach ( $bands->all() as $band ) $out[] = $band->from_days . '-' . ( null === $band->to_days ? '∞' : $band->to_days ) . ': €' . ( null === $band->daily_price ? 'invalid' : $band->daily_price ); return implode( '; ', $out ); }

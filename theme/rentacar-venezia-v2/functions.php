@@ -9,6 +9,8 @@ require_once get_template_directory() . '/inc/consent.php';
 require_once get_template_directory() . '/inc/seo.php';
 require_once get_template_directory() . '/inc/breadcrumbs.php';
 require_once get_template_directory() . '/inc/locations.php';
+require_once get_template_directory() . '/inc/contact-content.php';
+require_once get_template_directory() . '/inc/schema.php';
 
 function rentacar_venezia_v2_setup() {
     load_theme_textdomain( 'rentacar-venezia-v2', get_template_directory() . '/languages' );

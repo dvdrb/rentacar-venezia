@@ -45,9 +45,14 @@ function wp_trim_words( $text ) { return $text; }
 function trailingslashit( $value ) { return rtrim( $value, '/' ) . '/'; }
 function wp_unslash( $value ) { return $value; }
 function absint( $value ) { return abs( (int) $value ); }
+function sanitize_key( $value ) { return strtolower( preg_replace( '/[^a-z0-9_\-]/', '', (string) $value ) ); }
 function esc_url( $value ) { return $value; }
 function wp_json_encode( $value, $flags = 0 ) { return json_encode( $value, $flags ); }
 function get_the_title( $id = 0 ) { return 'Example title ' . $id; }
+function get_the_date() { return '2026-01-02T03:04:05+00:00'; }
+function get_the_modified_date() { return '2026-02-03T04:05:06+00:00'; }
+function get_the_excerpt() { return 'A reviewed guide excerpt.'; }
+function get_post_thumbnail_id() { return 99; }
 function get_post_ancestors() { return array(); }
 function wp_get_document_title() { return 'Archive'; }
 function determine_locale() { return 'en_US'; }
@@ -71,6 +76,10 @@ require_once dirname( __DIR__, 2 ) . '/theme/rentacar-venezia-v2/inc/presentatio
 require_once dirname( __DIR__, 2 ) . '/theme/rentacar-venezia-v2/inc/multilingual.php';
 require_once dirname( __DIR__, 2 ) . '/theme/rentacar-venezia-v2/inc/seo.php';
 require_once dirname( __DIR__, 2 ) . '/theme/rentacar-venezia-v2/inc/breadcrumbs.php';
+
+function rentacar_venezia_v2_business_data() { return array( 'public_name' => 'G&D Rent A Car', 'legal_name' => 'GABIDAN SRL', 'email' => 'info@example.test', 'phone' => '+3900000000', 'street_address' => 'Via Test 1', 'locality' => 'Treviso', 'country' => 'IT' ); }
+function rentacar_venezia_v2_location_label( $key ) { return array( 'venice_marco_polo' => 'Venice Marco Polo Airport', 'treviso_airport' => 'Treviso Airport', 'treviso_hotel' => 'Hotel in Treviso', 'venice_hotel' => 'Hotel in Venice' )[ $key ] ?? $key; }
+require_once dirname( __DIR__, 2 ) . '/theme/rentacar-venezia-v2/inc/schema.php';
 
 if ( ! class_exists( 'Rentacar_Core_Vehicle_Repository' ) ) {
     class Rentacar_Core_Vehicle_Repository {
@@ -107,7 +116,7 @@ $vehicle = new Rentacar_Core_Vehicle( array(
     'title'           => 'Fiat 500',
     'permalink'       => 'https://example.test/vehicles/fiat-500/',
     'vehicle_gallery' => new Rentacar_Core_Vehicle_Gallery( 99 ),
-    'pricing_bands'   => new Rentacar_Core_Pricing_Band_Collection( array() ),
+    'pricing_bands'   => new Rentacar_Core_Pricing_Band_Collection( array( new Rentacar_Core_Pricing_Band( 1, 3, 50 ) ) ),
 ) );
 $GLOBALS['theme_seo_vehicle'] = $vehicle;
 theme_seo_assert( 'Fiat 500 rental vehicle' === rentacar_venezia_v2_vehicle_image_alt( $vehicle, 99, true ), 'Primary images receive a restrained title-based fallback alt.' );
@@ -116,7 +125,11 @@ $GLOBALS['theme_seo_attachment_alts'][99] = 'White Fiat 500 parked in Venice';
 theme_seo_assert( 'White Fiat 500 parked in Venice' === rentacar_venezia_v2_vehicle_image_alt( $vehicle, 99, true ), 'Attachment alt text takes precedence.' );
 theme_seo_assert( 'https://example.test/media/99.webp' === rentacar_venezia_v2_primary_image_url( $vehicle ), 'Primary image URLs use WordPress media.' );
 
-theme_seo_assert( ! function_exists( 'rentacar_venezia_v2_vehicle_schema' ), 'Vehicle JSON-LD is not emitted because availability and final pricing require a manual confirmation.' );
+theme_seo_assert( function_exists( 'rentacar_venezia_v2_schema_graph' ), 'Vehicle schema is centrally integrated through Rank Math rather than emitted by a template.' );
+$airport_service = rentacar_venezia_v2_schema_location_service( 'venice_marco_polo', 'https://example.test/venice-airport/' );
+theme_seo_assert( 'Service' === $airport_service['@type'] && 'VCE' === $airport_service['areaServed']['iataCode'] && 'Airport' === $airport_service['areaServed']['@type'] && rentacar_venezia_v2_schema_organization_id() === $airport_service['provider']['@id'], 'Airport pickup is a Service with the correct IATA area, not a business branch.' );
+$hotel_service = rentacar_venezia_v2_schema_location_service( 'venice_hotel', 'https://example.test/hotel-pickup/' );
+theme_seo_assert( 'City' === $hotel_service['areaServed']['@type'] && 'Venice' === $hotel_service['areaServed']['name'], 'Hotel pickup uses its city service area and never fabricates a Hotel entity.' );
 $GLOBALS['theme_seo_is_singular'] = true;
 $GLOBALS['theme_seo_current_post_type'] = 'cars';
 $GLOBALS['theme_seo_post_meta'][42] = array(
@@ -134,7 +147,31 @@ $GLOBALS['theme_seo_current_post_type'] = 'page';
 $GLOBALS['theme_seo_post_meta'][42] = array( 'rank_math_title' => 'Non-car title' );
 theme_seo_assert( 'legacy title' === rentacar_venezia_v2_rank_math_vehicle_title( 'legacy title' ), 'Rank Math vehicle metadata does not override non-car pages.' );
 
+$GLOBALS['theme_seo_current_post_type'] = 'cars';
+theme_seo_assert( array() === rentacar_venezia_v2_schema_graph( array( 'WebPage' => array( '@id' => 'https://example.test/fleet/#webpage' ) ) ), 'Filtered fleet requests do not create an alternative schema graph.' );
 $_GET = array();
+$GLOBALS['theme_seo_query_vars']['rc_fleet'] = 0;
+$graph = rentacar_venezia_v2_schema_graph( array() );
+theme_seo_assert( rentacar_venezia_v2_schema_organization_id() === $graph['publisher']['@id'] && rentacar_venezia_v2_schema_website_id() === $graph['WebSite']['@id'], 'The graph has one canonical business and WebSite identity.' );
+theme_seo_assert( rentacar_venezia_v2_schema_has_unique_ids( $graph ), 'Schema graph nodes do not duplicate @id values.' );
+theme_seo_assert( 'BreadcrumbList' === $graph['BreadcrumbList']['@type'] && $graph['WebPage']['breadcrumb']['@id'] === $graph['BreadcrumbList']['@id'], 'Rank Math renders the visible breadcrumb hierarchy as one connected BreadcrumbList.' );
+theme_seo_assert( 'Car' === $graph['Car']['@type'] && $graph['WebPage']['mainEntity']['@id'] === $graph['Car']['@id'], 'Vehicle pages connect their WebPage and Car entities.' );
+theme_seo_assert( 'EUR' === $graph['Car']['offers']['priceSpecification']['priceCurrency'] && 'DAY' === $graph['Car']['offers']['priceSpecification']['referenceQuantity']['unitCode'] && ! isset( $graph['Car']['offers']['availability'] ), 'Vehicle offers describe daily EUR rental pricing without fabricated availability.' );
+$GLOBALS['theme_seo_current_post_type'] = 'post';
+$GLOBALS['theme_seo_post_meta'][42] = array( '_rc_seo_indexable' => '1' );
+$guide_graph = rentacar_venezia_v2_schema_graph( array( 'Article' => array( '@id' => 'https://example.test/legacy/#article' ) ) );
+theme_seo_assert( 'BlogPosting' === $guide_graph['BlogPosting']['@type'] && rentacar_venezia_v2_schema_organization_id() === $guide_graph['BlogPosting']['author']['@id'] && ! isset( $guide_graph['Article'] ), 'Approved guides receive one BlogPosting with the verified organization author fallback.' );
+unset( $GLOBALS['theme_seo_post_meta'][42]['_rc_seo_indexable'] );
+theme_seo_assert( array() === rentacar_venezia_v2_schema_graph( array( 'Article' => array( '@id' => 'https://example.test/legacy/#article' ) ) ), 'Unapproved guides do not inherit a rich BlogPosting graph.' );
+$GLOBALS['theme_seo_current_post_type'] = 'page';
+
+$GLOBALS['theme_seo_is_page'] = true;
+$GLOBALS['theme_seo_templates'][42] = 'template-results.php';
+theme_seo_assert( array() === rentacar_venezia_v2_schema_graph( array( 'WebPage' => array( '@id' => 'https://example.test/total/#webpage' ) ) ), 'Transactional noindex pages do not inherit Rank Math rich schema.' );
+$GLOBALS['theme_seo_is_page'] = false;
+
+$_GET = array();
+$GLOBALS['theme_seo_query_vars']['rc_fleet'] = 1;
 $breadcrumb_items = rentacar_venezia_v2_breadcrumb_items();
 theme_seo_assert( 2 === count( $breadcrumb_items ) && 'Fleet' === $breadcrumb_items[1]['label'], 'Fleet breadcrumbs include crawlable Home and current Fleet items.' );
 

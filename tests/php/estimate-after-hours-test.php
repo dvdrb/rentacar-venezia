@@ -50,7 +50,7 @@ $estimate = function( $pickup_time, $return_time ) use ( $service ) {
     return $service->estimate( 123, '2027-04-10', $pickup_time, '2027-04-13', $return_time )->to_array();
 };
 
-$normal = $estimate( '12:00', '12:00' );
+$normal = $estimate( '08:30', '08:30' );
 estimate_after_hours_assert( 0.0 === (float) $normal['after_hours_pickup'] && 0.0 === (float) $normal['after_hours_return'], 'Normal pickup and return do not add an after-hours surcharge.' );
 estimate_after_hours_assert( null === estimate_after_hours_line_item( $normal, 'after_hours_pickup' ) && null === estimate_after_hours_line_item( $normal, 'after_hours_return' ), 'Zero-valued after-hours surcharge line items are omitted.' );
 
@@ -68,5 +68,11 @@ $both_after_hours = $estimate( '20:00', '23:00' );
 estimate_after_hours_assert( 25.0 === (float) $both_after_hours['after_hours_pickup'] && 50.0 === (float) $both_after_hours['after_hours_return'], 'Pickup and return after-hours surcharges are calculated independently.' );
 estimate_after_hours_assert( 75.0 === (float) ( $both_after_hours['after_hours_pickup'] + $both_after_hours['after_hours_return'] ) && (float) $both_after_hours['base_total'] + 75.0 === (float) $both_after_hours['estimate_total'], 'Both after-hours surcharges are included in the estimate total.' );
 estimate_after_hours_assert( 25.0 === (float) estimate_after_hours_line_item( $both_after_hours, 'after_hours_pickup' )['amount'] && 50.0 === (float) estimate_after_hours_line_item( $both_after_hours, 'after_hours_return' )['amount'], 'Both after-hours line items are exposed when both events are outside normal hours.' );
+
+$boundary_after_hours = $estimate( '06:30', '08:15' );
+estimate_after_hours_assert( 25.0 === (float) $boundary_after_hours['after_hours_pickup'] && 25.0 === (float) $boundary_after_hours['after_hours_return'], 'Pickup and return both apply the €25 early band at its exact boundaries.' );
+
+$night_boundary = $estimate( '06:15', '22:30' );
+estimate_after_hours_assert( 50.0 === (float) $night_boundary['after_hours_pickup'] && 50.0 === (float) $night_boundary['after_hours_return'], 'Pickup and return both apply the €50 night band at its exact boundaries.' );
 
 echo "Estimate after-hours checks passed.\n";

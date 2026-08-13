@@ -709,58 +709,6 @@ add_filter( 'rank_math/frontend/description', 'rentacar_venezia_v2_rank_math_veh
 add_filter( 'rank_math/opengraph/facebook/og_description', 'rentacar_venezia_v2_rank_math_vehicle_description' );
 
 /**
- * Builds FAQ schema exclusively from visible <details>/<summary> content on
- * the FAQ template. Editorial FAQ text remains the single source of truth.
- */
-function rentacar_venezia_v2_visible_faq_schema_questions() {
-    if ( ! is_page() || 'page-templates/template-faq.php' !== get_page_template_slug( get_queried_object_id() ) ) {
-        return array();
-    }
-
-    $content = (string) get_post_field( 'post_content', get_queried_object_id() );
-    if ( ! preg_match_all( '~<details\b[^>]*>\s*<summary\b[^>]*>(.*?)</summary>(.*?)</details>~is', $content, $matches, PREG_SET_ORDER ) ) {
-        return array();
-    }
-
-    $questions = array();
-    foreach ( $matches as $match ) {
-        $question = trim( wp_strip_all_tags( $match[1] ) );
-        $answer = trim( wp_strip_all_tags( $match[2] ) );
-        if ( '' === $question || '' === $answer ) {
-            continue;
-        }
-        $questions[] = array(
-            '@type'          => 'Question',
-            'name'           => $question,
-            'acceptedAnswer' => array(
-                '@type' => 'Answer',
-                'text'  => $answer,
-            ),
-        );
-    }
-
-    return $questions;
-}
-
-function rentacar_venezia_v2_visible_faq_schema() {
-    $questions = rentacar_venezia_v2_visible_faq_schema_questions();
-    if ( ! $questions ) {
-        return;
-    }
-
-    $schema = array(
-        '@context'   => 'https://schema.org',
-        '@type'      => 'FAQPage',
-        '@id'        => trailingslashit( get_permalink( get_queried_object_id() ) ) . '#faq',
-        'mainEntity' => $questions,
-        'inLanguage' => get_bloginfo( 'language' ),
-    );
-
-    printf( "<script type=\"application/ld+json\" class=\"rentacar-faq-schema\">%s</script>\n", wp_json_encode( $schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) );
-}
-add_action( 'wp_head', 'rentacar_venezia_v2_visible_faq_schema', 30 );
-
-/**
  * Renders stored page content through normal WordPress content filters.
  */
 function rentacar_venezia_v2_render_page_content( $page_id, $content ) {

@@ -33,8 +33,8 @@ final class Rentacar_Core_Rental_Policy {
                 'full_casco' => array( 'enabled' => true, 'label' => 'Full Casco', 'daily_cents' => 4500 ),
             ),
             'after_hours' => array(
-                'early_start'   => 330,
-                'normal_start'  => 450,
+                'early_start'   => 390,
+                'normal_start'  => 510,
                 'evening_start' => 1170,
                 'night_start'   => 1350,
                 'early_cents'   => 2500,

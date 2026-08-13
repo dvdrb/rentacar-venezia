@@ -15,9 +15,12 @@ require_once dirname( __DIR__, 2 ) . '/plugin/rentacar-core/src/Settings/RentalP
 
 function rental_policy_assert( $condition, $message ) { if ( ! $condition ) { fwrite( STDERR, "FAIL: {$message}\n" ); exit( 1 ); } }
 
-rental_policy_assert( 2500 === Rentacar_Core_Rental_Policy::after_hours_cents( '07:00' ), 'Default early pickup surcharge is authoritative.' );
-rental_policy_assert( 0 === Rentacar_Core_Rental_Policy::after_hours_cents( '12:00' ), 'Normal-hours pickup has no surcharge.' );
-rental_policy_assert( 5000 === Rentacar_Core_Rental_Policy::after_hours_cents( '23:00' ), 'Default night pickup surcharge is authoritative.' );
+rental_policy_assert( 5000 === Rentacar_Core_Rental_Policy::after_hours_cents( '06:29' ), 'Night rate applies until the early boundary.' );
+rental_policy_assert( 2500 === Rentacar_Core_Rental_Policy::after_hours_cents( '06:30' ), 'Early rate begins at 06:30.' );
+rental_policy_assert( 2500 === Rentacar_Core_Rental_Policy::after_hours_cents( '08:29' ), 'Early rate applies until normal hours.' );
+rental_policy_assert( 0 === Rentacar_Core_Rental_Policy::after_hours_cents( '08:30' ), 'Normal hours begin at 08:30.' );
+rental_policy_assert( 2500 === Rentacar_Core_Rental_Policy::after_hours_cents( '19:30' ), 'Evening rate begins at 19:30.' );
+rental_policy_assert( 5000 === Rentacar_Core_Rental_Policy::after_hours_cents( '22:30' ), 'Night rate begins at 22:30.' );
 
 $policy = Rentacar_Core_Rental_Policy::sanitize( array(
     'insurance' => array( 'base' => array( 'enabled' => 1, 'daily_price' => 0 ) ),
