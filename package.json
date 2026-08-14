@@ -6,7 +6,7 @@
     "dev": "vite --config vite.config.ts",
     "build": "vite build --config vite.config.ts",
     "check:assets": "node scripts/check-asset-manifest.mjs",
-    "seo:audit": "wp eval-file tools/local-wp/seo-audit.php",
+    "seo:audit": "bash scripts/seo-audit-local.sh",
     "update:phone-metadata": "node scripts/update-phone-metadata.mjs",
     "typecheck": "tsc --noEmit",
     "lint:js": "eslint theme/rentacar-venezia-v2/assets/src --max-warnings=0",

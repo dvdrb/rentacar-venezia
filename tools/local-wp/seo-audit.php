@@ -21,8 +21,12 @@ foreach ( $pages as $post ) {
     if ( function_exists( 'pll_get_post_translations' ) && count( pll_languages_list( array( 'fields' => 'slug' ) ) ) > 1 && count( pll_get_post_translations( $post->ID ) ) < 4 ) $add( 'WARNING', 'missing_translation', $post, 'Missing one or more configured language counterparts.' );
 }
 $report = array( 'generated_at' => gmdate( 'c' ), 'site_url' => home_url( '/' ), 'indexable_pages' => count( $indexable ), 'issues' => $issues, 'summary' => array_count_values( array_column( $issues, 'severity' ) ) );
-$output = dirname( get_template_directory(), 2 ) . '/docs/generated'; if ( ! is_dir( $output ) ) wp_mkdir_p( $output );
+$output = getenv( 'RENTACAR_REPORT_DIR' );
+if ( ! $output ) {
+    $output = dirname( __DIR__, 2 ) . '/docs/generated';
+}
+$output = wp_normalize_path( $output ); if ( ! is_dir( $output ) ) wp_mkdir_p( $output );
 file_put_contents( $output . '/seo-audit.json', wp_json_encode( $report, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES ) );
 $csv = fopen( $output . '/seo-audit.csv', 'w' ); fputcsv( $csv, array( 'severity', 'code', 'id', 'language', 'url', 'detail' ) ); foreach ( $issues as $issue ) fputcsv( $csv, $issue ); fclose( $csv );
 $markdown = "# Local SEO audit\n\nGenerated: " . $report['generated_at'] . "\n\nIndexable resources: " . count( $indexable ) . "\n\n| Severity | Code | URL | Detail |\n| --- | --- | --- | --- |\n"; foreach ( $issues as $issue ) $markdown .= '| ' . $issue['severity'] . ' | ' . $issue['code'] . ' | ' . $issue['url'] . ' | ' . $issue['detail'] . " |\n"; file_put_contents( $output . '/seo-audit.md', $markdown );
-WP_CLI::success( sprintf( 'SEO audit complete: %d indexable resources, %d errors, %d warnings. Reports: docs/generated/seo-audit.*', count( $indexable ), (int) ( $report['summary']['ERROR'] ?? 0 ), (int) ( $report['summary']['WARNING'] ?? 0 ) ) );
+WP_CLI::success( sprintf( 'SEO audit complete: %d indexable resources, %d errors, %d warnings. Reports: %s', count( $indexable ), (int) ( $report['summary']['ERROR'] ?? 0 ), (int) ( $report['summary']['WARNING'] ?? 0 ), $output ) );

@@ -1,5 +1,258 @@
 {
-    "yoast_active": true,
-    "meta_keywords_present": false,
-    "note": "Validate rendered head with validate-head.php."
+    "generated_at": "2026-08-14T08:52:55+00:00",
+    "site_url": "http://rentacar-venezia-local.local/",
+    "indexable_pages": 248,
+    "issues": [
+        {
+            "severity": "INFO",
+            "code": "legacy_phrase_review",
+            "id": 5185,
+            "language": "it",
+            "url": "http://rentacar-venezia-local.local/privacy-policy/",
+            "detail": "Review whether Rent a Car Venezia is being used as identity instead of a search phrase."
+        },
+        {
+            "severity": "INFO",
+            "code": "legacy_phrase_review",
+            "id": 5186,
+            "language": "en",
+            "url": "http://rentacar-venezia-local.local/en/privacy-policy-2/",
+            "detail": "Review whether Rent a Car Venezia is being used as identity instead of a search phrase."
+        },
+        {
+            "severity": "INFO",
+            "code": "legacy_phrase_review",
+            "id": 5187,
+            "language": "ro",
+            "url": "http://rentacar-venezia-local.local/ro/politica-de-confidentialitate/",
+            "detail": "Review whether Rent a Car Venezia is being used as identity instead of a search phrase."
+        },
+        {
+            "severity": "INFO",
+            "code": "legacy_phrase_review",
+            "id": 5188,
+            "language": "ru",
+            "url": "http://rentacar-venezia-local.local/ru/politika-konfidentsialnosti/",
+            "detail": "Review whether Rent a Car Venezia is being used as identity instead of a search phrase."
+        },
+        {
+            "severity": "INFO",
+            "code": "legacy_phrase_review",
+            "id": 5032,
+            "language": "en",
+            "url": "http://rentacar-venezia-local.local/en/fleet-2/",
+            "detail": "Review whether Rent a Car Venezia is being used as identity instead of a search phrase."
+        },
+        {
+            "severity": "INFO",
+            "code": "legacy_phrase_review",
+            "id": 5033,
+            "language": "ro",
+            "url": "http://rentacar-venezia-local.local/ro/flota/",
+            "detail": "Review whether Rent a Car Venezia is being used as identity instead of a search phrase."
+        },
+        {
+            "severity": "INFO",
+            "code": "legacy_phrase_review",
+            "id": 5034,
+            "language": "ru",
+            "url": "http://rentacar-venezia-local.local/ru/avtopark/",
+            "detail": "Review whether Rent a Car Venezia is being used as identity instead of a search phrase."
+        },
+        {
+            "severity": "INFO",
+            "code": "legacy_phrase_review",
+            "id": 5035,
+            "language": "en",
+            "url": "http://rentacar-venezia-local.local/en/how-it-works-2/",
+            "detail": "Review whether Rent a Car Venezia is being used as identity instead of a search phrase."
+        },
+        {
+            "severity": "INFO",
+            "code": "legacy_phrase_review",
+            "id": 5036,
+            "language": "ro",
+            "url": "http://rentacar-venezia-local.local/ro/cum-functioneaza/",
+            "detail": "Review whether Rent a Car Venezia is being used as identity instead of a search phrase."
+        },
+        {
+            "severity": "INFO",
+            "code": "legacy_phrase_review",
+            "id": 5037,
+            "language": "ru",
+            "url": "http://rentacar-venezia-local.local/ru/kak-eto-rabotaet/",
+            "detail": "Review whether Rent a Car Venezia is being used as identity instead of a search phrase."
+        },
+        {
+            "severity": "INFO",
+            "code": "legacy_phrase_review",
+            "id": 5038,
+            "language": "en",
+            "url": "http://rentacar-venezia-local.local/en/rental-requirements-2/",
+            "detail": "Review whether Rent a Car Venezia is being used as identity instead of a search phrase."
+        },
+        {
+            "severity": "INFO",
+            "code": "legacy_phrase_review",
+            "id": 5039,
+            "language": "ro",
+            "url": "http://rentacar-venezia-local.local/ro/conditii-inchiriere/",
+            "detail": "Review whether Rent a Car Venezia is being used as identity instead of a search phrase."
+        },
+        {
+            "severity": "INFO",
+            "code": "legacy_phrase_review",
+            "id": 5040,
+            "language": "ru",
+            "url": "http://rentacar-venezia-local.local/ru/usloviya-arendy/",
+            "detail": "Review whether Rent a Car Venezia is being used as identity instead of a search phrase."
+        },
+        {
+            "severity": "INFO",
+            "code": "legacy_phrase_review",
+            "id": 5041,
+            "language": "en",
+            "url": "http://rentacar-venezia-local.local/en/terms-and-conditions-2/",
+            "detail": "Review whether Rent a Car Venezia is being used as identity instead of a search phrase."
+        },
+        {
+            "severity": "INFO",
+            "code": "legacy_phrase_review",
+            "id": 5042,
+            "language": "ro",
+            "url": "http://rentacar-venezia-local.local/ro/termeni-conditii/",
+            "detail": "Review whether Rent a Car Venezia is being used as identity instead of a search phrase."
+        },
+        {
+            "severity": "INFO",
+            "code": "legacy_phrase_review",
+            "id": 5043,
+            "language": "ru",
+            "url": "http://rentacar-venezia-local.local/ru/usloviya-i-polozheniya/",
+            "detail": "Review whether Rent a Car Venezia is being used as identity instead of a search phrase."
+        },
+        {
+            "severity": "INFO",
+            "code": "legacy_phrase_review",
+            "id": 5044,
+            "language": "en",
+            "url": "http://rentacar-venezia-local.local/en/guides-2/",
+            "detail": "Review whether Rent a Car Venezia is being used as identity instead of a search phrase."
+        },
+        {
+            "severity": "INFO",
+            "code": "legacy_phrase_review",
+            "id": 5045,
+            "language": "ro",
+            "url": "http://rentacar-venezia-local.local/ro/ghiduri/",
+            "detail": "Review whether Rent a Car Venezia is being used as identity instead of a search phrase."
+        },
+        {
+            "severity": "INFO",
+            "code": "legacy_phrase_review",
+            "id": 5046,
+            "language": "ru",
+            "url": "http://rentacar-venezia-local.local/ru/putevoditeli/",
+            "detail": "Review whether Rent a Car Venezia is being used as identity instead of a search phrase."
+        },
+        {
+            "severity": "INFO",
+            "code": "legacy_phrase_review",
+            "id": 5021,
+            "language": "it",
+            "url": "http://rentacar-venezia-local.local/terms-and-conditions/",
+            "detail": "Review whether Rent a Car Venezia is being used as identity instead of a search phrase."
+        },
+        {
+            "severity": "INFO",
+            "code": "legacy_phrase_review",
+            "id": 5022,
+            "language": "it",
+            "url": "http://rentacar-venezia-local.local/guides/",
+            "detail": "Review whether Rent a Car Venezia is being used as identity instead of a search phrase."
+        },
+        {
+            "severity": "INFO",
+            "code": "legacy_phrase_review",
+            "id": 5016,
+            "language": "it",
+            "url": "http://rentacar-venezia-local.local/fleet/",
+            "detail": "Review whether Rent a Car Venezia is being used as identity instead of a search phrase."
+        },
+        {
+            "severity": "INFO",
+            "code": "legacy_phrase_review",
+            "id": 5017,
+            "language": "it",
+            "url": "http://rentacar-venezia-local.local/how-it-works/",
+            "detail": "Review whether Rent a Car Venezia is being used as identity instead of a search phrase."
+        },
+        {
+            "severity": "INFO",
+            "code": "legacy_phrase_review",
+            "id": 5018,
+            "language": "it",
+            "url": "http://rentacar-venezia-local.local/rental-requirements/",
+            "detail": "Review whether Rent a Car Venezia is being used as identity instead of a search phrase."
+        },
+        {
+            "severity": "INFO",
+            "code": "legacy_phrase_review",
+            "id": 2426,
+            "language": "ro",
+            "url": "http://rentacar-venezia-local.local/ro/contacte-si-asistenta/",
+            "detail": "Review whether Rent a Car Venezia is being used as identity instead of a search phrase."
+        },
+        {
+            "severity": "INFO",
+            "code": "legacy_phrase_review",
+            "id": 2408,
+            "language": "ro",
+            "url": "http://rentacar-venezia-local.local/ro/",
+            "detail": "Review whether Rent a Car Venezia is being used as identity instead of a search phrase."
+        },
+        {
+            "severity": "INFO",
+            "code": "legacy_phrase_review",
+            "id": 23,
+            "language": "ru",
+            "url": "http://rentacar-venezia-local.local/ru/",
+            "detail": "Review whether Rent a Car Venezia is being used as identity instead of a search phrase."
+        },
+        {
+            "severity": "INFO",
+            "code": "legacy_phrase_review",
+            "id": 20,
+            "language": "en",
+            "url": "http://rentacar-venezia-local.local/en/",
+            "detail": "Review whether Rent a Car Venezia is being used as identity instead of a search phrase."
+        },
+        {
+            "severity": "INFO",
+            "code": "legacy_phrase_review",
+            "id": 8,
+            "language": "en",
+            "url": "http://rentacar-venezia-local.local/en/contact/",
+            "detail": "Review whether Rent a Car Venezia is being used as identity instead of a search phrase."
+        },
+        {
+            "severity": "INFO",
+            "code": "legacy_phrase_review",
+            "id": 3166,
+            "language": "it",
+            "url": "http://rentacar-venezia-local.local/contatti/",
+            "detail": "Review whether Rent a Car Venezia is being used as identity instead of a search phrase."
+        },
+        {
+            "severity": "INFO",
+            "code": "legacy_phrase_review",
+            "id": 73,
+            "language": "ru",
+            "url": "http://rentacar-venezia-local.local/ru/kontakty-i-pomoshch/",
+            "detail": "Review whether Rent a Car Venezia is being used as identity instead of a search phrase."
+        }
+    ],
+    "summary": {
+        "INFO": 31
+    }
 }
