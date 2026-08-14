@@ -311,6 +311,7 @@ final class Rentacar_Core_Fleet_Migration {
             return $result;
         }
 
+        $old_permalink = isset( $changes['slug'] ) ? get_permalink( $post->ID ) : '';
         if ( count( $post_update ) > 1 ) {
             self::update_vehicle_post_without_translation_sync( $post->ID, $post_update );
         }
@@ -339,12 +340,12 @@ final class Rentacar_Core_Fleet_Migration {
             Rentacar_Core_Vehicle_Maintenance::update_starting_price( $post->ID );
         }
         if ( isset( $changes['slug'] ) ) {
-            $redirect = self::ensure_rank_math_redirect( $changes['slug']['old'], $changes['slug']['new'], $post->ID );
+            $redirect = self::ensure_rank_math_redirect_for_permalinks( $old_permalink, get_permalink( $post->ID ), $post->ID );
             if ( is_wp_error( $redirect ) ) {
                 $result['warnings'][] = sprintf( '%s — old URL redirect needs review: %s.', $label, $redirect->get_error_message() );
             } elseif ( 'created' === $redirect ) {
                 $result['counts']['redirects_created']++;
-                $result['redirect'] = self::redirect_preview_from_plan( self::fleet_redirect_plan( $changes['slug']['old'], $changes['slug']['new'] ) );
+                $result['redirect'] = self::redirect_preview( $old_permalink, get_permalink( $post->ID ) );
             }
         }
 

@@ -1,6 +1,6 @@
 # Local SEO audit
 
-Generated: 2026-08-14T08:52:55+00:00
+Generated: 2026-08-14T09:11:09+00:00
 
 Indexable resources: 248
 

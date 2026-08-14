@@ -77,7 +77,9 @@ function rentacar_venezia_v2_intent_vehicles( $intent_key ) {
         usort( $matches, function( $a, $b ) { return rentacar_venezia_v2_vehicle_starting_price( $a ) <=> rentacar_venezia_v2_vehicle_starting_price( $b ); } );
         $matches = array_slice( $matches, 0, 6 );
     }
-    return rentacar_venezia_v2_sort_fleet_vehicles( $matches );
+    // Keep intent pages useful as curated discovery pages on narrow screens;
+    // the fleet CTA remains the complete inventory route.
+    return array_slice( rentacar_venezia_v2_sort_fleet_vehicles( $matches ), 0, 12 );
 }
 
 function rentacar_venezia_v2_intent_is_eligible( $intent_key ) {
