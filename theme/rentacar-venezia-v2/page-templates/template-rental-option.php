@@ -1,0 +1,9 @@
+<?php
+/* Template Name: Rental option */
+defined( 'ABSPATH' ) || exit;
+get_header(); while ( have_posts() ) : the_post(); $key = (string) get_post_meta( get_the_ID(), '_rentacar_intent_key', true ); $copy = rentacar_venezia_v2_landing_copy( $key ); $vehicles = rentacar_venezia_v2_intent_vehicles( $key ); ?>
+<main id="main-content" class="site-main landing-page"><article class="rc-container"><?php get_template_part( 'template-parts/global/breadcrumbs' ); ?><header class="landing-hero"><p class="eyebrow"><?php esc_html_e( 'Rental options', 'rentacar-venezia-v2' ); ?></p><h1><?php the_title(); ?></h1><p><?php echo esc_html( $copy['intro'] ); ?></p></header>
+<?php if ( $vehicles ) : ?><section class="landing-fleet"><h2><?php esc_html_e( 'Cars in this selection', 'rentacar-venezia-v2' ); ?></h2><p><?php esc_html_e( 'Indicative daily rates and vehicle details are shown from the current fleet. Availability is confirmed after your request.', 'rentacar-venezia-v2' ); ?></p><div class="vehicle-grid"><?php foreach ( $vehicles as $vehicle ) get_template_part( 'template-parts/vehicle/card', null, array( 'vehicle' => $vehicle, 'variant' => 'related' ) ); ?></div></section><?php endif; ?>
+<?php rentacar_venezia_v2_render_landing_links( rentacar_venezia_v2_landing_related_locations(), __( 'Pickup locations', 'rentacar-venezia-v2' ) ); ?>
+<section class="landing-cta"><h2><?php esc_html_e( 'Send your travel dates', 'rentacar-venezia-v2' ); ?></h2><p><?php esc_html_e( 'We confirm the final price and availability personally.', 'rentacar-venezia-v2' ); ?></p><a class="button button--secondary" href="<?php echo esc_url( rentacar_venezia_v2_fleet_url() ); ?>"><?php esc_html_e( 'Explore all cars', 'rentacar-venezia-v2' ); ?></a></section>
+</article></main><?php endwhile; get_template_part( 'template-parts/enquiry/reservation-modal' ); get_footer();

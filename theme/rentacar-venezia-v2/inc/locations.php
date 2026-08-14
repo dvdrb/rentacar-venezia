@@ -5,13 +5,13 @@ function rentacar_venezia_v2_pickup_locations() {
     return apply_filters(
         'rentacar_venezia_v2_pickup_locations',
         array(
-            'venice_marco_polo'     => array( 'value' => 'Airport Venice Marco Polo', 'label' => rentacar_venezia_v2_location_label( 'venice_marco_polo' ), 'map_url' => 'https://www.google.com/maps/search/?api=1&query=Venice+Marco+Polo+Airport', 'is_airport' => true ),
-            'treviso_airport'       => array( 'value' => 'Treviso Airport Arrivals', 'label' => rentacar_venezia_v2_location_label( 'treviso_airport' ), 'map_url' => 'https://www.google.com/maps/search/?api=1&query=Treviso+Airport', 'is_airport' => true ),
-            'treviso_station'       => array( 'value' => 'treviso_station', 'label' => rentacar_venezia_v2_location_label( 'treviso_station' ) ),
-            'venezia_mestre_station'=> array( 'value' => 'venezia_mestre_station', 'label' => rentacar_venezia_v2_location_label( 'venezia_mestre_station' ) ),
-            'venezia_piazzale_roma' => array( 'value' => 'venezia_piazzale_roma', 'label' => rentacar_venezia_v2_location_label( 'venezia_piazzale_roma' ) ),
-            'treviso_hotel'         => array( 'value' => 'treviso_hotel', 'label' => rentacar_venezia_v2_location_label( 'treviso_hotel' ) ),
-            'venice_hotel'          => array( 'value' => 'venice_hotel', 'label' => rentacar_venezia_v2_location_label( 'venice_hotel' ) ),
+            'venice_marco_polo'     => array( 'value' => 'Airport Venice Marco Polo', 'label' => rentacar_venezia_v2_location_label( 'venice_marco_polo' ), 'map_url' => 'https://www.google.com/maps/search/?api=1&query=Venice+Marco+Polo+Airport', 'type' => 'airport', 'is_airport' => true ),
+            'treviso_airport'       => array( 'value' => 'Treviso Airport Arrivals', 'label' => rentacar_venezia_v2_location_label( 'treviso_airport' ), 'map_url' => 'https://www.google.com/maps/search/?api=1&query=Treviso+Airport', 'type' => 'airport', 'is_airport' => true ),
+            'treviso_station'       => array( 'value' => 'treviso_station', 'label' => rentacar_venezia_v2_location_label( 'treviso_station' ), 'type' => 'station' ),
+            'venezia_mestre_station'=> array( 'value' => 'venezia_mestre_station', 'label' => rentacar_venezia_v2_location_label( 'venezia_mestre_station' ), 'type' => 'station' ),
+            'venezia_piazzale_roma' => array( 'value' => 'venezia_piazzale_roma', 'label' => rentacar_venezia_v2_location_label( 'venezia_piazzale_roma' ), 'type' => 'city_access' ),
+            'treviso_hotel'         => array( 'value' => 'treviso_hotel', 'label' => rentacar_venezia_v2_location_label( 'treviso_hotel' ), 'type' => 'hotel' ),
+            'venice_hotel'          => array( 'value' => 'venice_hotel', 'label' => rentacar_venezia_v2_location_label( 'venice_hotel' ), 'type' => 'hotel' ),
         )
     );
 }
@@ -130,4 +130,15 @@ function rentacar_venezia_v2_location_theme_image( $location_key ) {
     $image['url'] = get_theme_file_uri( $image['path'] );
 
     return (array) apply_filters( 'rentacar_venezia_v2_location_theme_image', $image, $location_key );
+}
+
+function rentacar_venezia_v2_location_hub_page_id( $language = null ) {
+    $pages = get_posts( array( 'post_type' => 'page', 'post_status' => 'publish', 'posts_per_page' => 1, 'fields' => 'ids', 'meta_key' => '_rc_provisioning_key', 'meta_value' => 'pickup_locations', 'suppress_filters' => true, 'no_found_rows' => true ) );
+    $page_id = $pages ? (int) $pages[0] : 0;
+    return $page_id && function_exists( 'rentacar_venezia_v2_translated_post_id' ) ? rentacar_venezia_v2_translated_post_id( $page_id, $language ) : $page_id;
+}
+
+function rentacar_venezia_v2_location_hub_url( $language = null ) {
+    $page_id = rentacar_venezia_v2_location_hub_page_id( $language );
+    return $page_id ? get_permalink( $page_id ) : '';
 }

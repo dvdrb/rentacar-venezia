@@ -9,6 +9,7 @@ require_once get_template_directory() . '/inc/consent.php';
 require_once get_template_directory() . '/inc/seo.php';
 require_once get_template_directory() . '/inc/breadcrumbs.php';
 require_once get_template_directory() . '/inc/locations.php';
+require_once get_template_directory() . '/inc/landing-pages.php';
 require_once get_template_directory() . '/inc/contact-content.php';
 require_once get_template_directory() . '/inc/schema.php';
 

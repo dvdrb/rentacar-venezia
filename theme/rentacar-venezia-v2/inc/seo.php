@@ -70,6 +70,12 @@ function rentacar_venezia_v2_yoast_business_website( $website ) {
 add_filter( 'wpseo_schema_website', 'rentacar_venezia_v2_yoast_business_website' );
 add_filter( 'wpseo_schema_company_name', function( $name ) { return function_exists( 'rentacar_venezia_v2_business_value' ) ? rentacar_venezia_v2_business_value( 'public_name' ) : $name; } );
 
+/** Rank Math owns Open Graph output; retain the authoritative public brand. */
+function rentacar_venezia_v2_rank_math_business_site_name( $site_name ) {
+    return function_exists( 'rentacar_venezia_v2_business_value' ) ? rentacar_venezia_v2_business_value( 'public_name' ) : $site_name;
+}
+add_filter( 'rank_math/opengraph/facebook/site_name', 'rentacar_venezia_v2_rank_math_business_site_name' );
+
 /**
  * Finds the published WordPress page that owns the fleet template.
  *

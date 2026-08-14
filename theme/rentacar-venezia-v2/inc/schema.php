@@ -191,6 +191,18 @@ function rentacar_venezia_v2_schema_fleet_items() {
     return $items;
 }
 
+function rentacar_venezia_v2_schema_vehicle_items( array $vehicles ) {
+    $items = array();
+    foreach ( $vehicles as $i => $vehicle ) $items[] = array( '@type' => 'ListItem', 'position' => $i + 1, 'name' => rentacar_venezia_v2_vehicle_title( $vehicle ), 'url' => rentacar_venezia_v2_schema_public_url( $vehicle->get( 'permalink' ) ) );
+    return $items;
+}
+
+function rentacar_venezia_v2_schema_location_items() {
+    $items = array();
+    foreach ( rentacar_venezia_v2_pickup_locations() as $key => $location ) { $url = rentacar_venezia_v2_location_page_url( $key ); if ( $url ) $items[] = array( '@type' => 'ListItem', 'position' => count( $items ) + 1, 'name' => $location['label'], 'url' => rentacar_venezia_v2_schema_public_url( $url ) ); }
+    return $items;
+}
+
 function rentacar_venezia_v2_schema_blog_posting( $page_url, $webpage_id ) {
     $article = array(
         '@type'            => 'BlogPosting',
@@ -308,6 +320,13 @@ function rentacar_venezia_v2_schema_graph( $data ) {
             $page['mainEntity'] = array( '@id' => $service['@id'] );
             $data['Service'] = $service;
         }
+    }
+    if ( is_page() && 'pickup_locations' === (string) get_post_meta( get_queried_object_id(), '_rc_provisioning_key', true ) ) {
+        $items = rentacar_venezia_v2_schema_location_items(); $list_id = trailingslashit( $page_url ) . '#itemlist'; $page['@type'] = 'CollectionPage'; $page['mainEntity'] = array( '@id' => $list_id ); $data['PickupLocationItemList'] = array( '@type' => 'ItemList', '@id' => $list_id, 'numberOfItems' => count( $items ), 'itemListElement' => $items );
+    }
+    if ( is_page() && function_exists( 'rentacar_venezia_v2_intent_vehicles' ) ) {
+        $intent = (string) get_post_meta( get_queried_object_id(), '_rentacar_intent_key', true );
+        if ( $intent ) { $items = rentacar_venezia_v2_schema_vehicle_items( rentacar_venezia_v2_intent_vehicles( $intent ) ); $list_id = trailingslashit( $page_url ) . '#itemlist'; $page['@type'] = 'CollectionPage'; $page['mainEntity'] = array( '@id' => $list_id ); $data['RentalOptionItemList'] = array( '@type' => 'ItemList', '@id' => $list_id, 'numberOfItems' => count( $items ), 'itemListElement' => $items ); }
     }
     if ( is_page() && 'guides' === (string) get_post_meta( get_queried_object_id(), '_rc_provisioning_key', true ) && class_exists( 'WP_Query' ) ) {
         $guides = new WP_Query( array( 'post_type' => 'post', 'post_status' => 'publish', 'posts_per_page' => 12, 'ignore_sticky_posts' => true, 'meta_key' => '_rc_seo_indexable', 'meta_value' => '1' ) );
