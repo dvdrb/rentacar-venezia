@@ -74,7 +74,7 @@ add_filter( 'wpseo_schema_company_name', function( $name ) { return function_exi
 function rentacar_venezia_v2_rank_math_business_site_name( $site_name ) {
     return function_exists( 'rentacar_venezia_v2_business_value' ) ? rentacar_venezia_v2_business_value( 'public_name' ) : $site_name;
 }
-add_filter( 'rank_math/opengraph/facebook/site_name', 'rentacar_venezia_v2_rank_math_business_site_name' );
+add_filter( 'rank_math/opengraph/facebook/og_site_name', 'rentacar_venezia_v2_rank_math_business_site_name' );
 
 /**
  * Finds the published WordPress page that owns the fleet template.

@@ -78,6 +78,7 @@ require_once dirname( __DIR__, 2 ) . '/theme/rentacar-venezia-v2/inc/seo.php';
 require_once dirname( __DIR__, 2 ) . '/theme/rentacar-venezia-v2/inc/breadcrumbs.php';
 
 function rentacar_venezia_v2_business_data() { return array( 'public_name' => 'G&D Rent A Car', 'legal_name' => 'GABIDAN SRL', 'email' => 'info@example.test', 'phone' => '+3900000000', 'street_address' => 'Via Test 1', 'locality' => 'Treviso', 'country' => 'IT' ); }
+function rentacar_venezia_v2_business_value( $key ) { $business = rentacar_venezia_v2_business_data(); return $business[ $key ] ?? ''; }
 function rentacar_venezia_v2_location_label( $key ) { return array( 'venice_marco_polo' => 'Venice Marco Polo Airport', 'treviso_airport' => 'Treviso Airport', 'treviso_hotel' => 'Hotel in Treviso', 'venice_hotel' => 'Hotel in Venice' )[ $key ] ?? $key; }
 require_once dirname( __DIR__, 2 ) . '/theme/rentacar-venezia-v2/inc/schema.php';
 
@@ -110,6 +111,8 @@ theme_seo_assert( ! empty( $robots['noindex'] ) && ! empty( $robots['follow'] ),
 add_filter( 'rentacar_venezia_v2_external_seo_plugin_active', function() { return true; } );
 theme_seo_assert( rentacar_venezia_v2_external_seo_plugin_active(), 'External SEO ownership can be enabled through the integration filter.' );
 $GLOBALS['theme_seo_filters']['rentacar_venezia_v2_external_seo_plugin_active'] = array();
+theme_seo_assert( isset( $GLOBALS['theme_seo_filters']['rank_math/opengraph/facebook/og_site_name'] ), 'Rank Math receives the Open Graph site-name filter on its og_site_name field.' );
+theme_seo_assert( 'G&D Rent A Car' === apply_filters( 'rank_math/opengraph/facebook/og_site_name', 'Rent a Car Venezia' ), 'Rank Math Open Graph site name uses the authoritative public business name.' );
 
 $vehicle = new Rentacar_Core_Vehicle( array(
     'id'              => 42,
