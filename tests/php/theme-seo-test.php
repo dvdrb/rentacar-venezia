@@ -77,8 +77,13 @@ require_once dirname( __DIR__, 2 ) . '/theme/rentacar-venezia-v2/inc/multilingua
 require_once dirname( __DIR__, 2 ) . '/theme/rentacar-venezia-v2/inc/seo.php';
 require_once dirname( __DIR__, 2 ) . '/theme/rentacar-venezia-v2/inc/breadcrumbs.php';
 
-function rentacar_venezia_v2_business_data() { return array( 'public_name' => 'G&D Rent A Car', 'legal_name' => 'GABIDAN SRL', 'email' => 'info@example.test', 'phone' => '+3900000000', 'street_address' => 'Via Test 1', 'locality' => 'Treviso', 'country' => 'IT' ); }
+function rentacar_venezia_v2_business_data() { return array( 'public_name' => 'G&D Rent A Car', 'email' => 'info@example.test', 'phone' => '+3900000000', 'street_address' => 'Via Test 1', 'postal_code' => '31100', 'locality' => 'Treviso', 'region' => 'TV', 'country' => 'IT', 'weekday_hours' => 'Monday–Friday, 24/24', 'weekend_hours' => 'Saturday–Sunday, 07:00–23:00' ); }
 function rentacar_venezia_v2_business_value( $key ) { $business = rentacar_venezia_v2_business_data(); return $business[ $key ] ?? ''; }
+function rentacar_venezia_v2_business_locations() { return array(
+    'treviso' => array( 'key' => 'treviso', 'public_name' => 'G&D Rent A Car', 'street_address' => 'Via Montello, 7', 'postal_code' => '31100', 'locality' => 'Treviso', 'region' => 'TV', 'country' => 'IT', 'phone' => '+393445068823', 'google_business_profile_url' => 'https://www.google.com/maps/search/?api=1&query_place_id=ChIJ_4ELE5U3eUcRjwKQKULkwKA', 'opening_hours_source' => 'business' ),
+    'venice_marco_polo' => array( 'key' => 'venice_marco_polo', 'public_name' => 'G&D Rent A Car', 'street_address' => 'Airport, Viale Galileo Galilei, 30/1', 'postal_code' => '30173', 'locality' => 'Venice', 'region' => 'VE', 'country' => 'IT', 'phone' => '+393445068823', 'google_business_profile_url' => 'https://www.google.com/maps/search/?api=1&query_place_id=ChIJX5MLBACzfkcRkpzxcPjF0es' ),
+); }
+function rentacar_venezia_v2_business_location_url( $key ) { return 'https://example.test/' . $key . '/'; }
 function rentacar_venezia_v2_location_label( $key ) { return array( 'venice_marco_polo' => 'Venice Marco Polo Airport', 'treviso_airport' => 'Treviso Airport', 'treviso_hotel' => 'Hotel in Treviso', 'venice_hotel' => 'Hotel in Venice' )[ $key ] ?? $key; }
 require_once dirname( __DIR__, 2 ) . '/theme/rentacar-venezia-v2/inc/schema.php';
 
@@ -130,7 +135,7 @@ theme_seo_assert( 'https://example.test/media/99.webp' === rentacar_venezia_v2_p
 
 theme_seo_assert( function_exists( 'rentacar_venezia_v2_schema_graph' ), 'Vehicle schema is centrally integrated through Rank Math rather than emitted by a template.' );
 $airport_service = rentacar_venezia_v2_schema_location_service( 'venice_marco_polo', 'https://example.test/venice-airport/' );
-theme_seo_assert( 'Service' === $airport_service['@type'] && 'VCE' === $airport_service['areaServed']['iataCode'] && 'Airport' === $airport_service['areaServed']['@type'] && rentacar_venezia_v2_schema_organization_id() === $airport_service['provider']['@id'], 'Airport pickup is a Service with the correct IATA area, not a business branch.' );
+theme_seo_assert( 'Service' === $airport_service['@type'] && 'VCE' === $airport_service['areaServed']['iataCode'] && 'Airport' === $airport_service['areaServed']['@type'] && rentacar_venezia_v2_schema_business_location_id( 'venice_marco_polo' ) === $airport_service['provider']['@id'], 'Venice airport remains a Service and references its physical business provider.' );
 $hotel_service = rentacar_venezia_v2_schema_location_service( 'venice_hotel', 'https://example.test/hotel-pickup/' );
 theme_seo_assert( 'City' === $hotel_service['areaServed']['@type'] && 'Venice' === $hotel_service['areaServed']['name'], 'Hotel pickup uses its city service area and never fabricates a Hotel entity.' );
 $GLOBALS['theme_seo_is_singular'] = true;
@@ -157,6 +162,9 @@ $GLOBALS['theme_seo_query_vars']['rc_fleet'] = 0;
 $graph = rentacar_venezia_v2_schema_graph( array() );
 theme_seo_assert( rentacar_venezia_v2_schema_organization_id() === $graph['publisher']['@id'] && rentacar_venezia_v2_schema_website_id() === $graph['WebSite']['@id'], 'The graph has one canonical business and WebSite identity.' );
 theme_seo_assert( rentacar_venezia_v2_schema_has_unique_ids( $graph ), 'Schema graph nodes do not duplicate @id values.' );
+theme_seo_assert( 'Organization' === $graph['publisher']['@type'] && ! isset( $graph['publisher']['legalName'] ), 'The parent graph is public Organization identity without legalName.' );
+theme_seo_assert( 'https://rentacarvenezia.it/#location-treviso' === $graph['BusinessLocation_treviso']['@id'] && 'Via Montello, 7' === $graph['BusinessLocation_treviso']['address']['streetAddress'] && '31100' === $graph['BusinessLocation_treviso']['address']['postalCode'] && 'TV' === $graph['BusinessLocation_treviso']['address']['addressRegion'], 'Treviso has one verified physical AutoRental entity with its approved NAP.' );
+theme_seo_assert( 'https://rentacarvenezia.it/#location-venice-marco-polo' === $graph['BusinessLocation_venice_marco_polo']['@id'] && false === strpos( implode( ' ', $graph['BusinessLocation_venice_marco_polo']['sameAs'] ), 'writereview' ), 'Venice has one verified physical AutoRental entity whose sameAs is not a review-write URL.' );
 theme_seo_assert( 'BreadcrumbList' === $graph['BreadcrumbList']['@type'] && $graph['WebPage']['breadcrumb']['@id'] === $graph['BreadcrumbList']['@id'], 'Rank Math renders the visible breadcrumb hierarchy as one connected BreadcrumbList.' );
 theme_seo_assert( 'Car' === $graph['Car']['@type'] && $graph['WebPage']['mainEntity']['@id'] === $graph['Car']['@id'], 'Vehicle pages connect their WebPage and Car entities.' );
 theme_seo_assert( 'EUR' === $graph['Car']['offers']['priceSpecification']['priceCurrency'] && 'DAY' === $graph['Car']['offers']['priceSpecification']['referenceQuantity']['unitCode'] && ! isset( $graph['Car']['offers']['availability'] ), 'Vehicle offers describe daily EUR rental pricing without fabricated availability.' );

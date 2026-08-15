@@ -21,15 +21,17 @@ function rentacar_venezia_v2_yoast_business_organization( $organization ) {
     }
 
     $business = rentacar_venezia_v2_business_data();
-    $organization['@type'] = array( 'Organization', 'AutoRental' );
+    $organization['@type'] = 'Organization';
     $organization['name'] = $business['public_name'];
-    $organization['legalName'] = $business['legal_name'];
+    unset( $organization['legalName'] );
     $organization['email'] = $business['email'];
     $organization['telephone'] = $business['phone'];
     $organization['address'] = array(
         '@type'           => 'PostalAddress',
         'streetAddress'   => $business['street_address'],
+        'postalCode'      => $business['postal_code'],
         'addressLocality' => $business['locality'],
+        'addressRegion'   => $business['region'],
         'addressCountry'  => $business['country'],
     );
     $organization['contactPoint'] = array(

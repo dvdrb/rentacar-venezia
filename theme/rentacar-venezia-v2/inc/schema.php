@@ -7,6 +7,7 @@ defined( 'ABSPATH' ) || exit;
  */
 function rentacar_venezia_v2_schema_organization_id() { return 'https://rentacarvenezia.it/#organization'; }
 function rentacar_venezia_v2_schema_website_id() { return 'https://rentacarvenezia.it/#website'; }
+function rentacar_venezia_v2_schema_business_location_id( $key ) { return 'https://rentacarvenezia.it/#location-' . str_replace( '_', '-', sanitize_key( $key ) ); }
 
 /**
  * Keep WordPress/Polylang's resolved path, but make schema portable between
@@ -65,6 +66,51 @@ function rentacar_venezia_v2_schema_hours( array $business ) {
     return $hours;
 }
 
+function rentacar_venezia_v2_schema_business_location( array $location, $url, array $business ) {
+    $entity = array(
+        '@type'     => 'AutoRental',
+        '@id'       => rentacar_venezia_v2_schema_business_location_id( $location['key'] ),
+        'name'      => $location['public_name'],
+        'url'       => $url,
+        'telephone' => $location['phone'],
+        'address'   => array(
+            '@type'           => 'PostalAddress',
+            'streetAddress'   => $location['street_address'],
+            'postalCode'      => $location['postal_code'],
+            'addressLocality' => $location['locality'],
+            'addressRegion'   => $location['region'],
+            'addressCountry'  => $location['country'],
+        ),
+        'sameAs'    => array( $location['google_business_profile_url'] ),
+    );
+    $hours = 'business' === ( $location['opening_hours_source'] ?? '' ) ? rentacar_venezia_v2_schema_hours( $business ) : array();
+    $logo = rentacar_venezia_v2_schema_logo_url();
+
+    if ( $hours ) $entity['openingHoursSpecification'] = $hours;
+    if ( $logo ) {
+        $entity['logo'] = $logo;
+        $entity['image'] = $logo;
+    }
+
+    return $entity;
+}
+
+/** Removes public legal-name fields supplied by an SEO plugin configuration. */
+function rentacar_venezia_v2_schema_remove_legal_names( $value ) {
+    if ( ! is_array( $value ) ) return $value;
+    unset( $value['legalName'] );
+    foreach ( $value as $key => $child ) $value[ $key ] = rentacar_venezia_v2_schema_remove_legal_names( $child );
+    return $value;
+}
+
+/** Avoid duplicate graph nodes when Rank Math data has an overlapping ID. */
+function rentacar_venezia_v2_schema_remove_nodes_by_id( array $data, array $ids ) {
+    foreach ( $data as $key => $node ) {
+        if ( is_array( $node ) && ! empty( $node['@id'] ) && in_array( $node['@id'], $ids, true ) ) unset( $data[ $key ] );
+    }
+    return $data;
+}
+
 function rentacar_venezia_v2_schema_vehicle( $vehicle, $url ) {
     if ( ! $vehicle instanceof Rentacar_Core_Vehicle ) return array();
     $car = array( '@type' => 'Car', '@id' => trailingslashit( $url ) . '#vehicle', 'url' => $url, 'name' => rentacar_venezia_v2_vehicle_title( $vehicle ) );
@@ -101,12 +147,16 @@ function rentacar_venezia_v2_schema_location_service( $key, $url ) {
     );
     if ( $areas[ $key ][1] ) $area['iataCode'] = $areas[ $key ][1];
 
+    $provider_id = 'venice_marco_polo' === $key
+        ? rentacar_venezia_v2_schema_business_location_id( 'venice_marco_polo' )
+        : rentacar_venezia_v2_schema_organization_id();
+
     return array(
         '@type'       => 'Service',
         '@id'         => trailingslashit( $url ) . '#service',
         'name'        => rentacar_venezia_v2_location_label( $key ),
         'serviceType' => rentacar_venezia_v2_schema_service_type(),
-        'provider'    => array( '@id' => rentacar_venezia_v2_schema_organization_id() ),
+        'provider'    => array( '@id' => $provider_id ),
         'areaServed'  => $area,
     );
 }
@@ -235,20 +285,24 @@ function rentacar_venezia_v2_schema_graph( $data ) {
 
     $business = rentacar_venezia_v2_business_data();
     $page_url = rentacar_venezia_v2_schema_page_url();
+    $location_ids = array( rentacar_venezia_v2_schema_organization_id() );
+    foreach ( rentacar_venezia_v2_business_locations() as $location ) $location_ids[] = rentacar_venezia_v2_schema_business_location_id( $location['key'] );
+    $data = rentacar_venezia_v2_schema_remove_nodes_by_id( rentacar_venezia_v2_schema_remove_legal_names( $data ), $location_ids );
     unset( $data['place'] );
 
     $data['publisher'] = array(
-        '@type'       => array( 'Organization', 'AutoRental' ),
+        '@type'       => 'Organization',
         '@id'         => rentacar_venezia_v2_schema_organization_id(),
         'name'        => $business['public_name'],
-        'legalName'   => $business['legal_name'],
         'url'         => 'https://rentacarvenezia.it/',
         'email'       => $business['email'],
         'telephone'   => $business['phone'],
         'address'     => array(
             '@type'           => 'PostalAddress',
             'streetAddress'   => $business['street_address'],
+            'postalCode'      => $business['postal_code'],
             'addressLocality' => $business['locality'],
+            'addressRegion'   => $business['region'],
             'addressCountry'  => $business['country'],
         ),
         'contactPoint' => array(
@@ -268,6 +322,14 @@ function rentacar_venezia_v2_schema_graph( $data ) {
     if ( $logo ) {
         $data['publisher']['logo'] = $logo;
         $data['publisher']['image'] = $logo;
+    }
+
+    foreach ( rentacar_venezia_v2_business_locations() as $location ) {
+        $data[ 'BusinessLocation_' . $location['key'] ] = rentacar_venezia_v2_schema_business_location(
+            $location,
+            rentacar_venezia_v2_schema_public_url( rentacar_venezia_v2_business_location_url( $location['key'] ) ),
+            $business
+        );
     }
 
     $data['WebSite'] = array(
