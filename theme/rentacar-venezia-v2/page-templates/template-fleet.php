@@ -32,6 +32,7 @@ get_header();
 <main id="main-content" class="site-main site-main--fleet">
     <div class="rc-container">
         <header class="page-intro"><h1><?php echo esc_html( is_page() ? get_the_title() : __( 'Rental cars in Venice and Treviso', 'rentacar-venezia-v2' ) ); ?></h1><p><?php esc_html_e( 'Explore the vehicle fleet and choose the option that suits your trip.', 'rentacar-venezia-v2' ); ?></p><p class="fleet-result-count"><?php echo esc_html( sprintf( _n( '%s vehicle', '%s vehicles', $fleet_total, 'rentacar-venezia-v2' ), number_format_i18n( $fleet_total ) ) ); ?></p></header>
+        <?php get_template_part( 'template-parts/global/reservation-policy', null, array( 'variant' => 'compact' ) ); ?>
         <?php if ( '' !== trim( $fleet_page_content['before'] ) ) : ?>
             <section class="fleet-page-content fleet-page-content--before">
                 <?php echo $fleet_page_content['before']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- rendered through the_content. ?>

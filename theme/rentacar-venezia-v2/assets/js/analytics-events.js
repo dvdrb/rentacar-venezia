@@ -1,20 +1,21 @@
 (function () {
   'use strict';
 
-  var dataLayer = window.dataLayer;
-  if (!Array.isArray(dataLayer)) return;
+  var dataLayer = Array.isArray(window.dataLayer) ? window.dataLayer : null;
 
   var baseProperties = function () {
     var query = new URLSearchParams(window.location.search);
     return {
       language: document.documentElement.lang || '',
       landing_page: window.location.pathname,
-      referrer: document.referrer || '',
-      campaign: query.get('utm_campaign') || ''
+      referrer: safeReferrer(document.referrer),
+      utm_source: query.get('utm_source') || '',
+      utm_medium: query.get('utm_medium') || '',
+      utm_campaign: query.get('utm_campaign') || ''
     };
   };
   var track = function (event, properties) {
-    dataLayer.push(Object.assign({ event: event }, baseProperties(), properties || {}));
+    if (dataLayer) dataLayer.push(Object.assign({ event: event }, baseProperties(), properties || {}));
   };
   var once = function (key, event, properties) {
     if (window.sessionStorage && sessionStorage.getItem(key)) return;
@@ -22,6 +23,20 @@
     track(event, properties);
   };
   var reservationForm = document.querySelector('[data-reservation-form]');
+  function safeReferrer(value) { try { var parsed = new URL(value); return parsed.origin + parsed.pathname; } catch (error) { return ''; } }
+  function acquisitionContext() {
+    var query = new URLSearchParams(window.location.search);
+    var firstLanding = window.location.pathname;
+    var referrer = safeReferrer(document.referrer);
+    try {
+      firstLanding = sessionStorage.getItem('rac_first_landing_page') || firstLanding;
+      sessionStorage.setItem('rac_first_landing_page', firstLanding);
+      if (!sessionStorage.getItem('rac_first_referrer') && referrer) sessionStorage.setItem('rac_first_referrer', referrer);
+      referrer = sessionStorage.getItem('rac_first_referrer') || referrer;
+    } catch (error) {}
+    return { acquisition_first_landing_page: firstLanding, acquisition_last_landing_page: window.location.pathname, acquisition_referrer: referrer, acquisition_utm_source: query.get('utm_source') || '', acquisition_utm_medium: query.get('utm_medium') || '', acquisition_utm_campaign: query.get('utm_campaign') || '' };
+  }
+  if (reservationForm) { var acquisition = acquisitionContext(); Object.keys(acquisition).forEach(function (key) { var field = reservationForm.elements.namedItem(key); if (field) field.value = acquisition[key]; }); }
   var reservationValues = function () {
     if (!reservationForm) return {};
     var vehicle = reservationForm.querySelector('[data-reservation-vehicle-id]');
@@ -88,7 +103,6 @@
       var key = leadId || window.location.pathname;
       var properties = Object.assign({}, reservationValues(), leadId ? { lead_id: leadId } : {});
       once('rac_reservation_submitted_' + key, 'reservation_submitted', properties);
-      once('rac_reservation_confirmed_' + key, 'reservation_confirmed', properties);
     };
     new MutationObserver(reportConfirmation).observe(success, { attributes: true, childList: true, subtree: true });
     reportConfirmation();

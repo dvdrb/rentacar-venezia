@@ -15,6 +15,7 @@ get_header();
                 <figure class="content-page__featured-image content-page__featured-image--location"><img src="<?php echo esc_url( $location_theme_image['url'] ); ?>" width="<?php echo esc_attr( $location_theme_image['width'] ); ?>" height="<?php echo esc_attr( $location_theme_image['height'] ); ?>" alt="" fetchpriority="high" decoding="async"></figure>
             <?php endif; ?>
             <div class="content-page__body"><?php the_content(); ?></div>
+            <?php get_template_part( 'template-parts/global/reservation-policy', null, array( 'variant' => 'compact' ) ); ?>
             <section class="airport-page__process" aria-labelledby="airport-process-title">
                 <p class="eyebrow"><?php esc_html_e( 'Airport pickup', 'rentacar-venezia-v2' ); ?></p>
                 <h2 id="airport-process-title"><?php echo esc_html( sprintf( __( 'Pickup at %s in three simple steps', 'rentacar-venezia-v2' ), $location['label'] ?? get_the_title() ) ); ?></h2>
@@ -32,7 +33,7 @@ get_header();
             </section>
             <?php $review_url = rentacar_venezia_v2_location_review_url( $location_key ); ?>
             <?php if ( $review_url ) : ?><section class="airport-page__cta" aria-labelledby="airport-review-title"><h2 id="airport-review-title"><?php esc_html_e( 'Have you rented with us?', 'rentacar-venezia-v2' ); ?></h2><p><?php esc_html_e( 'Your review helps future travellers choose a local rental service.', 'rentacar-venezia-v2' ); ?></p><a class="button button--secondary" href="<?php echo esc_url( $review_url ); ?>" target="_blank" rel="noopener noreferrer" data-review-cta><?php esc_html_e( 'Leave a review', 'rentacar-venezia-v2' ); ?></a></section><?php endif; ?>
-            <section class="airport-page__cta"><h2><?php esc_html_e( 'Choose the car for your journey', 'rentacar-venezia-v2' ); ?></h2><a class="button" href="<?php echo esc_url( add_query_arg( 'pickup_location', $location['value'] ?? '', rentacar_venezia_v2_fleet_url() ) ); ?>"><?php esc_html_e( 'Explore the fleet', 'rentacar-venezia-v2' ); ?></a></section>
+            <section class="airport-page__cta"><h2><?php esc_html_e( 'Choose the car for your journey', 'rentacar-venezia-v2' ); ?></h2><a class="button" href="<?php echo esc_url( rentacar_venezia_v2_fleet_url_with_trip( array( 'pickup_location' => $location['value'] ?? '' ) ) ); ?>"><?php esc_html_e( 'Explore the fleet', 'rentacar-venezia-v2' ); ?></a></section>
         <?php endwhile; ?>
     </article>
 </main>

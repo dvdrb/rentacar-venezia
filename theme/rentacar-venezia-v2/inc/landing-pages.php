@@ -13,8 +13,7 @@ function rentacar_venezia_v2_rental_intents() {
         'seven_seat' => array( 'minimum' => 1, 'match' => 'seven_seat' ),
         'nine_seat' => array( 'minimum' => 1, 'match' => 'nine_seat' ),
         'family' => array( 'minimum' => 2, 'match' => 'family' ),
-        // A payment-policy claim is not inferred from a vehicle record.
-        'no_credit_card' => array( 'minimum' => PHP_INT_MAX, 'match' => 'manual_policy', 'manual_review' => true ),
+        'no_credit_card' => array( 'minimum' => 1, 'match' => 'manual_policy', 'policy_keys' => array( 'no_credit_card_to_reserve', 'no_advance_reservation_deposit', 'security_deposit_at_pickup' ) ),
     );
 }
 
@@ -31,7 +30,7 @@ function rentacar_venezia_v2_landing_copy( $key, $language = null ) {
             'hotel' => array( 'it' => 'Indica il nome e l’indirizzo dell’hotel nella richiesta: i dettagli vengono confermati personalmente.', 'en' => 'Include your hotel name and address in the request; the details are confirmed personally.', 'ro' => 'Indicați numele și adresa hotelului în solicitare; detaliile sunt confirmate personal.', 'ru' => 'Укажите название и адрес отеля в запросе; детали подтверждаются лично.' ),
         );
         $metadata = array(
-            'venice_marco_polo' => array( 'it' => array( 'meta_title' => 'Noleggio auto Aeroporto Venezia Marco Polo | G&D Rent A Car', 'meta_description' => 'Noleggio auto per chi arriva all’Aeroporto di Venezia Marco Polo. Scegli un veicolo e invia la richiesta: i dettagli del ritiro vengono confermati personalmente.' ), 'en' => array( 'meta_title' => 'Venice Marco Polo Airport car rental | G&D Rent A Car', 'meta_description' => 'Car rental for travellers arriving at Venice Marco Polo Airport. Choose a vehicle and send a request; pickup details are confirmed personally.' ), 'ro' => array( 'meta_title' => 'Închirieri auto Aeroportul Veneția Marco Polo | G&D Rent A Car', 'meta_description' => 'Închirieri auto pentru călătorii care sosesc la Aeroportul Veneția Marco Polo. Alegeți un vehicul și trimiteți solicitarea; detaliile preluării sunt confirmate personal.' ), 'ru' => array( 'meta_title' => 'Прокат авто в аэропорту Венеция Марко Поло | G&D Rent A Car', 'meta_description' => 'Прокат авто для прибывающих в аэропорт Венеция Марко Поло. Выберите автомобиль и отправьте запрос; детали получения подтверждаются лично.' ) ),
+            'venice_marco_polo' => array( 'it' => array( 'meta_title' => 'Noleggio auto Aeroporto Venezia Marco Polo | G&D Rent A Car', 'meta_description' => 'Noleggio auto per chi arriva all’Aeroporto di Venezia Marco Polo. Scegli un veicolo e invia la richiesta: i dettagli del ritiro vengono confermati personalmente.' ), 'en' => array( 'meta_title' => 'Venice Airport Car Rental | No Credit Card to Reserve | G&D', 'meta_description' => 'Car rental at Venice Marco Polo Airport with direct local assistance. Reserve without a credit card or advance reservation deposit; a security deposit is required at pickup.' ), 'ro' => array( 'meta_title' => 'Închirieri auto Aeroportul Veneția Marco Polo | G&D Rent A Car', 'meta_description' => 'Închirieri auto pentru călătorii care sosesc la Aeroportul Veneția Marco Polo. Alegeți un vehicul și trimiteți solicitarea; detaliile preluării sunt confirmate personal.' ), 'ru' => array( 'meta_title' => 'Прокат авто в аэропорту Венеция Марко Поло | G&D Rent A Car', 'meta_description' => 'Прокат авто для прибывающих в аэропорт Венеция Марко Поло. Выберите автомобиль и отправьте запрос; детали получения подтверждаются лично.' ) ),
             'treviso_airport' => array( 'it' => array( 'meta_title' => 'Noleggio auto Aeroporto di Treviso | G&D Rent A Car', 'meta_description' => 'Noleggio auto per chi arriva all’Aeroporto di Treviso. Esplora la flotta e invia le date: disponibilità, prezzo e ritiro sono confermati personalmente.' ), 'en' => array( 'meta_title' => 'Treviso Airport car rental | G&D Rent A Car', 'meta_description' => 'Car rental for travellers arriving at Treviso Airport. Explore the fleet and send your dates; availability, price and pickup are confirmed personally.' ), 'ro' => array( 'meta_title' => 'Închirieri auto Aeroportul Treviso | G&D Rent A Car', 'meta_description' => 'Închirieri auto pentru călătorii care sosesc la Aeroportul Treviso. Explorați flota și trimiteți datele; disponibilitatea, prețul și preluarea sunt confirmate personal.' ), 'ru' => array( 'meta_title' => 'Прокат авто в аэропорту Тревизо | G&D Rent A Car', 'meta_description' => 'Прокат авто для прибывающих в аэропорт Тревизо. Посмотрите автопарк и отправьте даты; наличие, цена и получение подтверждаются лично.' ) ),
             'treviso_station' => array( 'it' => array( 'meta_title' => 'Noleggio auto alla Stazione di Treviso | G&D Rent A Car', 'meta_description' => 'Noleggio auto per chi arriva in treno alla Stazione di Treviso e vuole proseguire il viaggio in auto. Invia una richiesta per confermare i dettagli.' ), 'en' => array( 'meta_title' => 'Treviso Train Station car rental | G&D Rent A Car', 'meta_description' => 'Car rental for travellers arriving by train at Treviso Station and continuing by road. Send a request to have the practical details confirmed.' ), 'ro' => array( 'meta_title' => 'Închirieri auto la Gara Treviso | G&D Rent A Car', 'meta_description' => 'Închirieri auto pentru călătorii care sosesc cu trenul la Gara Treviso și continuă drumul cu mașina. Trimiteți o solicitare pentru confirmarea detaliilor.' ), 'ru' => array( 'meta_title' => 'Прокат авто у вокзала Тревизо | G&D Rent A Car', 'meta_description' => 'Прокат авто для прибывающих поездом на вокзал Тревизо и продолжающих путь на автомобиле. Отправьте запрос для подтверждения деталей.' ) ),
             'venezia_mestre_station' => array( 'it' => array( 'meta_title' => 'Noleggio auto alla Stazione Venezia Mestre | G&D Rent A Car', 'meta_description' => 'Organizza il noleggio auto nell’area della Stazione Venezia Mestre prima di proseguire verso Venezia o altre destinazioni. I dettagli sono confermati personalmente.' ), 'en' => array( 'meta_title' => 'Venezia Mestre Station car rental | G&D Rent A Car', 'meta_description' => 'Arrange car rental in the Venezia Mestre Station area before continuing to Venice or elsewhere. The practical details are confirmed personally.' ), 'ro' => array( 'meta_title' => 'Închirieri auto la Gara Venezia Mestre | G&D Rent A Car', 'meta_description' => 'Organizați închirierea auto în zona Gării Venezia Mestre înainte de a continua spre Veneția sau alte destinații. Detaliile sunt confirmate personal.' ), 'ru' => array( 'meta_title' => 'Прокат авто у станции Венеция-Местре | G&D Rent A Car', 'meta_description' => 'Организуйте прокат авто в районе станции Венеция-Местре перед поездкой в Венецию или другие места. Практические детали подтверждаются лично.' ) ),
@@ -54,6 +53,7 @@ function rentacar_venezia_v2_landing_copy( $key, $language = null ) {
         'seven_seat' => array( 'it' => array( 'title' => 'Auto a 7 posti a noleggio', 'intro' => 'Veicoli della flotta con almeno sette posti per viaggi in famiglia o in gruppo.' ), 'en' => array( 'title' => '7-seat rental cars', 'intro' => 'Fleet vehicles with at least seven seats for family or group travel.' ), 'ro' => array( 'title' => 'Mașini de închiriat cu 7 locuri', 'intro' => 'Vehicule din flotă cu cel puțin șapte locuri pentru familii sau grupuri.' ), 'ru' => array( 'title' => 'Автомобили напрокат на 7 мест', 'intro' => 'Автомобили из автопарка минимум на семь мест для семейных и групповых поездок.' ) ),
         'nine_seat' => array( 'it' => array( 'title' => 'Auto a 9 posti a noleggio', 'intro' => 'Veicoli della flotta con almeno nove posti per gruppi che viaggiano insieme.' ), 'en' => array( 'title' => '9-seat rental cars', 'intro' => 'Fleet vehicles with at least nine seats for groups travelling together.' ), 'ro' => array( 'title' => 'Mașini de închiriat cu 9 locuri', 'intro' => 'Vehicule din flotă cu cel puțin nouă locuri pentru grupuri care călătoresc împreună.' ), 'ru' => array( 'title' => 'Автомобили напрокат на 9 мест', 'intro' => 'Автомобили из автопарка минимум на девять мест для групп, путешествующих вместе.' ) ),
         'family' => array( 'it' => array( 'title' => 'Auto familiari a noleggio', 'intro' => 'Una selezione di auto spaziose della flotta per chi viaggia con famiglia o bagagli.' ), 'en' => array( 'title' => 'Family rental cars', 'intro' => 'A selection of spacious fleet cars for travellers with family or luggage.' ), 'ro' => array( 'title' => 'Mașini de familie de închiriat', 'intro' => 'O selecție de mașini spațioase din flotă pentru călătorii cu familia sau bagaje.' ), 'ru' => array( 'title' => 'Семейные автомобили напрокат', 'intro' => 'Подборка просторных автомобилей из автопарка для поездок с семьёй или багажом.' ) ),
+        'no_credit_card' => array( 'it' => array( 'title' => 'Noleggio auto senza carta di credito', 'intro' => 'Prenota senza carta di credito e senza deposito anticipato. Il deposito cauzionale viene richiesto al ritiro.', 'meta_title' => 'Noleggio auto senza carta di credito | G&D Rent A Car', 'meta_description' => 'Prenota senza carta di credito e senza deposito anticipato. Il deposito cauzionale viene richiesto al ritiro.' ), 'en' => array( 'title' => 'Car rental without a credit card', 'intro' => 'Reserve without a credit card or advance reservation deposit. A security deposit is required at pickup.', 'meta_title' => 'Car Rental Without a Credit Card | G&D Rent A Car', 'meta_description' => 'Reserve car rental in Venice or Treviso without a credit card or advance reservation deposit. A security deposit is required at pickup.' ), 'ro' => array( 'title' => 'Închirieri auto fără card de credit', 'intro' => 'Rezervați fără card de credit și fără avans la rezervare. La preluarea mașinii este necesar un depozit de garanție.', 'meta_title' => 'Închirieri auto fără card de credit | G&D Rent A Car', 'meta_description' => 'Rezervați fără card de credit și fără avans la rezervare. La preluarea mașinii este necesar un depozit de garanție.' ), 'ru' => array( 'title' => 'Прокат авто без кредитной карты', 'intro' => 'Бронируйте без кредитной карты и без предоплаты при бронировании. При получении автомобиля требуется залог.', 'meta_title' => 'Прокат авто без кредитной карты | G&D Rent A Car', 'meta_description' => 'Бронируйте без кредитной карты и без предоплаты. При получении автомобиля требуется залог.' ) ),
     );
     return $copy[ $key ][ $language ] ?? ( $copy[ $key ]['en'] ?? array() );
 }
@@ -66,7 +66,7 @@ function rentacar_venezia_v2_intent_vehicles( $intent_key ) {
         $price = rentacar_venezia_v2_vehicle_starting_price( $vehicle );
         $transmission = strtolower( (string) $vehicle->get( 'transmission' ) );
         $passengers = (int) $vehicle->get( 'passengers' );
-        $matched = ( 'automatic' === $intent_key && ( false !== strpos( $transmission, 'auto' ) || false !== strpos( $transmission, 'automatic' ) ) )
+        $matched = ( 'no_credit_card' === $intent_key ) || ( 'automatic' === $intent_key && ( false !== strpos( $transmission, 'auto' ) || false !== strpos( $transmission, 'automatic' ) ) )
             || ( 'seven_seat' === $intent_key && $passengers >= 7 )
             || ( 'nine_seat' === $intent_key && $passengers >= 9 )
             || ( 'family' === $intent_key && $passengers >= 5 )
@@ -84,6 +84,7 @@ function rentacar_venezia_v2_intent_vehicles( $intent_key ) {
 
 function rentacar_venezia_v2_intent_is_eligible( $intent_key ) {
     $intent = rentacar_venezia_v2_rental_intents()[ $intent_key ] ?? array();
+    if ( ! empty( $intent['policy_keys'] ) ) { if ( ! class_exists( 'Rentacar_Core_Marketing_Claim_Registry' ) ) return false; foreach ( $intent['policy_keys'] as $claim ) if ( ! Rentacar_Core_Marketing_Claim_Registry::enabled( $claim ) ) return false; }
     return empty( $intent['manual_review'] ) && count( rentacar_venezia_v2_intent_vehicles( $intent_key ) ) >= (int) ( $intent['minimum'] ?? PHP_INT_MAX );
 }
 
@@ -125,6 +126,7 @@ function rentacar_venezia_v2_register_landing_page_cli() {
     if ( defined( 'WP_CLI' ) && WP_CLI ) {
         WP_CLI::add_command( 'rentacar seo locations', 'rentacar_venezia_v2_cli_provision_locations' );
         WP_CLI::add_command( 'rentacar seo intents', 'rentacar_venezia_v2_cli_provision_intents' );
+        WP_CLI::add_command( 'rentacar seo noindex-legacy-pages', 'rentacar_venezia_v2_cli_noindex_legacy_pages' );
     }
 }
 add_action( 'cli_init', 'rentacar_venezia_v2_register_landing_page_cli', 20 );
@@ -153,8 +155,8 @@ function rentacar_venezia_v2_cli_upsert_landing_page( $key, $language, $template
         update_post_meta( $id, '_wp_page_template', $template ); update_post_meta( $id, '_rc_seo_indexable', '1' );
         if ( $meta_key ) update_post_meta( $id, $meta_key, $key );
         if ( ! get_post_meta( $id, '_rc_provisioning_key', true ) ) update_post_meta( $id, '_rc_provisioning_key', sanitize_key( ltrim( $meta_key, '_' ) ) . '_' . $key );
-        update_post_meta( $id, 'rank_math_title', $copy['meta_title'] ?? ( $copy['title'] . ' | ' . rentacar_venezia_v2_business_value( 'public_name' ) ) );
-        update_post_meta( $id, 'rank_math_description', $copy['meta_description'] ?? $copy['intro'] );
+        if ( ! get_post_meta( $id, 'rank_math_title', true ) ) update_post_meta( $id, 'rank_math_title', $copy['meta_title'] ?? ( $copy['title'] . ' | ' . rentacar_venezia_v2_business_value( 'public_name' ) ) );
+        if ( ! get_post_meta( $id, 'rank_math_description', true ) ) update_post_meta( $id, 'rank_math_description', $copy['meta_description'] ?? $copy['intro'] );
     }
     WP_CLI::log( sprintf( '%s %s: %s', strtoupper( $language ), $key, $id ? 'existing #' . $id : 'would create' ) );
     return $id;
@@ -165,11 +167,44 @@ function rentacar_venezia_v2_cli_provision_locations( $args, $assoc_args ) {
     foreach ( $languages as $language ) $hub[ $language ] = rentacar_venezia_v2_cli_upsert_landing_page( 'pickup_locations', $language, 'page-templates/template-pickup-locations.php', 0, $apply );
     rentacar_venezia_v2_cli_create_translation_group( array_filter( $hub ), $apply );
     foreach ( rentacar_venezia_v2_pickup_locations() as $key => $location ) { $group = array(); foreach ( $languages as $language ) $group[ $language ] = rentacar_venezia_v2_cli_upsert_landing_page( $key, $language, 'page-templates/template-location.php', $hub[ $language ] ?? 0, $apply, '_rentacar_location_key' ); rentacar_venezia_v2_cli_create_translation_group( array_filter( $group ), $apply ); }
+    if ( $apply && function_exists( 'rentacar_venezia_v2_invalidate_rank_math_sitemap_cache' ) ) rentacar_venezia_v2_invalidate_rank_math_sitemap_cache();
     WP_CLI::success( $apply ? 'Location pages provisioned.' : 'Dry run only; add --apply to create missing location pages.' );
 }
 
 function rentacar_venezia_v2_cli_provision_intents( $args, $assoc_args ) {
     $apply = ! empty( $assoc_args['apply'] ); $languages = array( 'it', 'en', 'ro', 'ru' );
     foreach ( rentacar_venezia_v2_rental_intents() as $key => $intent ) { if ( ! rentacar_venezia_v2_intent_is_eligible( $key ) ) { WP_CLI::warning( $key . ': not provisioned (inventory threshold or verified policy requirement).' ); continue; } $group = array(); foreach ( $languages as $language ) $group[ $language ] = rentacar_venezia_v2_cli_upsert_landing_page( $key, $language, 'page-templates/template-rental-option.php', 0, $apply, '_rentacar_intent_key' ); rentacar_venezia_v2_cli_create_translation_group( array_filter( $group ), $apply ); }
+    if ( $apply && function_exists( 'rentacar_venezia_v2_invalidate_rank_math_sitemap_cache' ) ) rentacar_venezia_v2_invalidate_rank_math_sitemap_cache();
     WP_CLI::success( $apply ? 'Eligible rental-option pages provisioned.' : 'Dry run only; add --apply to create eligible pages.' );
+}
+
+/**
+ * Persists the render-time noindex decision for legacy pages so Rank Math can
+ * exclude them before generating its cached sitemap query.
+ */
+function rentacar_venezia_v2_cli_noindex_legacy_pages( $args, $assoc_args ) {
+    $apply = ! empty( $assoc_args['apply'] );
+    $page_ids = get_posts( array( 'post_type' => 'page', 'post_status' => 'publish', 'posts_per_page' => -1, 'fields' => 'ids', 'suppress_filters' => true, 'no_found_rows' => true ) );
+    $updated = 0;
+
+    foreach ( $page_ids as $page_id ) {
+        $page_id = absint( $page_id );
+        if ( ! $page_id || rentacar_venezia_v2_is_indexable_page_id( $page_id ) ) continue;
+
+        $robots = get_post_meta( $page_id, 'rank_math_robots', true );
+        $robots = is_array( $robots ) ? $robots : array_filter( array_map( 'trim', explode( ',', (string) $robots ) ) );
+        if ( in_array( 'noindex', $robots, true ) ) continue;
+
+        WP_CLI::log( sprintf( '%s #%d: %s', $apply ? 'noindexed' : 'would noindex', $page_id, get_the_title( $page_id ) ) );
+        if ( ! $apply ) continue;
+
+        $robots[] = 'noindex';
+        $robots[] = 'follow';
+        $robots = array_values( array_unique( array_diff( $robots, array( 'index', 'nofollow' ) ) ) );
+        update_post_meta( $page_id, 'rank_math_robots', $robots );
+        $updated++;
+    }
+
+    if ( $apply && $updated && function_exists( 'rentacar_venezia_v2_invalidate_rank_math_sitemap_cache' ) ) rentacar_venezia_v2_invalidate_rank_math_sitemap_cache();
+    WP_CLI::success( $apply ? sprintf( 'Persisted noindex,follow for %d legacy pages.', $updated ) : 'Dry run only; add --apply to persist legacy noindex metadata.' );
 }

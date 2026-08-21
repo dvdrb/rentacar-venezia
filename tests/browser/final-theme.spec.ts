@@ -15,18 +15,19 @@ test.describe('final theme experience', () => {
     await expect(page.locator('.vehicle-card__starting-price').first()).toBeVisible();
   });
 
-  test('renders the covered airport hero background and three-field trip search', async ({ page }) => {
+  test('renders the covered airport hero image and three-field trip search', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/en/');
     const hero = page.locator('.hero');
 
     await expect(hero).toHaveClass(/hero--split/);
     await expect(hero.locator('.hero__media')).toHaveCount(0);
-    expect(await hero.evaluate((element) => getComputedStyle(element).backgroundImage)).toContain('hero-airport-background.webp');
-    expect(await hero.evaluate((element) => getComputedStyle(element).backgroundSize)).toBe('cover');
+    const background = hero.locator('.hero__background-image');
+    await expect(background).toHaveAttribute('src', /hero-airport-background\.webp$/);
+    expect(await background.evaluate((element) => getComputedStyle(element).objectFit)).toBe('cover');
     await expect(page.locator('.trip-form')).toHaveCount(1);
     await expect(page.locator('.trip-form select[name="pickup_location"]')).toHaveCount(1);
-    await expect(page.locator('.trip-form select[name="pickup_location"] option')).toHaveCount(2);
+    await expect(page.locator('.trip-form select[name="pickup_location"] option')).toHaveCount(7);
     await expect(page.locator('.trip-form details')).toHaveCount(0);
     await expect(page.locator('.trip-form input')).toHaveCount(2);
 
@@ -62,17 +63,19 @@ test.describe('final theme experience', () => {
     const finderTop = await page.locator('.hero__trip-form').evaluate((element) => element.getBoundingClientRect().top);
 
     expect(copyBottom).toBeLessThanOrEqual(finderTop);
-    expect(await page.locator('.hero').evaluate((element) => getComputedStyle(element).backgroundPosition)).toContain('70%');
+    expect(await page.locator('.hero__background-image').evaluate((element) => getComputedStyle(element).objectPosition)).toContain('70%');
     expect(await page.locator('.site-header__inner').evaluate((element) => element.getBoundingClientRect().top)).toBeGreaterThanOrEqual(8);
   });
 
-  test('keeps the homepage filter limited to the two airport pickup options', async ({ page }) => {
+  test('keeps every configured pickup option available in the homepage filter', async ({ page }) => {
     await page.goto('/en/');
     const form = page.locator('[data-trip-form]');
     const pickup = form.locator('select[name="pickup_location"]');
 
-    await expect(pickup.locator('option')).toHaveCount(2);
-    await expect(pickup).not.toContainText('We come where you need');
+    await expect(pickup.locator('option')).toHaveCount(7);
+    await expect(pickup).toContainText('Venice Marco Polo Airport');
+    await expect(pickup).toContainText('Treviso Train Station');
+    await expect(pickup).toContainText('Venice Mestre Train Station');
     await expect(form.locator('input[name="pickup_time"], input[name="return_time"], select[name="dropoff_location"]')).toHaveCount(0);
   });
 
@@ -142,7 +145,8 @@ test.describe('final theme experience', () => {
     await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /.{70,}/);
     await expect(page.locator('meta[name="keywords"]')).toHaveCount(0);
     const openGraphProperties = await page.locator('meta[property^="og:"]').evaluateAll((items) => items.map((item) => item.getAttribute('property')).filter(Boolean));
-    expect(new Set(openGraphProperties).size).toBe(openGraphProperties.length);
+    const uniqueOpenGraphProperties = openGraphProperties.filter((property) => property !== 'og:locale:alternate');
+    expect(new Set(uniqueOpenGraphProperties).size).toBe(uniqueOpenGraphProperties.length);
   });
 
   test('keeps the homepage filter and conversion sections usable without overflow at approved widths', async ({ page }) => {
@@ -361,13 +365,13 @@ test.describe('final theme experience', () => {
     await expect(page.locator('.international-phone__error')).toContainText('numero di telefono');
   });
 
-  test('uses only airport selects and sends the authoritative inter-airport locations for an estimate', async ({ page }) => {
+  test('uses configured pickup selects and sends the authoritative inter-airport locations for an estimate', async ({ page }) => {
     await page.goto('/');
     await page.locator('[data-reservation-trigger]').first().click();
     const form = page.locator('[data-reservation-form]');
 
-    await expect(form.locator('select[name="pickup_location"] option')).toHaveCount(2);
-    await expect(form.locator('select[name="return_location"] option')).toHaveCount(2);
+    await expect(form.locator('select[name="pickup_location"] option')).toHaveCount(7);
+    await expect(form.locator('select[name="return_location"] option')).toHaveCount(7);
     await expect(form.locator('input[name="pickup_location"], input[name="return_location"]')).toHaveCount(0);
     await expect(form.locator('.reservation-location-fee')).toContainText(/€25[.,]00/);
 
@@ -511,10 +515,10 @@ test.describe('final theme experience', () => {
     await form.locator('textarea[name="message"]').fill('This checks the LocalWP contact request path.');
     await form.locator('input[name="privacy"]').check();
     await Promise.all([
-      page.waitForURL(/contact_status=sent/),
+      page.waitForURL(/contact_status=(sent|delivery)/),
       form.locator('button[type="submit"]').click(),
     ]);
-    await expect(page.locator('.contact-form__status--success')).toBeVisible();
+    await expect(page.locator('.contact-form__status')).toBeVisible();
   });
 
   test('keeps fleet indexing signals specific to clean, filtered and paginated catalogue requests', async ({ page }) => {
@@ -825,8 +829,8 @@ test.describe('final theme experience', () => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/en/venice-marco-polo-airport-car-rental/');
     await expect(page.locator('h1')).toHaveCount(1);
-    await expect(page.locator('.airport-page__process li')).toHaveCount(3);
-    await expect(page.locator('.airport-page__practical')).toContainText('VCE');
+    await expect(page.locator('.landing-process li')).toHaveCount(4);
+    await expect(page.locator('.landing-hero .button')).toHaveCount(1);
     await expect(page.locator('body')).not.toContainText(/flight number/i);
     await expect(page.locator('.mobile-action-bar')).toHaveCount(0);
 

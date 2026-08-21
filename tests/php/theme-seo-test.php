@@ -21,6 +21,7 @@ function apply_filters( $tag, $value ) { $args = func_get_args(); if ( empty( $G
 function __( $text ) { return $text; }
 function get_posts() { return $GLOBALS['theme_seo_page_ids']; }
 function get_post_status( $id ) { return isset( $GLOBALS['theme_seo_post_status'][ $id ] ) ? $GLOBALS['theme_seo_post_status'][ $id ] : false; }
+function get_option( $key ) { return 'page_on_front' === $key ? 0 : null; }
 function get_permalink( $id ) { return 'https://example.test/fleet-' . $id . '/'; }
 function home_url( $path = '/' ) { return 'https://example.test' . $path; }
 function wp_parse_url( $url, $component = -1 ) { return parse_url( $url, $component ); }
@@ -112,6 +113,8 @@ theme_seo_assert( rentacar_venezia_v2_is_filtered_fleet_request(), 'Recognized f
 theme_seo_assert( 'https://example.test/fleet/' === rentacar_venezia_v2_fleet_canonical_url(), 'A filtered fleet canonical points to the clean catalogue.' );
 $robots = rentacar_venezia_v2_fleet_robots( array() );
 theme_seo_assert( ! empty( $robots['noindex'] ) && ! empty( $robots['follow'] ), 'Filtered fleet requests are noindex,follow.' );
+$rank_math_robots = rentacar_venezia_v2_rank_math_noindex_robots( array( 'index' => 'index' ) );
+theme_seo_assert( isset( $rank_math_robots['noindex'], $rank_math_robots['follow'] ) && ! isset( $rank_math_robots['index'] ), 'Rank Math keeps filtered fleet requests noindex,follow.' );
 
 add_filter( 'rentacar_venezia_v2_external_seo_plugin_active', function() { return true; } );
 theme_seo_assert( rentacar_venezia_v2_external_seo_plugin_active(), 'External SEO ownership can be enabled through the integration filter.' );
@@ -148,12 +151,21 @@ theme_seo_assert( isset( $GLOBALS['theme_seo_filters']['rank_math/frontend/title
 theme_seo_assert( isset( $GLOBALS['theme_seo_filters']['rank_math/frontend/description'] ), 'Rank Math receives the vehicle description localization filter.' );
 theme_seo_assert( 'Noleggio Fiat 500 a Venezia | G&D Rent' === rentacar_venezia_v2_rank_math_vehicle_title( 'legacy title' ), 'Stored Rank Math vehicle titles take precedence over the generic fallback.' );
 theme_seo_assert( 'Noleggia Fiat 500 a Venezia e Treviso.' === rentacar_venezia_v2_rank_math_vehicle_description( 'legacy description' ), 'Stored Rank Math vehicle descriptions take precedence over the generic fallback.' );
+theme_seo_assert( 'Example title 42 rental in Venice and Treviso' === rentacar_venezia_v2_vehicle_metadata_for_post( 'title', 42, 'en' ), 'Vehicle metadata can be generated deterministically for a specific translated record.' );
 unset( $GLOBALS['theme_seo_post_meta'][42] );
 theme_seo_assert( 'Example title 42 rental in Venice and Treviso' === rentacar_venezia_v2_rank_math_vehicle_title( 'legacy title' ), 'Rank Math vehicle titles retain the generic fallback when stored metadata is empty.' );
 theme_seo_assert( false !== strpos( rentacar_venezia_v2_rank_math_vehicle_description( 'legacy description' ), 'Example title 42' ), 'Rank Math vehicle descriptions retain the generic fallback when stored metadata is empty.' );
 $GLOBALS['theme_seo_current_post_type'] = 'page';
 $GLOBALS['theme_seo_post_meta'][42] = array( 'rank_math_title' => 'Non-car title' );
 theme_seo_assert( 'legacy title' === rentacar_venezia_v2_rank_math_vehicle_title( 'legacy title' ), 'Rank Math vehicle metadata does not override non-car pages.' );
+$GLOBALS['theme_seo_is_page'] = true;
+$GLOBALS['theme_seo_post_meta'][42]['_rc_provisioning_key'] = 'cookie_policy';
+theme_seo_assert( 'Cookie Policy for G&D Rent A Car' === apply_filters( 'rank_math/frontend/title', 'legacy title' ), 'The English Cookie Policy title is distinct from its Italian equivalent.' );
+$GLOBALS['theme_seo_post_meta'][42]['_rc_provisioning_key'] = '';
+$GLOBALS['theme_seo_post_meta'][42]['_rentacar_location_key'] = 'venice_marco_polo';
+theme_seo_assert( 'Venice Airport Car Rental | No Credit Card to Reserve | G&D' === apply_filters( 'rank_math/frontend/title', 'legacy title' ), 'The English Venice Airport page has targeted commercial Rank Math title metadata.' );
+theme_seo_assert( false !== strpos( apply_filters( 'rank_math/frontend/description', 'legacy description' ), 'security deposit is required at pickup' ), 'The Venice Airport description keeps the security-deposit condition explicit.' );
+$GLOBALS['theme_seo_is_page'] = false;
 
 $GLOBALS['theme_seo_current_post_type'] = 'cars';
 theme_seo_assert( array() === rentacar_venezia_v2_schema_graph( array( 'WebPage' => array( '@id' => 'https://example.test/fleet/#webpage' ) ) ), 'Filtered fleet requests do not create an alternative schema graph.' );

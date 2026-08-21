@@ -27,7 +27,7 @@ get_header();
             <div class="hero__copy">
                 <p class="eyebrow"><?php esc_html_e( 'Car rental at Venice and Treviso airports', 'rentacar-venezia-v2' ); ?></p>
                 <h1><?php esc_html_e( 'Car Rental in Venice & Treviso', 'rentacar-venezia-v2' ); ?></h1>
-                <p><?php esc_html_e( 'Choose your car and send a reservation request with no credit card required. Airport pickup and direct local assistance.', 'rentacar-venezia-v2' ); ?></p>
+                <p><?php esc_html_e( 'Choose your car, check availability and send a straightforward reservation request. Airport pickup and direct local assistance.', 'rentacar-venezia-v2' ); ?></p>
                 <div class="hero__actions"><a class="button" href="<?php echo esc_url( rentacar_venezia_v2_fleet_url() ); ?>"><?php esc_html_e( 'Explore our cars', 'rentacar-venezia-v2' ); ?></a><?php if ( $whatsapp_url ) : ?><a class="button button--whatsapp" href="<?php echo esc_url( $whatsapp_url ); ?>"><?php esc_html_e( 'Ask on WhatsApp', 'rentacar-venezia-v2' ); ?></a><?php endif; ?></div>
             </div>
             <form id="trip-filter" class="trip-form hero__trip-form" method="get" action="<?php echo esc_url( rentacar_venezia_v2_fleet_url() ); ?>" data-trip-form>
@@ -43,6 +43,7 @@ get_header();
             </form>
         </div>
     </section>
+    <div class="rc-container"><?php get_template_part( 'template-parts/global/reservation-policy', null, array( 'variant' => 'detailed' ) ); ?></div>
     <section class="trust-strip" aria-label="<?php esc_attr_e( 'Service highlights', 'rentacar-venezia-v2' ); ?>">
         <div class="rc-container">
             <ul class="trust-strip__list">
@@ -53,10 +54,6 @@ get_header();
                 <li class="trust-strip__item">
                     <span class="trust-strip__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/><path d="M20 12v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h9"/></svg></span>
                     <span class="trust-strip__text"><?php esc_html_e( 'Fast and simple reservation', 'rentacar-venezia-v2' ); ?></span>
-                </li>
-                <li class="trust-strip__item">
-                    <span class="trust-strip__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/><path d="M7 15h3"/></svg></span>
-                    <span class="trust-strip__text"><?php esc_html_e( 'No credit card required to send a request', 'rentacar-venezia-v2' ); ?></span>
                 </li>
                 <li class="trust-strip__item">
                     <span class="trust-strip__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 15a4 4 0 0 1-4 4H9l-5 3v-7a4 4 0 0 1-2-3.5V8a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4Z"/><path d="M7.5 11.5h.01M12 11.5h.01M16.5 11.5h.01"/></svg></span>

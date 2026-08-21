@@ -41,7 +41,14 @@ $return_time = in_array( $trip['return_time'] ?? '', $reservation_times, true ) 
           <input type="hidden" name="action" value="rentacar_submit_reservation">
           <input type="hidden" name="vehicle_id" data-reservation-vehicle-id value="">
           <input type="hidden" name="started_at" value="<?php echo esc_attr( time() ); ?>">
+          <input type="hidden" name="acquisition_first_landing_page" value="">
+          <input type="hidden" name="acquisition_last_landing_page" value="">
+          <input type="hidden" name="acquisition_referrer" value="">
+          <input type="hidden" name="acquisition_utm_source" value="">
+          <input type="hidden" name="acquisition_utm_medium" value="">
+          <input type="hidden" name="acquisition_utm_campaign" value="">
           <?php wp_nonce_field( 'rentacar_submit_reservation', 'rentacar_reservation_nonce' ); ?>
+          <?php get_template_part( 'template-parts/global/reservation-policy', null, array( 'variant' => 'compact' ) ); ?>
           <p id="reservation-errors" class="reservation-form__error" data-reservation-errors tabindex="-1" aria-live="assertive"></p>
           <div class="honeypot" aria-hidden="true"><label><?php esc_html_e( 'Website', 'rentacar-venezia-v2' ); ?><input name="website" tabindex="-1" autocomplete="off"></label></div>
           <p class="reservation-form__progress" data-reservation-progress aria-live="polite"><?php esc_html_e( '1 of 2 · Trip', 'rentacar-venezia-v2' ); ?></p>

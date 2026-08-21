@@ -17,6 +17,7 @@ function home_url( $path = '/' ) { return 'https://example.test' . $path; }
 function trailingslashit( $value ) { return rtrim( $value, '/' ) . '/'; }
 function determine_locale() { return 'en_US'; }
 function has_filter( $filter ) { return false; }
+function add_filter() {}
 
 require_once dirname( __DIR__, 2 ) . '/plugin/rentacar-core/src/Multilingual/LanguageResolverInterface.php';
 require_once dirname( __DIR__, 2 ) . '/plugin/rentacar-core/src/Multilingual/PolylangLanguageResolver.php';

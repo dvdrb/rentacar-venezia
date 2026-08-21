@@ -20,12 +20,34 @@ where appropriate:
 - Indicative price
 - Final price confirmed by our team
 
+## Verified reservation policy
+
+The following owner-approved facts are enabled by default in the registry.
+They are rendered only through the registry/component; templates must not
+restate or alter them. They apply to the reservation stage, not to every later
+rental condition.
+
+| Claim key | Status | Public meaning |
+| --- | --- | --- |
+| `no_credit_card_to_reserve` | Approved | A credit card is not required to make a reservation. |
+| `no_advance_reservation_deposit` | Approved | No advance payment/deposit is required to make a reservation. |
+| `security_deposit_at_pickup` | Approved condition | A security deposit is required when the vehicle is collected. |
+| `no_deposit` | Disabled | Must never be used as a synonym for the two reservation-stage facts. |
+
+The legacy `no_credit_card` lookup remains a compatibility alias for
+`no_credit_card_to_reserve`; new code must use the explicit key.
+
+Exact policy summary:
+
+- IT: “Prenota senza carta di credito e senza deposito anticipato. Il deposito cauzionale viene richiesto al momento del ritiro.”
+- EN: “Reserve without a credit card or advance reservation deposit. A security deposit is required at pickup.”
+- RO: “Rezervați fără card de credit și fără avans la rezervare. La preluarea mașinii este necesar un depozit de garanție.”
+- RU: “Бронируйте без кредитной карты и без предоплаты при бронировании. При получении автомобиля требуется залог.”
+
 ## Requires owner approval before enabling
 
 | Claim key | Proposed label | Status |
 | --- | --- | --- |
-| `no_credit_card` | No credit card required | Disabled / unresolved |
-| `no_deposit` | No deposit required | Disabled / unresolved |
 | `free_cancellation` | Free cancellation | Disabled / unresolved |
 | `no_hidden_fees` | No hidden fees | Disabled / unresolved |
 | `unlimited_mileage` | Unlimited mileage | Disabled / unresolved |

@@ -1,7 +1,7 @@
 {
-    "generated_at": "2026-08-15T08:25:05+00:00",
+    "generated_at": "2026-08-21T06:28:08+00:00",
     "site_url": "http://rentacar-venezia-local.local/",
-    "indexable_pages": 248,
+    "indexable_pages": 252,
     "issues": [
         {
             "severity": "INFO",
@@ -33,6 +33,30 @@
             "id": 5188,
             "language": "ru",
             "url": "http://rentacar-venezia-local.local/ru/politika-konfidentsialnosti/",
+            "detail": "Review whether Rent a Car Venezia is being used as identity instead of a search phrase."
+        },
+        {
+            "severity": "INFO",
+            "code": "legacy_phrase_review",
+            "id": 5179,
+            "language": "it",
+            "url": "http://rentacar-venezia-local.local/cookie-policy/",
+            "detail": "Review whether Rent a Car Venezia is being used as identity instead of a search phrase."
+        },
+        {
+            "severity": "INFO",
+            "code": "legacy_phrase_review",
+            "id": 5181,
+            "language": "ro",
+            "url": "http://rentacar-venezia-local.local/ro/politica-privind-cookie-urile/",
+            "detail": "Review whether Rent a Car Venezia is being used as identity instead of a search phrase."
+        },
+        {
+            "severity": "INFO",
+            "code": "legacy_phrase_review",
+            "id": 5182,
+            "language": "ru",
+            "url": "http://rentacar-venezia-local.local/ru/politika-ispolzovaniya-faylov-cookie/",
             "detail": "Review whether Rent a Car Venezia is being used as identity instead of a search phrase."
         },
         {
@@ -198,6 +222,14 @@
         {
             "severity": "INFO",
             "code": "legacy_phrase_review",
+            "id": 3214,
+            "language": "ro",
+            "url": "http://rentacar-venezia-local.local/ro/intrebari-frecvente/",
+            "detail": "Review whether Rent a Car Venezia is being used as identity instead of a search phrase."
+        },
+        {
+            "severity": "INFO",
+            "code": "legacy_phrase_review",
             "id": 2426,
             "language": "ro",
             "url": "http://rentacar-venezia-local.local/ro/contacte-si-asistenta/",
@@ -246,6 +278,30 @@
         {
             "severity": "INFO",
             "code": "legacy_phrase_review",
+            "id": 3125,
+            "language": "en",
+            "url": "http://rentacar-venezia-local.local/en/frequents/",
+            "detail": "Review whether Rent a Car Venezia is being used as identity instead of a search phrase."
+        },
+        {
+            "severity": "INFO",
+            "code": "legacy_phrase_review",
+            "id": 3149,
+            "language": "ru",
+            "url": "http://rentacar-venezia-local.local/ru/chasto-zadavayemyye/",
+            "detail": "Review whether Rent a Car Venezia is being used as identity instead of a search phrase."
+        },
+        {
+            "severity": "INFO",
+            "code": "legacy_phrase_review",
+            "id": 3161,
+            "language": "it",
+            "url": "http://rentacar-venezia-local.local/faq/",
+            "detail": "Review whether Rent a Car Venezia is being used as identity instead of a search phrase."
+        },
+        {
+            "severity": "INFO",
+            "code": "legacy_phrase_review",
             "id": 73,
             "language": "ru",
             "url": "http://rentacar-venezia-local.local/ru/kontakty-i-pomoshch/",
@@ -253,6 +309,6 @@
         }
     ],
     "summary": {
-        "INFO": 31
+        "INFO": 38
     }
 }

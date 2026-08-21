@@ -6,7 +6,7 @@ The new public architecture has one multilingual Pickup Locations hub, seven rea
 
 `inc/locations.php` remains the source of truth for pickup keys. `inc/landing-pages.php` adds presentation copy, controlled commercial-intent rules, relation helpers, and the safe provisioners. The reusable templates are `template-pickup-locations.php`, `template-location.php`, and `template-rental-option.php`. All fleet cards use `Rentacar_Core_Vehicle_Repository`; no availability is implied.
 
-Intent rules are: automatic = structured transmission value, 7/9-seat = passenger capacity at least 7/9, family = at least 5 seats, and economy = the six lowest valid starting prices. A page requires its configured minimum matching vehicles. `no_credit_card` is deliberately never provisioned without a separately verified business-policy implementation.
+Intent rules are: automatic = structured transmission value, 7/9-seat = passenger capacity at least 7/9, family = at least 5 seats, and economy = the six lowest valid starting prices. A page requires its configured minimum matching vehicles. `no_credit_card` is a single policy-backed multilingual page, eligible only while the three verified reservation-policy claims are enabled; it uses the real current fleet and never creates location/keyword variants.
 
 ## Provisioning and languages
 

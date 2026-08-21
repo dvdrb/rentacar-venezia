@@ -999,6 +999,19 @@ function rentacar_venezia_v2_interface_translation_map() {
     );
     foreach ( $request_policy_translations as $language => $strings ) $translations[ $language ] = array_merge( $translations[ $language ], $strings );
 
+    $organic_policy_translations = array(
+        'it' => array(
+            'Postal code' => 'CAP', 'Region' => 'Provincia', 'Check availability' => 'Verifica disponibilità', 'Reservation questions' => 'Domande sulla prenotazione', 'Can I reserve without a credit card?' => 'Posso prenotare senza carta di credito?', 'Is an advance reservation deposit required?' => 'È richiesto un deposito anticipato per la prenotazione?', 'Reservation policy' => 'Politica di prenotazione', 'Choose your car, check availability and send a straightforward reservation request. Airport pickup and direct local assistance.' => 'Scegli la tua auto, verifica la disponibilità e invia una richiesta di prenotazione semplice e chiara. Ritiro in aeroporto e assistenza locale diretta.',
+        ),
+        'ro' => array(
+            'Postal code' => 'Cod poștal', 'Region' => 'Regiune', 'Check availability' => 'Verificați disponibilitatea', 'Reservation questions' => 'Întrebări despre rezervare', 'Can I reserve without a credit card?' => 'Pot rezerva fără card de credit?', 'Is an advance reservation deposit required?' => 'Este necesar un avans pentru rezervare?', 'Reservation policy' => 'Politica de rezervare', 'Choose your car, check availability and send a straightforward reservation request. Airport pickup and direct local assistance.' => 'Alegeți mașina, verificați disponibilitatea și trimiteți o solicitare de rezervare clară. Preluare de la aeroport și asistență locală directă.',
+        ),
+        'ru' => array(
+            'Postal code' => 'Почтовый индекс', 'Region' => 'Регион', 'Check availability' => 'Проверить наличие', 'Reservation questions' => 'Вопросы о бронировании', 'Can I reserve without a credit card?' => 'Можно ли забронировать без кредитной карты?', 'Is an advance reservation deposit required?' => 'Нужен ли аванс при бронировании?', 'Reservation policy' => 'Условия бронирования', 'Choose your car, check availability and send a straightforward reservation request. Airport pickup and direct local assistance.' => 'Выберите автомобиль, проверьте наличие и отправьте понятный запрос на бронирование. Получение в аэропорту и прямая помощь местной команды.',
+        ),
+    );
+    foreach ( $organic_policy_translations as $language => $strings ) $translations[ $language ] = array_merge( $translations[ $language ], $strings );
+
     $translations['ru'] = array_merge( $translations['ru'], array(
         'View airport map' => 'Открыть карту аэропорта', 'Have you rented with us?' => 'Вы уже арендовали у нас автомобиль?', 'Your review helps future travellers choose a local rental service.' => 'Ваш отзыв помогает будущим путешественникам выбрать местный сервис аренды.', 'Leave a review' => 'Оставить отзыв', 'Customer feedback' => 'Отзывы клиентов', 'Thank you for renting with us. Choose the airport location used for your rental to share your experience.' => 'Спасибо, что выбрали нас. Выберите аэропорт, которым вы пользовались при аренде, чтобы поделиться впечатлением.'
     ) );

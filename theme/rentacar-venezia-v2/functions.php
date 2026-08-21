@@ -607,3 +607,19 @@ function rentacar_venezia_v2_trip_query() {
 
     return $trip;
 }
+
+/** Preserve the entered trip context when a visitor continues to the fleet. */
+function rentacar_venezia_v2_fleet_url_with_trip( array $context = array() ) {
+    $allowed = array_flip( array( 'pickup_location', 'dropoff_location', 'pickup_date', 'pickup_time', 'return_date', 'return_time' ) );
+    $trip = array_intersect_key( array_merge( rentacar_venezia_v2_trip_query(), $context ), $allowed );
+    $trip = array_filter( $trip, 'is_scalar' );
+
+    return $trip ? add_query_arg( $trip, rentacar_venezia_v2_fleet_url() ) : rentacar_venezia_v2_fleet_url();
+}
+
+/** Map the stored pickup label to the verified Google review profile. */
+function rentacar_venezia_v2_review_location_for_pickup( $pickup_location ) {
+    $pickup_location = strtolower( (string) $pickup_location );
+
+    return false !== strpos( $pickup_location, 'marco polo' ) || false !== strpos( $pickup_location, 'venice' ) ? 'venice_marco_polo' : 'treviso_airport';
+}

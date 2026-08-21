@@ -2606,6 +2606,12 @@ body.home .site-header .language-switcher__trigger { border-color:rgb(255 255 25
 .trust-strip__icon svg { width:17px; height:17px; stroke-width:1.8; }
 
 .trust-strip__text { max-width:19ch; }
+.reservation-policy { max-width:760px; padding:18px 20px; margin:24px 0; border:1px solid #d6e2ef; border-radius:var(--rc-radius-sm); background:#f4f8fc; }
+.reservation-policy__summary { margin:0; color:var(--rc-navy-950); font-weight:700; line-height:1.5; }
+.reservation-policy__list { display:grid; gap:7px; padding:0; margin:14px 0 0; list-style:none; }
+.reservation-policy__item { position:relative; padding-left:24px; color:#38536e; font-size:.9rem; line-height:1.45; }
+.reservation-policy__item::before { position:absolute; left:0; color:#12703f; content:'✓'; font-weight:800; }
+.reservation-policy__item--security_deposit_at_pickup::before { color:#925e00; content:'i'; }
 
 @media (max-width:899px) {
   .trust-strip__list { grid-template-columns:repeat(2, minmax(0, 1fr)); }

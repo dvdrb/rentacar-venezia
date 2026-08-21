@@ -82,8 +82,13 @@ final class Rentacar_Core_Reservation_Controller {
             'extras' => self::extra_keys( $raw['extras'] ?? array() ),
             'rentacar_ajax' => ! empty( $raw['rentacar_ajax'] ), 'rentacar_reservation_nonce' => sanitize_text_field( $raw['rentacar_reservation_nonce'] ?? '' ),
             'language' => sanitize_key( Rentacar_Core_Language_Resolver_Factory::create()->current_language() ),
+            'acquisition_first_landing_page' => self::relative_path( $raw['acquisition_first_landing_page'] ?? '' ), 'acquisition_last_landing_page' => self::relative_path( $raw['acquisition_last_landing_page'] ?? '' ), 'acquisition_referrer' => self::referrer( $raw['acquisition_referrer'] ?? '' ),
+            'acquisition_utm_source' => sanitize_text_field( substr( (string) ( $raw['acquisition_utm_source'] ?? '' ), 0, 160 ) ), 'acquisition_utm_medium' => sanitize_text_field( substr( (string) ( $raw['acquisition_utm_medium'] ?? '' ), 0, 160 ) ), 'acquisition_utm_campaign' => sanitize_text_field( substr( (string) ( $raw['acquisition_utm_campaign'] ?? '' ), 0, 160 ) ),
         );
     }
+
+    private static function relative_path( $value ) { $path = wp_parse_url( (string) $value, PHP_URL_PATH ); return is_string( $path ) && 0 === strpos( $path, '/' ) ? substr( $path, 0, 500 ) : ''; }
+    private static function referrer( $value ) { $parts = wp_parse_url( (string) $value ); return is_array( $parts ) && in_array( $parts['scheme'] ?? '', array( 'http', 'https' ), true ) && ! empty( $parts['host'] ) ? substr( ( $parts['scheme'] . '://' . $parts['host'] . ( $parts['path'] ?? '' ) ), 0, 500 ) : ''; }
 
     private static function estimate_summary( $estimate ) {
         if ( ! $estimate || ! $estimate->get( 'available' ) ) {
