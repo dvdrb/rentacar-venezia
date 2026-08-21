@@ -574,12 +574,16 @@ function rentacar_venezia_v2_language_links() {
         }
 
         $name = $language['name'] ?? ( $language['native_name'] ?? strtoupper( $code ) );
+        $url = $language['url'];
+        if ( function_exists( 'rentacar_venezia_v2_is_fleet_request' ) && rentacar_venezia_v2_is_fleet_request() && function_exists( 'rentacar_venezia_v2_fleet_url' ) ) {
+            $url = rentacar_venezia_v2_fleet_url( $code );
+        }
         $items[ $code ] = array(
             'language_code'   => $code,
             'native_name'     => $name,
             'translated_name' => $language['translated_name'] ?? $name,
             'country_flag_url'=> $language['flag'] ?? ( $language['flag_url'] ?? ( $language['country_flag_url'] ?? '' ) ),
-            'url'             => $language['url'],
+            'url'             => $url,
             'active'          => ! empty( $language['current_lang'] ) || ! empty( $language['active'] ),
         );
     }

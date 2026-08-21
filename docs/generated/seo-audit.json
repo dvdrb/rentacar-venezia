@@ -1,5 +1,5 @@
 {
-    "generated_at": "2026-08-21T06:28:08+00:00",
+    "generated_at": "2026-08-21T07:18:08+00:00",
     "site_url": "http://rentacar-venezia-local.local/",
     "indexable_pages": 252,
     "issues": [
@@ -57,30 +57,6 @@
             "id": 5182,
             "language": "ru",
             "url": "http://rentacar-venezia-local.local/ru/politika-ispolzovaniya-faylov-cookie/",
-            "detail": "Review whether Rent a Car Venezia is being used as identity instead of a search phrase."
-        },
-        {
-            "severity": "INFO",
-            "code": "legacy_phrase_review",
-            "id": 5032,
-            "language": "en",
-            "url": "http://rentacar-venezia-local.local/en/fleet-2/",
-            "detail": "Review whether Rent a Car Venezia is being used as identity instead of a search phrase."
-        },
-        {
-            "severity": "INFO",
-            "code": "legacy_phrase_review",
-            "id": 5033,
-            "language": "ro",
-            "url": "http://rentacar-venezia-local.local/ro/flota/",
-            "detail": "Review whether Rent a Car Venezia is being used as identity instead of a search phrase."
-        },
-        {
-            "severity": "INFO",
-            "code": "legacy_phrase_review",
-            "id": 5034,
-            "language": "ru",
-            "url": "http://rentacar-venezia-local.local/ru/avtopark/",
             "detail": "Review whether Rent a Car Venezia is being used as identity instead of a search phrase."
         },
         {
@@ -198,14 +174,6 @@
         {
             "severity": "INFO",
             "code": "legacy_phrase_review",
-            "id": 5016,
-            "language": "it",
-            "url": "http://rentacar-venezia-local.local/fleet/",
-            "detail": "Review whether Rent a Car Venezia is being used as identity instead of a search phrase."
-        },
-        {
-            "severity": "INFO",
-            "code": "legacy_phrase_review",
             "id": 5017,
             "language": "it",
             "url": "http://rentacar-venezia-local.local/how-it-works/",
@@ -309,6 +277,6 @@
         }
     ],
     "summary": {
-        "INFO": 38
+        "INFO": 34
     }
 }

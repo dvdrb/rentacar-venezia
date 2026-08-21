@@ -540,6 +540,55 @@ test.describe('final theme experience', () => {
     await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', /\/page\/2\/?$/);
   });
 
+  test('uses one canonical fleet route per language across links, alternates, menus, redirects and sitemap', async ({ page }) => {
+    const routes: Record<string, string> = {
+      it: '/fleet/',
+      en: '/en/fleet/',
+      ro: '/ro/flota/',
+      ru: '/ru/avtopark/',
+    };
+
+    for (const [language, route] of Object.entries(routes)) {
+      await page.goto(route);
+      await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', new RegExp(`${route.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`));
+      await expect(page.locator(`link[rel="alternate"][hreflang="${language}"]`)).toHaveAttribute('href', new RegExp(`${route.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`));
+      expect(await page.title()).toContain('G&D Rent A Car');
+      expect(await page.title()).not.toContain('Rent a Car Venezia');
+    }
+
+    await page.goto('/en/fleet/');
+    const promotedFleetLinks = await page.locator('.primary-navigation a, .footer-navigation a, [data-language-switcher] a').evaluateAll((links) => links.map((link) => link.getAttribute('href')));
+    expect(promotedFleetLinks).toContain(new URL('/en/fleet/', page.url()).toString());
+    expect(promotedFleetLinks).not.toContain(new URL('/en/fleet-2/', page.url()).toString());
+
+    for (const [commercialPath, fleetRoute] of Object.entries({
+      '/venice-marco-polo-airport-car-rental/': '/fleet/',
+      '/en/venice-marco-polo-airport-car-rental-2/': '/en/fleet/',
+      '/ro/inchirieri-auto-aeroport-venetia-marco-polo/': '/ro/flota/',
+      '/ru/prokat-avto-aeroport-veneciya-marko-polo/': '/ru/avtopark/',
+    })) {
+      await page.goto(commercialPath);
+      await expect(page.locator(`main a[href*="${fleetRoute}"]`)).not.toHaveCount(0);
+    }
+
+    await page.goto('/en/fleet/?pickup_location=venice_marco_polo');
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', /\/en\/fleet\/$/);
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex.*follow|follow.*noindex/i);
+
+    const obsolete = await page.request.get('/en/fleet-2/', { maxRedirects: 0 });
+    expect(obsolete.status()).toBe(301);
+    expect(obsolete.headers().location).toMatch(/\/en\/fleet\/$/);
+    const obsoleteFiltered = await page.request.get('/en/fleet-2/?pickup_location=venice_marco_polo', { maxRedirects: 0 });
+    expect(obsoleteFiltered.status()).toBe(301);
+    expect(obsoleteFiltered.headers().location).toMatch(/\/en\/fleet\/\?pickup_location=venice_marco_polo$/);
+
+    const sitemap = await page.request.get('/page-sitemap.xml');
+    expect(sitemap.ok()).toBeTruthy();
+    const sitemapText = await sitemap.text();
+    expect(sitemapText).toContain(new URL('/en/fleet/', page.url()).toString());
+    expect(sitemapText).not.toContain(new URL('/en/fleet-2/', page.url()).toString());
+  });
+
   test('keeps transactional legacy pages and user archives out of search discovery', async ({ page }) => {
     for (const path of ['/total/', '/la-tua-richiesta-e-stata-inviata/', '/posti/']) {
       await page.goto(path);

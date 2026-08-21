@@ -99,6 +99,17 @@ function theme_seo_assert( $condition, $message ) { if ( ! $condition ) { fwrite
 add_filter( 'wpml_object_id', function( $id ) { return 110; } );
 theme_seo_assert( 110 === rentacar_venezia_v2_fleet_page_id(), 'A template-assigned fleet page resolves through WPML.' );
 theme_seo_assert( 'https://example.test/fleet/' === rentacar_venezia_v2_fleet_url(), 'A suffixed translation permalink retains the established fleet route.' );
+theme_seo_assert( 'https://example.test/en/fleet/' === rentacar_venezia_v2_fleet_url( 'en' ), 'The English catalogue uses its stable public route rather than the translated page slug.' );
+theme_seo_assert( 'https://example.test/ro/flota/' === rentacar_venezia_v2_fleet_url( 'ro' ), 'The Romanian catalogue keeps its established public route.' );
+theme_seo_assert( 'https://example.test/ru/avtopark/' === rentacar_venezia_v2_fleet_url( 'ru' ), 'The Russian catalogue keeps its established public route.' );
+$fleet_menu = array( (object) array( 'type' => 'post_type', 'object' => 'page', 'object_id' => 110, 'url' => 'https://example.test/en/fleet-2/' ) );
+theme_seo_assert( 'https://example.test/en/fleet/' === rentacar_venezia_v2_canonicalize_fleet_menu_links( $fleet_menu )[0]->url, 'Fleet page-backed menu items use the canonical public route.' );
+$fleet_hreflangs = rentacar_venezia_v2_canonicalize_fleet_hreflangs( array( 'it' => 'https://example.test/fleet/', 'en' => 'https://example.test/en/fleet-2/', 'ro' => 'https://example.test/ro/flota/', 'ru' => 'https://example.test/ru/avtopark/' ) );
+theme_seo_assert( 'https://example.test/en/fleet/' === $fleet_hreflangs['en'], 'Fleet hreflang uses the English canonical route.' );
+theme_seo_assert( 'https://example.test/ro/flota/' === $fleet_hreflangs['ro'] && 'https://example.test/ru/avtopark/' === $fleet_hreflangs['ru'], 'Fleet hreflang retains canonical Romanian and Russian routes.' );
+$localized_content = rentacar_venezia_v2_localize_fleet_content_links( '<p><a href="/fleet/?pickup_location=venice">Fleet</a></p>' );
+theme_seo_assert( false !== strpos( $localized_content, rentacar_venezia_v2_fleet_url() . '?pickup_location=venice' ), 'Editor fleet links resolve through the canonical fleet helper and retain query context.' );
+theme_seo_assert( 'Rental cars in Venice and Treviso | G&D Rent A Car' === rentacar_venezia_v2_fleet_public_title( 'en' ), 'English fleet public metadata uses the approved G&D brand.' );
 
 $_GET = array();
 theme_seo_assert( ! rentacar_venezia_v2_is_filtered_fleet_request(), 'A clean fleet request is not treated as filtered.' );

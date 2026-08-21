@@ -1,6 +1,6 @@
 # Local SEO audit
 
-Generated: 2026-08-21T06:28:08+00:00
+Generated: 2026-08-21T07:18:08+00:00
 
 Indexable resources: 252
 
@@ -13,9 +13,6 @@ Indexable resources: 252
 | INFO | legacy_phrase_review | http://rentacar-venezia-local.local/cookie-policy/ | Review whether Rent a Car Venezia is being used as identity instead of a search phrase. |
 | INFO | legacy_phrase_review | http://rentacar-venezia-local.local/ro/politica-privind-cookie-urile/ | Review whether Rent a Car Venezia is being used as identity instead of a search phrase. |
 | INFO | legacy_phrase_review | http://rentacar-venezia-local.local/ru/politika-ispolzovaniya-faylov-cookie/ | Review whether Rent a Car Venezia is being used as identity instead of a search phrase. |
-| INFO | legacy_phrase_review | http://rentacar-venezia-local.local/en/fleet-2/ | Review whether Rent a Car Venezia is being used as identity instead of a search phrase. |
-| INFO | legacy_phrase_review | http://rentacar-venezia-local.local/ro/flota/ | Review whether Rent a Car Venezia is being used as identity instead of a search phrase. |
-| INFO | legacy_phrase_review | http://rentacar-venezia-local.local/ru/avtopark/ | Review whether Rent a Car Venezia is being used as identity instead of a search phrase. |
 | INFO | legacy_phrase_review | http://rentacar-venezia-local.local/en/how-it-works-2/ | Review whether Rent a Car Venezia is being used as identity instead of a search phrase. |
 | INFO | legacy_phrase_review | http://rentacar-venezia-local.local/ro/cum-functioneaza/ | Review whether Rent a Car Venezia is being used as identity instead of a search phrase. |
 | INFO | legacy_phrase_review | http://rentacar-venezia-local.local/ru/kak-eto-rabotaet/ | Review whether Rent a Car Venezia is being used as identity instead of a search phrase. |
@@ -30,7 +27,6 @@ Indexable resources: 252
 | INFO | legacy_phrase_review | http://rentacar-venezia-local.local/ru/putevoditeli/ | Review whether Rent a Car Venezia is being used as identity instead of a search phrase. |
 | INFO | legacy_phrase_review | http://rentacar-venezia-local.local/terms-and-conditions/ | Review whether Rent a Car Venezia is being used as identity instead of a search phrase. |
 | INFO | legacy_phrase_review | http://rentacar-venezia-local.local/guides/ | Review whether Rent a Car Venezia is being used as identity instead of a search phrase. |
-| INFO | legacy_phrase_review | http://rentacar-venezia-local.local/fleet/ | Review whether Rent a Car Venezia is being used as identity instead of a search phrase. |
 | INFO | legacy_phrase_review | http://rentacar-venezia-local.local/how-it-works/ | Review whether Rent a Car Venezia is being used as identity instead of a search phrase. |
 | INFO | legacy_phrase_review | http://rentacar-venezia-local.local/rental-requirements/ | Review whether Rent a Car Venezia is being used as identity instead of a search phrase. |
 | INFO | legacy_phrase_review | http://rentacar-venezia-local.local/ro/intrebari-frecvente/ | Review whether Rent a Car Venezia is being used as identity instead of a search phrase. |

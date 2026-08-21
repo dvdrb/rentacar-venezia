@@ -47,8 +47,9 @@ function rentacar_venezia_v2_schema_logo_url() {
 
 function rentacar_venezia_v2_schema_page_url() {
     if ( is_front_page() && function_exists( 'rentacar_venezia_v2_home_url' ) ) return rentacar_venezia_v2_schema_public_url( trailingslashit( rentacar_venezia_v2_home_url() ) );
+    if ( function_exists( 'rentacar_venezia_v2_fleet_canonical_url' ) && rentacar_venezia_v2_is_fleet_request() ) return rentacar_venezia_v2_schema_public_url( rentacar_venezia_v2_fleet_canonical_url() );
     if ( is_singular() ) return rentacar_venezia_v2_schema_public_url( get_permalink( get_queried_object_id() ) );
-    return rentacar_venezia_v2_schema_public_url( function_exists( 'rentacar_venezia_v2_fleet_canonical_url' ) && rentacar_venezia_v2_is_fleet_request() ? rentacar_venezia_v2_fleet_canonical_url() : home_url( '/' ) );
+    return rentacar_venezia_v2_schema_public_url( home_url( '/' ) );
 }
 
 function rentacar_venezia_v2_schema_is_indexable() {

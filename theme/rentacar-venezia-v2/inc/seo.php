@@ -84,11 +84,14 @@ add_filter( 'rank_math/opengraph/facebook/og_site_name', 'rentacar_venezia_v2_ra
  * No title, slug or language prefix is assumed. The active multilingual
  * provider resolves the discovered source page into the current language.
  */
-function rentacar_venezia_v2_fleet_page_id() {
-    static $fleet_page_id = null;
+function rentacar_venezia_v2_fleet_page_id( $language = null ) {
+    static $fleet_page_ids = array();
 
-    if ( null !== $fleet_page_id ) {
-        return $fleet_page_id;
+    $language = $language ?: rentacar_venezia_v2_current_language();
+    $cache_key = strtolower( (string) $language );
+
+    if ( array_key_exists( $cache_key, $fleet_page_ids ) ) {
+        return $fleet_page_ids[ $cache_key ];
     }
 
     $fleet_page_id = 0;
@@ -114,7 +117,7 @@ function rentacar_venezia_v2_fleet_page_id() {
         $translated_id = $page_id;
 
         $translated_id = function_exists( 'rentacar_venezia_v2_translated_post_id' )
-            ? rentacar_venezia_v2_translated_post_id( $page_id )
+            ? rentacar_venezia_v2_translated_post_id( $page_id, $language )
             : $page_id;
 
         if ( $translated_id && 'publish' === get_post_status( $translated_id ) ) {
@@ -123,41 +126,71 @@ function rentacar_venezia_v2_fleet_page_id() {
         }
     }
 
-    $fleet_page_id = (int) apply_filters( 'rentacar_venezia_v2_fleet_page_id', $fleet_page_id, $page_ids );
+    $fleet_page_id = (int) apply_filters( 'rentacar_venezia_v2_fleet_page_id', $fleet_page_id, $page_ids, $language );
 
-    return $fleet_page_id;
+    return $fleet_page_ids[ $cache_key ] = $fleet_page_id;
 }
 
 /**
- * Returns the current-language fleet URL without assuming a page ID, route or
- * multilingual directory structure.
+ * Returns the established public catalogue URL for the supplied language.
+ *
+ * The translated English fleet page deliberately retains its WordPress slug
+ * (`fleet-2`) so existing content and its Polylang relationship stay intact.
+ * Its public route is nevertheless `/en/fleet/`; treating the public route as
+ * an explicit catalogue concern keeps WordPress page identity separate from
+ * the stable URL architecture.
  */
-function rentacar_venezia_v2_fleet_url() {
-    static $fleet_url = null;
+function rentacar_venezia_v2_fleet_canonical_route( $language = null ) {
+    $language = $language ?: rentacar_venezia_v2_current_language();
+    $routes = array(
+        'it' => '/fleet/',
+        'en' => '/en/fleet/',
+        'ro' => '/ro/flota/',
+        'ru' => '/ru/avtopark/',
+    );
 
-    if ( null !== $fleet_url ) {
-        return $fleet_url;
+    return $routes[ $language ] ?? '';
+}
+
+/** Returns the canonical public fleet URL for the requested/current language. */
+function rentacar_venezia_v2_fleet_url( $language = null ) {
+    static $fleet_urls = array();
+
+    $explicit_language = null !== $language && '' !== $language;
+    $language = $language ?: rentacar_venezia_v2_current_language();
+    $cache_key = strtolower( (string) $language ) . ( $explicit_language ? ':explicit' : ':current' );
+
+    if ( array_key_exists( $cache_key, $fleet_urls ) ) {
+        return $fleet_urls[ $cache_key ];
     }
 
-    $fleet_page_id = rentacar_venezia_v2_fleet_page_id();
-    if ( $fleet_page_id ) {
-        $fleet_url = get_permalink( $fleet_page_id );
-        // WordPress can suffix a translated page slug even though the
-        // established multilingual catalogue route remains /{lang}/fleet/.
-        if ( preg_match( '#/fleet-[0-9]+/?$#', (string) wp_parse_url( $fleet_url, PHP_URL_PATH ) ) && function_exists( 'rentacar_venezia_v2_localized_fallback_url' ) ) {
+    $route = rentacar_venezia_v2_fleet_canonical_route( $language );
+    if ( $route && ( $explicit_language || 'polylang' === rentacar_venezia_v2_multilingual_provider() ) ) {
+        $fleet_url = home_url( $route );
+    } else {
+        $fleet_page_id = rentacar_venezia_v2_fleet_page_id( $language );
+        $fleet_url = $fleet_page_id ? get_permalink( $fleet_page_id ) : home_url( '/fleet/' );
+
+        if ( function_exists( 'wp_parse_url' ) && preg_match( '#/fleet-[0-9]+/?$#', (string) wp_parse_url( $fleet_url, PHP_URL_PATH ) ) && function_exists( 'rentacar_venezia_v2_localized_fallback_url' ) ) {
             $fleet_url = rentacar_venezia_v2_localized_fallback_url( home_url( '/fleet/' ) );
         }
-    } else {
-        $fleet_url = home_url( '/fleet/' );
-
-        if ( function_exists( 'rentacar_venezia_v2_localized_fallback_url' ) ) {
-            $fleet_url = rentacar_venezia_v2_localized_fallback_url( $fleet_url );
-        }
     }
 
-    $fleet_url = (string) apply_filters( 'rentacar_venezia_v2_fleet_url', $fleet_url, $fleet_page_id );
+    $fleet_url = (string) apply_filters( 'rentacar_venezia_v2_fleet_url', $fleet_url, $fleet_page_id ?? 0, $language );
 
-    return $fleet_url;
+    return $fleet_urls[ $cache_key ] = $fleet_url;
+}
+
+/** Returns whether a page belongs to the current multilingual fleet group. */
+function rentacar_venezia_v2_is_fleet_page_id( $page_id ) {
+    $page_id = absint( $page_id );
+    if ( ! $page_id ) {
+        return false;
+    }
+
+    $language = function_exists( 'rentacar_venezia_v2_post_language' ) ? rentacar_venezia_v2_post_language( $page_id ) : '';
+
+    return $page_id === rentacar_venezia_v2_fleet_page_id( $language );
 }
 
 function rentacar_venezia_v2_is_fleet_request() {
@@ -165,6 +198,75 @@ function rentacar_venezia_v2_is_fleet_request() {
 
     return (bool) get_query_var( 'rc_fleet' ) || ( $fleet_page_id && is_page( $fleet_page_id ) );
 }
+
+/** Make page-backed fleet menu items use the stable public route. */
+function rentacar_venezia_v2_canonicalize_fleet_menu_links( $items ) {
+    foreach ( $items as $index => $item ) {
+        if ( ! isset( $item->type, $item->object, $item->object_id ) || 'post_type' !== $item->type || 'page' !== $item->object || ! rentacar_venezia_v2_is_fleet_page_id( $item->object_id ) ) {
+            continue;
+        }
+
+        $language = rentacar_venezia_v2_post_language( $item->object_id ) ?: rentacar_venezia_v2_current_language();
+        $items[ $index ]->url = rentacar_venezia_v2_fleet_url( $language );
+    }
+
+    return $items;
+}
+add_filter( 'wp_nav_menu_objects', 'rentacar_venezia_v2_canonicalize_fleet_menu_links', 30 );
+
+/** Keep Polylang alternates on the public catalogue routes, never page slugs. */
+function rentacar_venezia_v2_canonicalize_fleet_hreflangs( $hreflangs ) {
+    if ( ! rentacar_venezia_v2_is_fleet_request() || ! is_array( $hreflangs ) ) {
+        return $hreflangs;
+    }
+
+    foreach ( $hreflangs as $key => $url ) {
+        $language = 'x-default' === $key ? rentacar_venezia_v2_default_language() : $key;
+        if ( rentacar_venezia_v2_fleet_canonical_route( $language ) ) {
+            $hreflangs[ $key ] = rentacar_venezia_v2_fleet_url( $language );
+        }
+    }
+
+    return $hreflangs;
+}
+add_filter( 'pll_rel_hreflang_attributes', 'rentacar_venezia_v2_canonicalize_fleet_hreflangs', 30 );
+
+/**
+ * Editor content from the imported commercial pages can still contain a
+ * language-neutral or suffixed fleet permalink. Resolve only same-site fleet
+ * anchors at render time so the canonical helper remains the single source of
+ * truth without rewriting an editor's unrelated links.
+ */
+function rentacar_venezia_v2_localize_fleet_content_links( $content ) {
+    if ( ! is_string( $content ) || false === stripos( $content, 'fleet' ) ) {
+        return $content;
+    }
+
+    $site_host = strtolower( (string) wp_parse_url( home_url( '/' ), PHP_URL_HOST ) );
+    $canonical = rentacar_venezia_v2_fleet_url();
+
+    return preg_replace_callback(
+        '#(\bhref\s*=\s*)(["\'])([^"\']+)\2#i',
+        function( $match ) use ( $site_host, $canonical ) {
+            $href = html_entity_decode( $match[3], ENT_QUOTES, 'UTF-8' );
+            $host = strtolower( (string) wp_parse_url( $href, PHP_URL_HOST ) );
+            $path = (string) wp_parse_url( $href, PHP_URL_PATH );
+            $normalized_path = '/' . trim( $path, '/' ) . '/';
+
+            if ( ( $host && $host !== $site_host && 'rentacarvenezia.it' !== $host && 'www.rentacarvenezia.it' !== $host ) || ! preg_match( '#^/(?:it/|en/|ro/|ru/)?(?:fleet|flota|avtopark)(?:-[0-9]+)?/$#i', $normalized_path ) ) {
+                return $match[0];
+            }
+
+            $query = (string) wp_parse_url( $href, PHP_URL_QUERY );
+            $fragment = (string) wp_parse_url( $href, PHP_URL_FRAGMENT );
+            $localized = $canonical . ( '' !== $query ? '?' . $query : '' ) . ( '' !== $fragment ? '#' . $fragment : '' );
+
+            return $match[1] . $match[2] . esc_url( $localized ) . $match[2];
+        },
+        $content
+    );
+}
+add_filter( 'the_content', 'rentacar_venezia_v2_localize_fleet_content_links', 20 );
 
 function rentacar_venezia_v2_fleet_filter_keys() {
     return array(
@@ -362,6 +464,10 @@ function rentacar_venezia_v2_localized_sitemap_entry( $entry, $post ) {
 
     $entry['loc'] = trailingslashit( pll_home_url( $language ) ) . $relative_path;
 
+    if ( rentacar_venezia_v2_is_fleet_page_id( $post->ID ) ) {
+        $entry['loc'] = rentacar_venezia_v2_fleet_url( $language );
+    }
+
     return $entry;
 }
 add_filter( 'wp_sitemaps_posts_entry', 'rentacar_venezia_v2_localized_sitemap_entry', 10, 2 );
@@ -483,11 +589,20 @@ function rentacar_venezia_v2_redirect_migrated_localized_urls() {
     }
 
     list( $key, $language ) = $redirects[ $path ];
-    $destination = rentacar_venezia_v2_managed_page_url( $key, $language );
+    $destination = 'fleet' === $key ? rentacar_venezia_v2_fleet_url( $language ) : rentacar_venezia_v2_managed_page_url( $key, $language );
     $destination_path = $destination ? wp_parse_url( $destination, PHP_URL_PATH ) : '';
     $destination_path = is_string( $destination_path ) ? trailingslashit( '/' . ltrim( $destination_path, '/' ) ) : '';
 
     if ( $destination && $destination_path !== $path ) {
+        if ( 'fleet' === $key ) {
+            $query = array();
+            foreach ( rentacar_venezia_v2_fleet_filter_keys() as $query_key ) {
+                if ( isset( $_GET[ $query_key ] ) && is_scalar( $_GET[ $query_key ] ) && '' !== (string) $_GET[ $query_key ] ) {
+                    $query[ $query_key ] = sanitize_text_field( wp_unslash( $_GET[ $query_key ] ) );
+                }
+            }
+            if ( $query ) $destination = add_query_arg( $query, $destination );
+        }
         wp_safe_redirect( $destination, 301, 'Rentacar Venezia' );
         exit;
     }
@@ -558,12 +673,19 @@ function rentacar_venezia_v2_rank_math_sitemap_posts_to_exclude( $post_ids ) {
 add_filter( 'rank_math/sitemap/posts_to_exclude', 'rentacar_venezia_v2_rank_math_sitemap_posts_to_exclude' );
 
 function rentacar_venezia_v2_rank_math_sitemap_entry( $entry, $type, $object ) {
-    if ( ! $object instanceof WP_Post || 'page' !== $object->post_type ) {
+    if ( ! is_object( $object ) || 'page' !== ( $object->post_type ?? '' ) ) {
         return $entry;
     }
 
-    if ( ! rentacar_venezia_v2_is_indexable_page_id( $object->ID ) || rentacar_venezia_v2_is_utility_page_id( $object->ID ) || rentacar_venezia_v2_is_legacy_terms_page_id( $object->ID ) ) {
+    $page_id = absint( $object->ID ?? 0 );
+    if ( ! $page_id ) return $entry;
+
+    if ( ! rentacar_venezia_v2_is_indexable_page_id( $page_id ) || rentacar_venezia_v2_is_utility_page_id( $page_id ) || rentacar_venezia_v2_is_legacy_terms_page_id( $page_id ) ) {
         return false;
+    }
+
+    if ( rentacar_venezia_v2_is_fleet_page_id( $page_id ) ) {
+        $entry['loc'] = rentacar_venezia_v2_fleet_url( rentacar_venezia_v2_post_language( $page_id ) );
     }
 
     return $entry;
@@ -632,9 +754,23 @@ function rentacar_venezia_v2_localized_home_canonical( $canonical ) {
 add_filter( 'wpseo_canonical', 'rentacar_venezia_v2_localized_home_canonical', 20 );
 add_filter( 'rank_math/frontend/canonical', 'rentacar_venezia_v2_localized_home_canonical', 20 );
 
+/** Public fleet titles use the approved G&D brand in every supported locale. */
+function rentacar_venezia_v2_fleet_public_title( $language = null ) {
+    $language = $language ?: rentacar_venezia_v2_current_language();
+    $titles = array(
+        'it' => 'Auto a noleggio a Venezia e Treviso | G&D Rent A Car',
+        'en' => 'Rental cars in Venice and Treviso | G&D Rent A Car',
+        'ro' => 'Mașini de închiriat în Veneția și Treviso | G&D Rent A Car',
+        'ru' => 'Автомобили в аренду в Венеции и Тревизо | G&D Rent A Car',
+    );
+
+    return $titles[ $language ] ?? '';
+}
+
 function rentacar_venezia_v2_rank_math_commercial_title( $title ) {
     if ( is_page() && 'cookie_policy' === get_post_meta( get_queried_object_id(), '_rc_provisioning_key', true ) && 'en' === rentacar_venezia_v2_current_language() ) return 'Cookie Policy for G&D Rent A Car';
     if ( 'en' === rentacar_venezia_v2_current_language() && is_page() && 'venice_marco_polo' === get_post_meta( get_queried_object_id(), '_rentacar_location_key', true ) ) return 'Venice Airport Car Rental | No Credit Card to Reserve | G&D';
+    if ( rentacar_venezia_v2_is_fleet_request() ) return rentacar_venezia_v2_fleet_public_title() ?: $title;
     return $title;
 }
 function rentacar_venezia_v2_rank_math_commercial_description( $description ) {
@@ -643,10 +779,17 @@ function rentacar_venezia_v2_rank_math_commercial_description( $description ) {
 }
 add_filter( 'rank_math/frontend/title', 'rentacar_venezia_v2_rank_math_commercial_title', 30 );
 add_filter( 'rank_math/frontend/description', 'rentacar_venezia_v2_rank_math_commercial_description', 30 );
+add_filter( 'rank_math/opengraph/facebook/og_title', 'rentacar_venezia_v2_rank_math_commercial_title', 30 );
+
+function rentacar_venezia_v2_yoast_fleet_title( $title ) {
+    return rentacar_venezia_v2_is_fleet_request() ? ( rentacar_venezia_v2_fleet_public_title() ?: $title ) : $title;
+}
+add_filter( 'wpseo_title', 'rentacar_venezia_v2_yoast_fleet_title', 30 );
+add_filter( 'wpseo_opengraph_title', 'rentacar_venezia_v2_yoast_fleet_title', 30 );
 
 function rentacar_venezia_v2_document_title( $parts ) {
     if ( get_query_var( 'rc_fleet' ) && ! rentacar_venezia_v2_external_seo_plugin_active() ) {
-        $parts['title'] = __( 'Rental cars in Venice and Treviso | Rent a Car Venezia', 'rentacar-venezia-v2' );
+        $parts['title'] = rentacar_venezia_v2_fleet_public_title() ?: __( 'Rental cars in Venice and Treviso | G&D Rent A Car', 'rentacar-venezia-v2' );
     }
 
     return $parts;
@@ -812,6 +955,14 @@ function rentacar_venezia_v2_cli_normalize_seo_metadata( $args, $assoc_args ) {
         $language = function_exists( 'pll_get_post_language' ) ? pll_get_post_language( $page_id, 'slug' ) : '';
         $replacement = 'en' === $language ? 'Cookie Policy for G&D Rent A Car' : '';
         if ( $replacement && $replacement !== (string) get_post_meta( $page_id, 'rank_math_title', true ) ) $updates[] = array( 'id' => (int) $page_id, 'key' => 'rank_math_title', 'value' => $replacement );
+    }
+
+    $fleet_pages = get_posts( array( 'post_type' => 'page', 'post_status' => 'publish', 'posts_per_page' => -1, 'fields' => 'ids', 'meta_key' => '_wp_page_template', 'meta_value' => 'page-templates/template-fleet.php', 'suppress_filters' => true, 'no_found_rows' => true ) );
+    foreach ( $fleet_pages as $page_id ) {
+        $language = function_exists( 'pll_get_post_language' ) ? pll_get_post_language( $page_id, 'slug' ) : '';
+        $current = (string) get_post_meta( $page_id, 'rank_math_title', true );
+        $replacement = rentacar_venezia_v2_fleet_public_title( $language );
+        if ( $replacement && false !== strpos( $current, 'Rent a Car Venezia' ) && $replacement !== $current ) $updates[] = array( 'id' => (int) $page_id, 'key' => 'rank_math_title', 'value' => $replacement );
     }
 
     foreach ( $updates as $update ) {
