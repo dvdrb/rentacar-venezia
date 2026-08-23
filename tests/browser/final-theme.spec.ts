@@ -787,6 +787,27 @@ test.describe('final theme experience', () => {
     await expect(links.nth(2)).toHaveAttribute('href', 'https://wa.me/393445068823');
     await expect(links.nth(3)).toHaveAttribute('href', 'https://t.me/+393445068823');
     expect(await links.evaluateAll((items) => items.every((item) => item.getAttribute('target') === '_blank' && item.getAttribute('rel') === 'noopener noreferrer'))).toBe(true);
+    expect(await links.evaluateAll((items) => items.every((item) => item.getAttribute('aria-label') === item.textContent?.trim()))).toBe(true);
+    expect(await links.evaluateAll((items) => items.every((item) => {
+      const styles = getComputedStyle(item);
+      return item.getBoundingClientRect().width === 48
+        && item.getBoundingClientRect().height === 48
+        && styles.transform === 'none';
+    }))).toBe(true);
+    await expect(links.nth(0)).toHaveCSS('transition-duration', /0\.18s/);
+    await expect(links.nth(0)).toHaveCSS('background-image', /gradient/);
+    await expect(links.nth(1)).toHaveCSS('background-color', 'rgb(24, 119, 242)');
+    await expect(links.nth(2)).toHaveCSS('background-color', 'rgb(37, 211, 102)');
+    await expect(links.nth(3)).toHaveCSS('background-color', 'rgb(34, 158, 217)');
+    await expect(links.nth(2).locator('svg circle')).toHaveCount(0);
+    await expect(links.nth(2).locator('svg path')).toHaveCount(1);
+    await links.nth(0).focus();
+    await expect(links.nth(0)).toHaveCSS('outline-style', 'solid');
+    await links.nth(0).hover();
+    await expect(links.nth(0)).toHaveCSS('transform', /matrix/);
+
+    await page.setViewportSize({ width: 320, height: 900 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBeTruthy();
   });
 
   test('renders translated, WordPress-managed Cookie Policy pages with their own footer targets', async ({ page }) => {

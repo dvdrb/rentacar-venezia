@@ -2021,11 +2021,16 @@ h3,
 .site-footer__contact p { margin:2px 0; }
 .site-footer__bottom { display:flex; flex-wrap:wrap; gap:var(--rc-space-3); justify-content:space-between; }
 .site-footer__bottom a { color:#e5edf7; font-size:.82rem; }
-.site-footer__social { display:flex; flex-wrap:wrap; gap:8px; margin-top:var(--rc-space-3); }
-.site-footer__social-link { display:grid; width:38px; height:38px; place-items:center; border:1px solid rgb(255 255 255 / 30%); border-radius:50%; color:#fff !important; transition:background var(--rc-transition), border-color var(--rc-transition), color var(--rc-transition), transform var(--rc-transition); }
-.site-footer__social-link svg { width:18px; height:18px; fill:none; stroke:currentcolor; stroke-linecap:round; stroke-linejoin:round; stroke-width:1.7; }
+.site-footer__social { display:flex; flex-wrap:wrap; gap:12px; margin-top:var(--rc-space-3); }
+.site-footer__social-link { display:grid; flex:0 0 48px; width:48px; height:48px; place-items:center; border-radius:50%; color:#fff !important; text-decoration:none; transition:transform 180ms ease, box-shadow 180ms ease; }
+.site-footer__social-link svg { width:30px; height:30px; fill:none; stroke:currentcolor; stroke-linecap:round; stroke-linejoin:round; stroke-width:1.7; }
 .site-footer__social-link .site-footer__social-fill { fill:currentcolor; stroke:none; }
-.site-footer__social-link:hover, .site-footer__social-link:focus-visible { border-color:var(--rc-yellow-500); background:var(--rc-yellow-500); color:var(--rc-navy-950) !important; text-decoration:none; transform:translateY(-2px); }
+.site-footer__social-link--facebook { background:#1877F2; }
+.site-footer__social-link--whatsapp { background:#25D366; }
+.site-footer__social-link--telegram { background:#229ED9; }
+.site-footer__social-link--instagram { background:radial-gradient(circle at 30% 107%, #fdf497 0 5%, #fd5949 45%, #d6249f 60%, #285aeb 90%); }
+.site-footer__social-link:hover { color:#fff !important; text-decoration:none; transform:scale(1.08); }
+.site-footer__social-link:focus-visible { color:#fff !important; outline:3px solid #fff; outline-offset:3px; text-decoration:none; }
 
 .airport-page__process,
 .airport-page__practical,
