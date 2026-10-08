@@ -58,22 +58,14 @@ final class Rentacar_Core_Fleet_Provision {
             return;
         }
         if ( $publish ) {
-            foreach ( $plans as $plan ) {
-                $check = self::publication_check( $plan );
-                if ( is_wp_error( $check ) ) WP_CLI::error( $plan['vehicle']['key'] . ': ' . $check->get_error_message() );
-            }
-            foreach ( $plans as $plan ) foreach ( $plan['posts'] as $id ) {
-                if ( 'publish' !== get_post_status( $id ) ) Rentacar_Core_Fleet_Migration::update_vehicle_post_without_translation_sync( $id, array( 'ID' => $id, 'post_status' => 'publish', 'post_name' => $plan['vehicle']['slug'] ) );
-            }
+            $result = self::publish_plans( $plans );
+            if ( is_wp_error( $result ) ) WP_CLI::error( $result->get_error_message() );
             WP_CLI::success( 'Published only the validated provisioned records: ' . implode( ', ', array_merge( ...array_map( static function( $plan ) { return array_values( $plan['posts'] ); }, $plans ) ) ) );
             return;
         }
-        foreach ( $plans as $plan ) {
-            if ( 'EXISTING' === $plan['state'] ) continue;
-            $ids = self::create_family( $plan );
-            if ( is_wp_error( $ids ) ) WP_CLI::error( $plan['vehicle']['key'] . ': ' . $ids->get_error_message() );
-            WP_CLI::log( '[CREATED DRAFT] ' . $plan['vehicle']['key'] . ' ' . wp_json_encode( $ids ) );
-        }
+        $result = self::apply_plans( $plans );
+        if ( is_wp_error( $result ) ) WP_CLI::error( $result->get_error_message() );
+        foreach ( $result as $key => $created ) WP_CLI::log( '[CREATED DRAFT] ' . $key . ' ' . wp_json_encode( $created['posts'] ) );
         WP_CLI::success( 'Apply complete. Newly created posts remain drafts; existing records were not changed.' );
     }
 
@@ -132,40 +124,121 @@ final class Rentacar_Core_Fleet_Provision {
         return array( 'state' => $existing ? 'EXISTING' : 'CREATE', 'vehicle' => $vehicle, 'posts' => $posts, 'image' => $image );
     }
 
-    private static function create_family( array $plan ) {
-        $vehicle = $plan['vehicle'];
-        $attachment = self::import_image( $plan['image'], $vehicle );
-        if ( is_wp_error( $attachment ) ) return $attachment;
-        $pricing = Rentacar_Core_Fleet_Migration::pricing_meta_from_row( $vehicle['pricing'], Rentacar_Core_Rental_Policy::minimum_rental_days() );
-        $ids = array();
-        foreach ( self::LANGUAGES as $language ) {
-            $copy = $vehicle['locales'][ $language ];
-            $id = wp_insert_post( array( 'post_type' => 'cars', 'post_status' => 'draft', 'post_title' => $vehicle['title'], 'post_content' => $copy['content'], 'post_name' => $vehicle['slug'] ), true );
-            if ( is_wp_error( $id ) || ! $id ) return new WP_Error( 'insert', 'Post creation failed for ' . $language );
-            update_post_meta( $id, self::KEY_META, $vehicle['key'] );
-            pll_set_post_language( $id, $language );
-            if ( $language !== pll_get_post_language( $id, 'slug' ) ) return new WP_Error( 'language', 'Polylang language did not persist.' );
-            if ( ! Rentacar_Core_Fleet_Migration::slug_is_available_in_vehicle_language( $id, $vehicle['slug'] ) ) return new WP_Error( 'slug', 'Exact slug is occupied in ' . $language );
-            Rentacar_Core_Fleet_Migration::update_vehicle_post_without_translation_sync( $id, array( 'ID' => $id, 'post_name' => $vehicle['slug'] ) );
-            update_post_meta( $id, 'gearbox', $vehicle['gearbox'] );
-            update_post_meta( $id, 'max_passagers', $vehicle['passengers'] );
-            update_post_meta( $id, 'doors', $vehicle['doors'] );
-            update_post_meta( $id, Rentacar_Core_Vehicle_Maintenance::POWERTRAIN_META, $vehicle['powertrain'] );
-            update_post_meta( $id, '_rentacar_engine', $vehicle['engine'] );
-            foreach ( $pricing as $key => $value ) update_post_meta( $id, $key, $value );
-            update_post_meta( $id, 'rank_math_title', $copy['seo_title'] );
-            update_post_meta( $id, 'rank_math_description', $copy['seo_description'] );
-            if ( ! set_post_thumbnail( $id, $attachment ) ) return new WP_Error( 'image', 'Featured image could not be set.' );
-            $result = Rentacar_Core_Vehicle_Maintenance::update_starting_price( $id );
-            if ( 'valid' !== $result['status'] ) return new WP_Error( 'pricing', 'Derived starting price is invalid.' );
-            $ids[ $language ] = (int) $id;
+    /** Applies the complete requested batch or removes everything it created. */
+    public static function apply_plans( array $plans ) {
+        $created = array();
+        foreach ( $plans as $plan ) {
+            if ( 'EXISTING' === $plan['state'] ) continue;
+            $result = self::create_family( $plan );
+            if ( is_wp_error( $result ) ) {
+                $cleanup = array();
+                foreach ( array_reverse( $created ) as $family ) $cleanup = array_merge( $cleanup, self::rollback_created( $family['posts'], $family['attachment_id'] ) );
+                return new WP_Error( 'fleet_provision_failed', $plan['vehicle']['key'] . ': ' . $result->get_error_message() . ( $cleanup ? ' Earlier-family rollback incomplete: ' . implode( ' ', $cleanup ) : '' ) );
+            }
+            $created[ $plan['vehicle']['key'] ] = $result;
         }
-        pll_save_post_translations( $ids );
-        $check = self::publication_check( array( 'vehicle' => $vehicle, 'posts' => $ids, 'image' => $plan['image'] ) );
-        return is_wp_error( $check ) ? $check : $ids;
+        return $created;
     }
 
-    private static function import_image( array $image, array $vehicle ) {
+    /** Publishes only after complete preflight; restores original statuses on failure. */
+    public static function publish_plans( array $plans ) {
+        $original = array(); $slugs = array();
+        foreach ( $plans as $plan ) {
+            $check = self::publication_check( $plan );
+            if ( is_wp_error( $check ) ) return $check;
+            foreach ( $plan['posts'] as $id ) {
+                $original[ $id ] = get_post_status( $id );
+                $slugs[ $id ] = $plan['vehicle']['slug'];
+            }
+        }
+        try {
+            foreach ( $original as $id => $status ) {
+                if ( 'publish' === $status ) continue;
+                Rentacar_Core_Fleet_Migration::update_vehicle_post_without_translation_sync( $id, array( 'ID' => $id, 'post_status' => 'publish', 'post_name' => $slugs[ $id ] ) );
+                if ( 'publish' !== get_post_status( $id ) || $slugs[ $id ] !== get_post_field( 'post_name', $id ) ) throw new RuntimeException( 'Publish did not persist for post ' . $id );
+            }
+            foreach ( $original as $id => $status ) if ( 'publish' !== get_post_status( $id ) ) throw new RuntimeException( 'Post ' . $id . ' is not published.' );
+            return true;
+        } catch ( Throwable $failure ) {
+            $cleanup = array();
+            foreach ( $original as $id => $status ) {
+                if ( $status === get_post_status( $id ) ) continue;
+                try {
+                    Rentacar_Core_Fleet_Migration::update_vehicle_post_without_translation_sync( $id, array( 'ID' => $id, 'post_status' => $status, 'post_name' => $slugs[ $id ] ) );
+                } catch ( Throwable $rollback_failure ) {
+                    $cleanup[] = 'Could not restore post ' . $id . ': ' . $rollback_failure->getMessage();
+                }
+            }
+            foreach ( $original as $id => $status ) if ( $status !== get_post_status( $id ) ) $cleanup[] = 'Post ' . $id . ' status was not restored.';
+            return self::failure_after_cleanup( $failure->getMessage(), $cleanup );
+        }
+    }
+
+    private static function create_family( array $plan ) {
+        $vehicle = $plan['vehicle']; $ids = array(); $created_attachment = 0;
+        try {
+            $attachment = self::import_image( $plan['image'], $vehicle, $created_attachment );
+            if ( is_wp_error( $attachment ) ) throw new RuntimeException( $attachment->get_error_message() );
+            $pricing = Rentacar_Core_Fleet_Migration::pricing_meta_from_row( $vehicle['pricing'], Rentacar_Core_Rental_Policy::minimum_rental_days() );
+            if ( is_wp_error( $pricing ) || ! is_array( $pricing ) ) throw new RuntimeException( 'Manifest pricing became invalid.' );
+            foreach ( self::LANGUAGES as $language ) {
+                $copy = $vehicle['locales'][ $language ];
+                $id = wp_insert_post( array( 'post_type' => 'cars', 'post_status' => 'draft', 'post_title' => $vehicle['title'], 'post_content' => $copy['content'], 'post_name' => $vehicle['slug'] ), true );
+                if ( is_wp_error( $id ) || ! $id ) throw new RuntimeException( 'Post creation failed for ' . $language . ( is_wp_error( $id ) ? ': ' . $id->get_error_message() : '' ) );
+                $ids[ $language ] = (int) $id;
+                update_post_meta( $id, self::KEY_META, $vehicle['key'] );
+                pll_set_post_language( $id, $language );
+                if ( $language !== pll_get_post_language( $id, 'slug' ) ) throw new RuntimeException( 'Polylang language did not persist.' );
+                if ( ! Rentacar_Core_Fleet_Migration::slug_is_available_in_vehicle_language( $id, $vehicle['slug'] ) ) throw new RuntimeException( 'Exact slug is occupied in ' . $language );
+                Rentacar_Core_Fleet_Migration::update_vehicle_post_without_translation_sync( $id, array( 'ID' => $id, 'post_name' => $vehicle['slug'] ) );
+                update_post_meta( $id, 'gearbox', $vehicle['gearbox'] );
+                update_post_meta( $id, 'max_passagers', $vehicle['passengers'] );
+                update_post_meta( $id, 'doors', $vehicle['doors'] );
+                update_post_meta( $id, Rentacar_Core_Vehicle_Maintenance::POWERTRAIN_META, $vehicle['powertrain'] );
+                update_post_meta( $id, '_rentacar_engine', $vehicle['engine'] );
+                foreach ( $pricing as $key => $value ) update_post_meta( $id, $key, $value );
+                update_post_meta( $id, 'rank_math_title', $copy['seo_title'] );
+                update_post_meta( $id, 'rank_math_description', $copy['seo_description'] );
+                if ( ! set_post_thumbnail( $id, $attachment ) ) throw new RuntimeException( 'Featured image could not be set.' );
+                $result = Rentacar_Core_Vehicle_Maintenance::update_starting_price( $id );
+                if ( 'valid' !== $result['status'] ) throw new RuntimeException( 'Derived starting price is invalid.' );
+            }
+            pll_save_post_translations( $ids );
+            $check = self::publication_check( array( 'vehicle' => $vehicle, 'posts' => $ids, 'image' => $plan['image'] ) );
+            if ( is_wp_error( $check ) ) throw new RuntimeException( $check->get_error_message() );
+            return array( 'posts' => $ids, 'attachment_id' => $created_attachment );
+        } catch ( Throwable $failure ) {
+            return self::failure_after_cleanup( $failure->getMessage(), self::rollback_created( $ids, $created_attachment ) );
+        }
+    }
+
+    /** Only receives IDs proven to have been created by this invocation. */
+    private static function rollback_created( array $posts, $attachment_id ) {
+        $errors = array();
+        foreach ( array_reverse( $posts ) as $id ) {
+            try {
+                if ( get_post( $id ) && ! wp_delete_post( $id, true ) ) $errors[] = 'Could not delete new post ' . $id . '.';
+                if ( get_post( $id ) ) $errors[] = 'New post ' . $id . ' remains after rollback.';
+            } catch ( Throwable $failure ) {
+                $errors[] = 'Could not delete or verify new post ' . $id . ': ' . $failure->getMessage();
+            }
+        }
+        if ( $attachment_id ) {
+            try {
+                if ( get_post( $attachment_id ) && ! wp_delete_attachment( $attachment_id, true ) ) $errors[] = 'Could not delete new attachment ' . $attachment_id . '.';
+                if ( get_post( $attachment_id ) ) $errors[] = 'New attachment ' . $attachment_id . ' remains after rollback.';
+            } catch ( Throwable $failure ) {
+                $errors[] = 'Could not delete or verify new attachment ' . $attachment_id . ': ' . $failure->getMessage();
+            }
+        }
+        return $errors;
+    }
+
+    private static function failure_after_cleanup( $message, array $cleanup ) {
+        return new WP_Error( 'fleet_provision_failed', $message . ( $cleanup ? ' Rollback incomplete: ' . implode( ' ', $cleanup ) : ' Rolled back all records and media created by this invocation.' ) );
+    }
+
+    private static function import_image( array $image, array $vehicle, &$created_attachment ) {
         $existing = get_posts( array( 'post_type' => 'attachment', 'post_status' => 'inherit', 'posts_per_page' => -1, 'fields' => 'ids', 'suppress_filters' => true, 'meta_key' => Rentacar_Core_Fleet_Migration::IMAGE_HASH_META, 'meta_value' => $image['hash'] ) );
         if ( $existing ) {
             if ( 1 !== count( $existing ) || get_post_meta( $existing[0], self::IMAGE_KEY_META, true ) !== $vehicle['key'] ) return new WP_Error( 'image', 'Image hash belongs to another attachment or family.' );
@@ -177,9 +250,16 @@ final class Rentacar_Core_Fleet_Provision {
         $filetype = wp_check_filetype_and_ext( $image['path'], $vehicle['image'] );
         if ( ( $filetype['type'] ?? '' ) !== 'image/webp' ) return new WP_Error( 'image', 'WordPress rejected WebP MIME.' );
         $temporary = wp_tempnam( $vehicle['image'] );
-        if ( ! $temporary || ! copy( $image['path'], $temporary ) ) return new WP_Error( 'image', 'Could not copy image for media import.' );
+        if ( ! $temporary || ! copy( $image['path'], $temporary ) ) {
+            if ( $temporary && is_file( $temporary ) ) unlink( $temporary );
+            return new WP_Error( 'image', 'Could not copy image for media import.' );
+        }
         $id = media_handle_sideload( array( 'name' => $vehicle['image'], 'tmp_name' => $temporary, 'error' => 0, 'size' => filesize( $temporary ) ), 0, $vehicle['title'] );
-        if ( is_wp_error( $id ) ) return $id;
+        if ( is_wp_error( $id ) ) {
+            if ( is_file( $temporary ) ) unlink( $temporary );
+            return $id;
+        }
+        $created_attachment = (int) $id;
         update_post_meta( $id, Rentacar_Core_Fleet_Migration::IMAGE_HASH_META, $image['hash'] );
         update_post_meta( $id, self::IMAGE_KEY_META, $vehicle['key'] );
         update_post_meta( $id, '_wp_attachment_image_alt', $vehicle['title'] );
@@ -189,18 +269,19 @@ final class Rentacar_Core_Fleet_Provision {
 
     public static function publication_check( array $plan ) {
         $posts = $plan['posts']; $vehicle = $plan['vehicle'];
-        if ( count( array_filter( $posts ) ) !== 4 ) return new WP_Error( 'incomplete', 'All four translations are required.' );
+        if ( count( array_filter( $posts ) ) !== 4 || ! self::exact_keys( $posts, self::LANGUAGES ) ) return new WP_Error( 'incomplete', 'All four translations are required.' );
         $family = array_map( 'intval', (array) pll_get_post_translations( $posts['it'] ) );
+        if ( count( $family ) !== 4 ) return new WP_Error( 'identity', 'Polylang family must contain exactly four translations.' );
         $attachment = 0;
         foreach ( self::LANGUAGES as $language ) {
             $id = $posts[ $language ];
             $post = get_post( $id );
-            if ( ! $post || 'cars' !== $post->post_type || $family[ $language ] !== $id || pll_get_post_language( $id, 'slug' ) !== $language || get_post_meta( $id, self::KEY_META, true ) !== $vehicle['key'] || $post->post_name !== $vehicle['slug'] || ! Rentacar_Core_Fleet_Migration::slug_is_available_in_vehicle_language( $id, $vehicle['slug'] ) ) return new WP_Error( 'identity', 'Invalid relation, ownership, or slug for ' . $language );
+            if ( ! $post || 'cars' !== $post->post_type || ( $family[ $language ] ?? 0 ) !== $id || pll_get_post_language( $id, 'slug' ) !== $language || get_post_meta( $id, self::KEY_META, true ) !== $vehicle['key'] || $post->post_name !== $vehicle['slug'] || ! Rentacar_Core_Fleet_Migration::slug_is_available_in_vehicle_language( $id, $vehicle['slug'] ) ) return new WP_Error( 'identity', 'Invalid relation, ownership, or slug for ' . $language );
+            if ( $post->post_title !== $vehicle['title'] || get_post_meta( $id, 'gearbox', true ) !== $vehicle['gearbox'] || (int) get_post_meta( $id, 'max_passagers', true ) !== $vehicle['passengers'] || (int) get_post_meta( $id, 'doors', true ) !== $vehicle['doors'] || get_post_meta( $id, Rentacar_Core_Vehicle_Maintenance::POWERTRAIN_META, true ) !== $vehicle['powertrain'] || get_post_meta( $id, '_rentacar_engine', true ) !== $vehicle['engine'] ) return new WP_Error( 'technical', 'Confirmed vehicle identity or technical fields differ from the manifest for ' . $language );
             $image_id = (int) get_post_thumbnail_id( $id );
             if ( ! $image_id || ! wp_attachment_is_image( $image_id ) || ( $attachment && $attachment !== $image_id ) ) return new WP_Error( 'image', 'Missing or inconsistent featured image.' );
             $attachment = $image_id;
             if ( get_post_meta( $image_id, self::IMAGE_KEY_META, true ) !== $vehicle['key'] || get_post_meta( $image_id, Rentacar_Core_Fleet_Migration::IMAGE_HASH_META, true ) !== $plan['image']['hash'] ) return new WP_Error( 'image', 'Featured image identity is invalid.' );
-            if ( ! in_array( get_post_meta( $id, Rentacar_Core_Vehicle_Maintenance::POWERTRAIN_META, true ), Rentacar_Core_Vehicle_Maintenance::POWERTRAINS, true ) ) return new WP_Error( 'powertrain', 'Invalid powertrain.' );
             $price = Rentacar_Core_Fleet_Translation_Pricing_Sync::validated_source_pricing( $id );
             if ( is_wp_error( $price ) || 'valid' !== Rentacar_Core_Vehicle_Maintenance::starting_price_result( $id )['status'] || (string) $price[ Rentacar_Core_Vehicle_Maintenance::STARTING_PRICE_META ] !== (string) get_post_meta( $id, Rentacar_Core_Vehicle_Maintenance::STARTING_PRICE_META, true ) ) return new WP_Error( 'pricing', 'Invalid pricing or derived starting price.' );
             if ( '' === trim( $post->post_content ) || '' === trim( (string) get_post_meta( $id, 'rank_math_title', true ) ) || '' === trim( (string) get_post_meta( $id, 'rank_math_description', true ) ) ) return new WP_Error( 'editorial', 'Missing localized content or Rank Math metadata.' );

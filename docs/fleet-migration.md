@@ -16,6 +16,15 @@ editorial copy, and Rank Math metadata before publishing. Provisioned records
 carry `_rentacar_vehicle_provisioning_key`; later `--apply` runs inspect them
 without rewriting editor changes. The command does not edit existing vehicles.
 
+An apply run removes all posts and media created by that invocation if any
+family fails, including families created earlier in the same manifest run.
+Pre-existing attachments are never removed. Publishing checks the confirmed
+vehicle identity, complete translation group, shared image, current valid
+pricing, derived starting price, and nonempty localized copy and SEO before
+changing statuses. If a status update fails, it restores the targeted posts'
+original statuses. Current prices, descriptions, and SEO may differ from the
+manifest after editor changes; verification does not replace them.
+
 This one-time importer updates existing `cars` posts. It never creates or
 deletes vehicles, translations, attachments, or price rules. Take a database
 and uploads backup before an apply run.
