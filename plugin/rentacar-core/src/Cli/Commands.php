@@ -13,6 +13,7 @@ final class Rentacar_Core_Cli_Commands {
         WP_CLI::add_command( 'rentacar pricing update-after-hours', array( __CLASS__, 'update_after_hours' ) );
         WP_CLI::add_command( 'rentacar fleet migrate', array( 'Rentacar_Core_Fleet_Migration', 'run' ) );
         WP_CLI::add_command( 'rentacar fleet sync-translations', array( 'Rentacar_Core_Fleet_Translation_Pricing_Sync', 'run' ) );
+        WP_CLI::add_command( 'rentacar fleet provision', array( 'Rentacar_Core_Fleet_Provision', 'run' ) );
     }
 
     public static function pricing_audit() {

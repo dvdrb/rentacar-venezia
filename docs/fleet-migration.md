@@ -1,5 +1,21 @@
 # Fleet migration
 
+## Provisioning new multilingual vehicles
+
+`wp rentacar fleet provision --manifest=/absolute/path/manifest.json --images=/absolute/path/images`
+is a read-only creation plan by default. The JSON manifest contains a `vehicles`
+array. Each vehicle specifies `key`, matching `slug`, clean `title`, unique
+WebP `image`, `engine`, `powertrain`, `gearbox`, `passengers`, `doors`, four
+pricing ranges/prices, and `locales` with `content`, `seo_title`, and
+`seo_description` for `it`, `en`, `ro`, and `ru`. Unknown fields are rejected.
+
+After a local database backup, add `--apply` to create drafts. A later,
+separate `--publish` validates all four Polylang translations, exact slugs,
+shared featured image, pricing and derived starting prices, powertrain,
+editorial copy, and Rank Math metadata before publishing. Provisioned records
+carry `_rentacar_vehicle_provisioning_key`; later `--apply` runs inspect them
+without rewriting editor changes. The command does not edit existing vehicles.
+
 This one-time importer updates existing `cars` posts. It never creates or
 deletes vehicles, translations, attachments, or price rules. Take a database
 and uploads backup before an apply run.

@@ -50,6 +50,7 @@ require_once RENTACAR_CORE_PATH . 'src/Enquiries/ContactController.php';
 require_once RENTACAR_CORE_PATH . 'src/Cli/Commands.php';
 require_once RENTACAR_CORE_PATH . 'src/Cli/FleetMigration.php';
 require_once RENTACAR_CORE_PATH . 'src/Cli/FleetTranslationPricingSync.php';
+require_once RENTACAR_CORE_PATH . 'src/Cli/FleetProvision.php';
 
 add_action( 'init', array( 'Rentacar_Core_Cars_Post_Type', 'register_when_legacy_absent' ), 9 );
 add_action( 'init', array( 'Rentacar_Core_Reservation_Store', 'register_post_type' ), 9 );
@@ -75,3 +76,4 @@ add_filter( 'rentacar_core_reservation_recipient', function( $recipient ) {
 } );
 add_filter( 'gettext', array( 'Rentacar_Core_Reservation_Translations', 'filter_gettext' ), 20, 3 );
 add_action( 'cli_init', array( 'Rentacar_Core_Cli_Commands', 'register' ) );
+add_filter( 'pre_wp_unique_post_slug', array( 'Rentacar_Core_Fleet_Provision', 'preserve_provisioned_slug' ), 20, 6 );
